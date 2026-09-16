@@ -8,7 +8,6 @@
     padding: 0;
 }
 
-
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f9f5fb;
@@ -384,7 +383,40 @@ body {
     padding: 1.5rem;
 }
 
-/* ===== الفصول ===== */
+/* ===== قائمة المواد داخل السنة ===== */
+.year-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.year-content ul li {
+    margin-bottom: 0.6rem;
+}
+
+.year-content ul li a {
+    display: block;
+    padding: 0.9rem 1.2rem;
+    background: #faf5fc;
+    color: #4a148c;
+    text-decoration: none;
+    border-radius: 10px;
+    border-right: 4px solid #e1bee7;
+    transition: all 0.25s;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.year-content ul li a:hover {
+    background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+    border-right-color: #9c27b0;
+    color: #4a148c;
+    transform: translateX(-6px);
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.2);
+}
+
+/* ===== الفصول (متوافقة مع النسخة القديمة) ===== */
 .semester {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
@@ -501,7 +533,6 @@ body {
 .plan-btn:hover .plan-arrow {
     transform: translateX(-8px);
 }
-
 
 /* ===== قسم الصناديق (روابط تهمك + تواصل معنا) ===== */
 .box-section {
