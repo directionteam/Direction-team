@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المواد الدراسية - Direction Team</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- شريط التنقل -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
+            <ul class="nav-links">
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="index.html#about">من نحن</a></li>
+                <li><a href="index.html#team">الفريق</a></li>
+                <li><a href="materials.html" class="active">المواد</a></li>
+                <li><a href="plans.html">الخطط الدراسية</a></li>
+                <li><a href="index.html#contact">تواصل معنا</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- رأس الصفحة -->
+    <section class="page-header">
+        <h1>📚 مواد التخصص</h1>
+        <p>مواد هندسة الطاقة المتجددة المتوفرة حالياً</p>
+
+        <div class="search-box-page">
+            <input type="text" id="searchInput" placeholder="🔍 ابحث عن مادة..." onkeyup="searchMaterials()">
+        </div>
+    </section>
+
+    <!-- قسم المواد -->
+    <section class="materials-section">
+
+        <!-- السنة الثانية -->
+        <div class="year-card">
+            <button class="year-header" onclick="toggleYear(this)">
+                <span>🎓 السنة الثانية</span>
+                <span class="arrow">▼</span>
+            </button>
+            <div class="year-content">
+                <div class="semester">
+                    <h4>الفصل الأول</h4>
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/1alY5-RbDwpkLZFDdvhtrOMJB-f0QzzQq?usp=sharing" target="_blank">رياضيات هندسية - Engineering Mathematics</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1_mcD5vtbL3B9bzZdUQ2huJ21uXnDloof?usp=sharing" target="_blank">الطاقة والبيئة - Energy and the Environment</a></li>
+                    </ul>
+                </div>
+                <div class="semester">
+                    <h4>الفصل الثاني</h4>
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/1jSR__e_cuiWXTcaBeizMBGLpvbvIasQO?usp=sharing" target="_blank">القياسات والأجهزة الهندسية - Engineering Measurements and Devices</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1wRqvuvPA29-NkyH4ohsMvPR7_RBVKLdR?usp=sharing" target="_blank">الميكانيكا الهندسية - Engineering Mechanics</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- السنة الثالثة -->
+        <div class="year-card">
+            <button class="year-header" onclick="toggleYear(this)">
+                <span>🎓 السنة الثالثة</span>
+                <span class="arrow">▼</span>
+            </button>
+            <div class="year-content">
+                <div class="semester">
+                    <h4>الفصل الأول</h4>
+                    <ul>
+                        <li><a href="https://drive.google.com/file/d/1wJsyACF3zaZjJ4FggRDHPpX1hGgXXBBP/view?usp=sharing" target="_blank">برمجة الحاسوب للمهندسين - Computer Programming for Engineers</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1FK2OuTBC21V4b-AQTaDzqREa2Eh4T73s?usp=sharing" target="_blank">ميكانيكا الموائع - Fluid Mechanics</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1-gXAYnoxL_ejP2wlgVVjg5viAU9kD_Sm?usp=sharing" target="_blank">مبادئ الكهرباء و الالكترونيات  - Electrical & Electronic Principles</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/15aCMP-cMvMLP4XDu13PZp83iLr6O1o3l?usp=sharing" target="_blank">الديناميكا الحرارية - Thermodynamics</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1FK2OuTBC21V4b-AQTaDzqREa2Eh4T73s?usp=sharing" target="_blank">مصادر الطاقة المتجددة - Renewable Energy Sources</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/14zAzE5yudy40tkGBLMd2itWB_YBqZ5s-?usp=sharing" target="_blank">ميكانيكا المواد وخصائصها - Mechanics of Material and Properties</a></li>
+                    </ul>
+                </div>
+                <div class="semester">
+                    <h4>الفصل الثاني</h4>
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/1crJS5GV38gWmCIjDRh8HWMbvp9GYSGT8?usp=sharing" target="_blank">انقال حرارة وكتلة  - Heat and Mass Transfer</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1kFJd6Nr76desDUjFyP_1x9XEe8KrJdtJ?usp=sharing" target="_blank">أساسيات أنظمة القدرة  - Fundamentals of Power Systems</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/140_6GT1hnJSsLpZ29Y8yf0bh_LpJGUsc?usp=sharing" target="_blank">مختبر ميكانيكا الموائع - Fluid Mechanics Lab</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- السنة الرابعة -->
+        <div class="year-card">
+            <button class="year-header" onclick="toggleYear(this)">
+                <span>🎓 السنة الرابعة</span>
+                <span class="arrow">▼</span>
+            </button>
+            <div class="year-content">
+                <div class="semester">
+                    <h4>الفصل الأول</h4>
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/10tgtLlcEsOfwPtVdANNyZN1FV7yQ7pIK?usp=sharing" target="_blank">أنظمة طاقة شمسية حرارية - Solar Thermal Energy Systems</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1UjD9zJgyqjQtqaw--1dlZfWkiz54PZAt?usp=sharing" target="_blank">الآلات التوربينية - Turbo-Machinery</a></li>
+                    </ul>
+                </div>
+                <div class="semester">
+                    <h4>الفصل الثاني</h4>
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/1xirgaZ_Nn0X-qOwgKLPLDVjMF6QiJdIz?usp=sharing" target="_blank">تكنولوجيا أنظمة الخلايا الكهروضوئية  - PV System technology</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1lVaHg2sIGLpsYK9oN5E1q6a8mDq9Qn8u?usp=sharing" target="_blank">إدارة الطاقة - Energy Management</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1C78HI_p9mnblSosWxNk6Ap_BcV5F_VQT?usp=sharing" target="_blank">مقدمة في التصميم الميكانيكي - Introduction to Mechanical Design</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- السنة الخامسة -->
+        <div class="year-card">
+            <button class="year-header" onclick="toggleYear(this)">
+                <span>🎓 السنة الخامسة</span>
+                <span class="arrow">▼</span>
+            </button>
+            <div class="year-content">
+                <div class="semester">
+                    <h4>الفصل الأول</h4>
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/17FOwGMN2HJrlr2bV6GohTR1b6BRE5m-s?usp=sharing" target="_blank">الطاقة الحراية الارضية  - Geothermal Energy</a></li>
+                        <li><a href="https://drive.google.com/file/d/1ZV3khJQxD6Y5T7IvPiL9yanMbvGm8bzj/view?usp=sharing" target="_blank">طاقة الرياح - Wind Energy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- الفوتر -->
+    <footer>
+        <img src="logo.png" alt="Direction Team" class="footer-logo">
+        <p class="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
+        <p>صُنع بحب لخدمة طلبة الهندسة 💜</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
