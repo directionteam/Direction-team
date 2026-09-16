@@ -1,3 +1,7 @@
+/* ============================================
+   Direction Team - Main Stylesheet
+   ============================================ */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -51,12 +55,13 @@ body {
     font-size: 0.95rem;
 }
 
-.nav-links a:hover {
+.nav-links a:hover,
+.nav-links a.active {
     background: #f3e5f5;
     color: #4a148c;
 }
 
-/* ===== الهيرو ===== */
+/* ===== الهيرو (الصفحة الرئيسية) ===== */
 .hero {
     background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 50%, #ab47bc 100%);
     color: #fff;
@@ -99,52 +104,30 @@ body {
     margin-bottom: 2rem;
 }
 
-.search-box {
-    max-width: 500px;
-    margin: 0 auto 2rem;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 1rem 1.5rem;
-    border: none;
-    border-radius: 50px;
-    font-size: 1rem;
-    font-family: inherit;
-    outline: none;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    transition: box-shadow 0.3s;
-}
-
-.search-box input:focus {
-    box-shadow: 0 6px 25px rgba(0,0,0,0.25);
-}
-
-.social-icons {
+.hero-buttons {
     display: flex;
     justify-content: center;
     gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
 }
 
-.social-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 55px;
-    height: 55px;
-    background: rgba(255,255,255,0.15);
-    border: 2px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
-    font-size: 1.6rem;
+.hero-btn {
+    padding: 1rem 2rem;
+    background: rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.5);
+    border-radius: 50px;
+    color: #fff;
     text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
     transition: all 0.3s;
-    backdrop-filter: blur(10px);
 }
 
-.social-btn:hover {
-    background: rgba(255,255,255,0.3);
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+.hero-btn:hover {
+    background: rgba(255,255,255,0.35);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
 /* ===== من نحن ===== */
@@ -242,13 +225,7 @@ body {
     text-align: justify;
 }
 
-/* ===== قسم المواد ===== */
-.materials-section {
-    max-width: 1000px;
-    margin: 4rem auto;
-    padding: 0 1rem;
-}
-
+/* ===== عناوين الأقسام ===== */
 .section-title {
     text-align: center;
     color: #6a1b9a;
@@ -262,6 +239,49 @@ body {
     margin-bottom: 2rem;
 }
 
+/* ===== رأس الصفحات الداخلية ===== */
+.page-header {
+    background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%);
+    color: #fff;
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.page-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.page-header p {
+    opacity: 0.9;
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+}
+
+.search-box-page {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.search-box-page input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* ===== قسم المواد ===== */
+.materials-section {
+    max-width: 1000px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+/* التابان */
 .tabs {
     display: flex;
     justify-content: center;
@@ -308,6 +328,7 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* ===== بطاقة السنة ===== */
 .year-card {
     background: #fff;
     border-radius: 12px;
@@ -363,108 +384,98 @@ body {
     padding: 1.5rem;
 }
 
-.semester {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px dashed #e0c8e8;
-}
-
-.semester:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-.semester h4 {
-    color: #6a1b9a;
-    margin-bottom: 0.8rem;
-    font-size: 1.1rem;
-    padding-right: 0.8rem;
-    border-right: 4px solid #9c27b0;
-}
-
-.semester.summer h4 {
-    color: #e67e22;
-    border-right-color: #e67e22;
-}
-
-.semester ul {
+/* ===== قائمة المواد داخل السنة (بدون فصول) ===== */
+.materials-list {
     list-style: none;
     padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.7rem;
 }
 
-.semester li {
-    margin-bottom: 0.5rem;
-}
-
-.semester li a {
+.materials-list li a {
     display: block;
-    padding: 0.8rem 1rem;
+    padding: 0.9rem 1.1rem;
     background: #faf5fc;
-    color: #333;
+    color: #4a148c;
     text-decoration: none;
-    border-radius: 8px;
-    border-right: 3px solid transparent;
-    transition: all 0.2s;
+    border-radius: 10px;
+    border-right: 4px solid #e1bee7;
+    transition: all 0.25s;
     font-size: 0.95rem;
+    font-weight: 500;
 }
 
-.semester li a:hover {
-    background: #f3e5f5;
+.materials-list li a:hover {
+    background: linear-gradient(135deg, #f3e5f5, #e1bee7);
     border-right-color: #9c27b0;
-    color: #6a1b9a;
-    transform: translateX(-5px);
-    font-weight: 600;
+    color: #4a148c;
+    transform: translateX(-6px);
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.2);
 }
 
 /* ===== قسم الخطط الدراسية ===== */
 .plans-section {
     max-width: 900px;
-    margin: 4rem auto;
+    margin: 3rem auto;
     padding: 0 1rem;
+}
+
+.plans-group {
+    margin-bottom: 3rem;
+}
+
+.plans-group-title {
+    color: #6a1b9a;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 3px solid #9c27b0;
+    display: inline-block;
 }
 
 .plans-buttons {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
 }
 
 .plan-btn {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1.5rem 2rem;
-    background: linear-gradient(135deg, #fff 0%, #faf5fc 100%);
-    border: 2px solid #9c27b0;
-    border-radius: 15px;
+    padding: 1.2rem 1.5rem;
+    background: #fff;
+    border: 2px solid #e0c8e8;
+    border-radius: 12px;
     text-decoration: none;
-    color: #6a1b9a;
-    font-size: 1.1rem;
-    font-weight: bold;
+    color: #4a148c;
+    font-size: 1rem;
+    font-weight: 600;
     transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(106, 27, 154, 0.08);
+    box-shadow: 0 3px 10px rgba(106, 27, 154, 0.06);
 }
 
 .plan-btn:hover {
     background: linear-gradient(135deg, #9c27b0, #6a1b9a);
     color: #fff;
+    border-color: #9c27b0;
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(106, 27, 154, 0.3);
+    box-shadow: 0 12px 25px rgba(106, 27, 154, 0.3);
 }
 
-.plan-icon {
-    font-size: 2rem;
+.plan-btn .plan-icon {
+    font-size: 1.6rem;
 }
 
-.plan-text {
+.plan-btn .plan-text {
     flex-grow: 1;
     text-align: right;
 }
 
-.plan-arrow {
-    font-size: 1.5rem;
+.plan-btn .plan-arrow {
+    font-size: 1.3rem;
     transition: transform 0.3s;
 }
 
@@ -551,233 +562,6 @@ footer p {
     .tab-btn { padding: 0.8rem 1rem; font-size: 0.95rem; }
     .team-cards { grid-template-columns: 1fr; }
     .plans-buttons { grid-template-columns: 1fr; }
-}
-/* ===== شريط التنقل - تفعيل الرابط النشط ===== */
-.nav-links a.active {
-    background: #f3e5f5;
-    color: #4a148c;
-    border-bottom: 2px solid #9c27b0;
-}
-
-/* ===== أزرار الهيرو ===== */
-.hero-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-top: 1.5rem;
-}
-
-.hero-btn {
-    padding: 1rem 2rem;
-    background: rgba(255,255,255,0.2);
-    border: 2px solid rgba(255,255,255,0.5);
-    border-radius: 50px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: all 0.3s;
-    backdrop-filter: blur(10px);
-}
-
-.hero-btn:hover {
-    background: rgba(255,255,255,0.35);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-}
-
-/* ===== رأس الصفحة الداخلية ===== */
-.page-header {
-    background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%);
-    color: #fff;
-    text-align: center;
-    padding: 3rem 1rem;
-}
-
-.page-header h1 {
-    font-size: 2.2rem;
-    margin-bottom: 0.5rem;
-}
-
-.page-header p {
-    opacity: 0.9;
-    font-size: 1.05rem;
-    margin-bottom: 1.5rem;
-}
-
-.search-box-page {
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.search-box-page input {
-    width: 100%;
-    padding: 1rem 1.5rem;
-    border: none;
-    border-radius: 50px;
-    font-size: 1rem;
-    font-family: inherit;
-    outline: none;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
-
-/* إزالة السوشيال من الهيرو */
-.social-icons { display: none !important; }
-/* ===== مجموعات الخطط ===== */
-.plans-group {
-    margin-bottom: 3rem;
-}
-
-.plans-group-title {
-    color: #6a1b9a;
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.8rem;
-    border-bottom: 3px solid #9c27b0;
-    display: inline-block;
-    padding-right: 0;
-}
-
-.plans-section {
-    max-width: 900px;
-    margin: 3rem auto;
-    padding: 0 1rem;
-}
-
-.plans-buttons {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1rem;
-}
-
-.plan-btn {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.2rem 1.5rem;
-    background: #fff;
-    border: 2px solid #e0c8e8;
-    border-radius: 12px;
-    text-decoration: none;
-    color: #4a148c;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s;
-    box-shadow: 0 3px 10px rgba(106, 27, 154, 0.06);
-}
-
-.plan-btn:hover {
-    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
-    color: #fff;
-    border-color: #9c27b0;
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(106, 27, 154, 0.3);
-}
-
-.plan-btn .plan-icon {
-    font-size: 1.6rem;
-}
-
-.plan-btn .plan-text {
-    flex-grow: 1;
-    text-align: right;
-}
-
-.plan-btn .plan-arrow {
-    font-size: 1.3rem;
-    transition: transform 0.3s;
-}
-
-.plan-btn:hover .plan-arrow {
-    transform: translateX(-8px);
-}
-
-/* الجوال */
-@media (max-width: 700px) {
-    .plans-buttons {
-        grid-template-columns: 1fr;
-    }
-    .plans-group-title {
-        font-size: 1.2rem;
-    }
-}
-/* ===== التابان ===== */
-.tabs {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-}
-
-.tab-btn {
-    padding: 0.9rem 2rem;
-    font-size: 1.05rem;
-    font-weight: bold;
-    border: 2px solid #9c27b0;
-    background: #fff;
-    color: #6a1b9a;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-family: inherit;
-}
-
-.tab-btn:hover {
-    background: #f3e5f5;
-    transform: translateY(-2px);
-}
-
-.tab-btn.active {
-    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
-    color: #fff;
-    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.4);
-}
-
-.tab-content { display: none; }
-.tab-content.active { display: block; animation: fadeIn 0.4s ease; }
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 700px) {
-    .tabs { flex-direction: column; align-items: stretch; }
-    .tab-btn { padding: 0.8rem 1rem; font-size: 0.95rem; }
-}
-/* قائمة المواد داخل السنة (بدون فصول) */
-.materials-list {
-    list-style: none;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 0.6rem;
-}
-
-.materials-list li a {
-    display: block;
-    padding: 0.8rem 1rem;
-    background: #faf5fc;
-    color: #333;
-    text-decoration: none;
-    border-radius: 8px;
-    border-right: 3px solid transparent;
-    transition: all 0.2s;
-    font-size: 0.95rem;
-}
-
-.materials-list li a:hover {
-    background: #f3e5f5;
-    border-right-color: #9c27b0;
-    color: #6a1b9a;
-    transform: translateX(-5px);
-    font-weight: 600;
-}
-
-@media (max-width: 700px) {
-    .materials-list {
-        grid-template-columns: 1fr;
-    }
+    .materials-list { grid-template-columns: 1fr; }
+    .plans-group-title { font-size: 1.2rem; }
 }
