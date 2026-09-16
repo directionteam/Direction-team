@@ -702,3 +702,48 @@ footer p {
         font-size: 1.2rem;
     }
 }
+/* ===== التابان ===== */
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 0.9rem 2rem;
+    font-size: 1.05rem;
+    font-weight: bold;
+    border: 2px solid #9c27b0;
+    background: #fff;
+    color: #6a1b9a;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.tab-btn:hover {
+    background: #f3e5f5;
+    transform: translateY(-2px);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.4);
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 700px) {
+    .tabs { flex-direction: column; align-items: stretch; }
+    .tab-btn { padding: 0.8rem 1rem; font-size: 0.95rem; }
+}
