@@ -703,3 +703,132 @@ footer p {
         grid-template-columns: 1fr;
     }
 }
+/* ===== قسم الأيقونات الدائرية ===== */
+.icons-section {
+    max-width: 1100px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+.icons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    justify-items: center;
+}
+
+.icon-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    padding: 1.5rem 1rem;
+    border-radius: 15px;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+.icon-card:hover {
+    transform: translateY(-8px);
+    background: #faf5fc;
+    box-shadow: 0 15px 35px rgba(106, 27, 154, 0.15);
+}
+
+.icon-circle {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    margin-bottom: 1.2rem;
+    transition: all 0.3s;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.icon-card:hover .icon-circle {
+    transform: scale(1.08) rotate(-5deg);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+}
+
+/* ألوان الدوائر */
+.icon-circle.blue {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: #fff;
+}
+
+.icon-circle.green {
+    background: linear-gradient(135deg, #27ae60, #1e8449);
+    color: #fff;
+}
+
+.icon-circle.purple {
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #fff;
+}
+
+.icon-circle.red {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: #fff;
+}
+
+.icon-circle.orange {
+    background: linear-gradient(135deg, #f39c12, #d68910);
+    color: #fff;
+}
+
+.icon-circle.teal {
+    background: linear-gradient(135deg, #16a085, #0e6655);
+    color: #fff;
+}
+
+.icon-circle.instagram {
+    background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    color: #fff;
+}
+
+.icon-circle.facebook {
+    background: linear-gradient(135deg, #1877f2, #0d5dbf);
+    color: #fff;
+}
+
+.icon-card h3 {
+    color: #4a148c;
+    font-size: 1.15rem;
+    margin-bottom: 0.4rem;
+    font-weight: bold;
+}
+
+.icon-card p {
+    color: #777;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* الجوال */
+@media (max-width: 700px) {
+    .icons-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    .icon-circle {
+        width: 90px;
+        height: 90px;
+        font-size: 2.5rem;
+    }
+    .icon-card h3 {
+        font-size: 0.95rem;
+    }
+    .icon-card p {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .icons-grid {
+        grid-template-columns: 1fr;
+    }
+}
