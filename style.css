@@ -747,3 +747,37 @@ footer p {
     .tabs { flex-direction: column; align-items: stretch; }
     .tab-btn { padding: 0.8rem 1rem; font-size: 0.95rem; }
 }
+/* قائمة المواد داخل السنة (بدون فصول) */
+.materials-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.6rem;
+}
+
+.materials-list li a {
+    display: block;
+    padding: 0.8rem 1rem;
+    background: #faf5fc;
+    color: #333;
+    text-decoration: none;
+    border-radius: 8px;
+    border-right: 3px solid transparent;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.materials-list li a:hover {
+    background: #f3e5f5;
+    border-right-color: #9c27b0;
+    color: #6a1b9a;
+    transform: translateX(-5px);
+    font-weight: 600;
+}
+
+@media (max-width: 700px) {
+    .materials-list {
+        grid-template-columns: 1fr;
+    }
+}
