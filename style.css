@@ -715,3 +715,75 @@ footer p {
         font-size: 2.5rem;
     }
 }
+/* ===== قسم امتحان الكفاءة ===== */
+.exam-section {
+    max-width: 900px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+.exam-group {
+    margin-bottom: 3rem;
+}
+
+.exam-group-title {
+    color: #6a1b9a;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 3px solid #9c27b0;
+    display: inline-block;
+}
+
+.exam-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+}
+
+.exam-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.5rem;
+    background: #fff;
+    border: 2px solid #e0c8e8;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #4a148c;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 3px 10px rgba(106, 27, 154, 0.06);
+}
+
+.exam-btn:hover {
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #fff;
+    border-color: #9c27b0;
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(106, 27, 154, 0.3);
+}
+
+.exam-btn .exam-icon {
+    font-size: 1.6rem;
+}
+
+.exam-btn .exam-text {
+    flex-grow: 1;
+    text-align: right;
+}
+
+.exam-btn .exam-arrow {
+    font-size: 1.3rem;
+    transition: transform 0.3s;
+}
+
+.exam-btn:hover .exam-arrow {
+    transform: translateX(-8px);
+}
+
+@media (max-width: 700px) {
+    .exam-buttons { grid-template-columns: 1fr; }
+    .exam-group-title { font-size: 1.2rem; }
+}
