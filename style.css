@@ -1340,3 +1340,132 @@ body.dark-mode .share-material-btn:hover {
         font-size: 2.5rem;
     }
 }
+/* ===== قسم المفضلة ===== */
+.favorites-section {
+    max-width: 900px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+}
+
+.favorites-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.favorite-item {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    box-shadow: 0 4px 15px rgba(106, 27, 154, 0.08);
+    border-right: 4px solid #ffc107;
+    transition: all 0.3s;
+    gap: 0.5rem;
+}
+
+.favorite-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(106, 27, 154, 0.15);
+}
+
+.fav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: #4a148c;
+    flex-grow: 1;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.fav-link:hover {
+    color: #9c27b0;
+}
+
+.fav-remove {
+    background: rgba(231, 76, 60, 0.1);
+    border: none;
+    color: #e74c3c;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    padding: 0;
+    font-family: inherit;
+    line-height: 1;
+}
+
+.fav-remove:hover {
+    background: #e74c3c;
+    color: #ffffff;
+    transform: scale(1.15);
+}
+
+.empty-favorites {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    background: #faf5fc;
+    border-radius: 15px;
+    border: 2px dashed #e0c8e8;
+    grid-column: 1 / -1;
+}
+
+.empty-favorites p {
+    color: #777;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.empty-favorites a {
+    color: #9c27b0;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.empty-favorites a:hover {
+    text-decoration: underline;
+}
+
+/* الوضع الليلي */
+body.dark-mode .favorite-item {
+    background: #16213e;
+    color: #e0e0e0;
+    border-right-color: #ffc107;
+}
+
+body.dark-mode .fav-link {
+    color: #bb86fc;
+}
+
+body.dark-mode .fav-link:hover {
+    color: #d0a2ff;
+}
+
+body.dark-mode .empty-favorites {
+    background: #0f3460;
+    border-color: #2a1b4d;
+}
+
+body.dark-mode .empty-favorites p {
+    color: #b0b0b0;
+}
+
+body.dark-mode .empty-favorites a {
+    color: #bb86fc;
+}
+
+@media (max-width: 700px) {
+    .favorites-list {
+        grid-template-columns: 1fr;
+    }
+}
