@@ -1202,20 +1202,25 @@ body.dark-mode .theme-toggle {
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(156, 39, 176, 0.1);
+    background: rgba(156, 39, 176, 0.15);
     border: 1px solid rgba(156, 39, 176, 0.3);
     color: #9c27b0;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+    width: auto;
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 20px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s;
-    opacity: 0.6;
-    padding: 0;
+    opacity: 0.75;
+    z-index: 10;
+    white-space: nowrap;
+    gap: 4px;
 }
 
 .share-material-btn:hover {
@@ -1259,10 +1264,4 @@ body.dark-mode .share-material-btn:hover {
     .year-content ul li a {
         padding-left: 45px !important;
     }
-}
-.share-material-btn {
-    width: auto;
-    padding: 0 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
 }
