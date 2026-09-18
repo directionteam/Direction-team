@@ -5,7 +5,6 @@ function switchTab(event, tabId) {
     document.getElementById(tabId).classList.add('active');
     event.currentTarget.classList.add('active');
 
-    // إعادة تعيين البحث
     const searchInput = document.getElementById('searchInput');
     if (searchInput) searchInput.value = '';
     resetSearch();
@@ -33,6 +32,8 @@ function searchMaterials() {
     document.querySelectorAll('.tab-content.active .year-card').forEach(c => c.classList.add('active'));
 
     const activeTab = document.querySelector('.tab-content.active');
+    if (!activeTab) return;
+
     activeTab.querySelectorAll('.semester li').forEach(li => {
         li.style.display = li.textContent.toLowerCase().includes(input) ? '' : 'none';
     });
@@ -62,8 +63,11 @@ function resetSearch() {
 
 // ===== فتح السنة الأولى =====
 document.addEventListener('DOMContentLoaded', function() {
-    const firstYear = document.querySelector('.tab-content.active .year-card');
+    const firstYear = document.querySelector('.tab-content.active .year-card') || document.querySelector('.year-card');
     if (firstYear) firstYear.classList.add('active');
+    
+    // تطبيق الوضع المحفوظ
+    applySavedTheme();
 });
 
 // ===== تمرير سلس =====
@@ -77,3 +81,73 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
         }
     });
 });
+
+// ===== الوضع الليلي =====
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    
+    // تغيير أيقونة الزر
+    const themeBtn = document.getElementById('themeToggle');
+    if (themeBtn) {
+        themeBtn.textContent = isDark ? '☀️' : '🌙';
+    }
+}
+
+function applySavedTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        const themeBtn = document.getElementById('themeToggle');
+        if (themeBtn) themeBtn.textContent = '☀️';
+    }
+}
+
+// ===== زر شارك الموقع =====
+function shareSite() {
+    const url = 'https://directionteam.github.io/Direction-team/';
+    const text = '🔗 موقع Direction Team الرسمي\n\n' +
+                 '📚 مواد هندسة الميكانيك والطاقة المتجددة\n' +
+                 '📋 الخطط الدراسية\n' +
+                 '📝 امتحان الكفاءة\n' +
+                 '💻 برامج هندسية\n\n' +
+                 url + '\n\n' +
+                 '💜 انشروه لكل الطلاب!';
+    
+    // إذا كان الجهاز يدعم المشاركة
+    if (navigator.share) {
+        navigator.share({
+            title: 'Direction Team',
+            text: text,
+            url: url
+        }).catch(() => {
+            // إذا فشلت المشاركة، افتح واتساب
+            openWhatsApp(text);
+        });
+    } else {
+        // إذا لم يدعم، افتح واتساب
+        openWhatsApp(text);
+    }
+}
+
+function openWhatsApp(text) {
+    const whatsappUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
+    window.open(whatsappUrl, '_blank');
+}
+
+// ===== زر الرجوع للأعلى =====
+window.addEventListener('scroll', function() {
+    const btn = document.getElementById('scrollTop');
+    if (btn) {
+        if (window.scrollY > 300) {
+            btn.classList.add('show');
+        } else {
+            btn.classList.remove('show');
+        }
+    }
+});
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
