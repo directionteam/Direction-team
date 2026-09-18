@@ -172,14 +172,25 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
         }
     });
 });
-// ===== إخفاء شاشة التحميل =====
+// ===== شاشة التحميل (أول زيارة فقط) =====
 window.addEventListener('load', function() {
+    const loader = document.getElementById('loaderScreen');
+    if (!loader) return; // إذا ما فيه شاشة تحميل، تجاهل
+    
+    // هل هذه أول زيارة؟
+    const hasVisited = localStorage.getItem('hasVisited');
+    
+    if (hasVisited) {
+        // ليس أول زيارة → إخفاء فوري
+        loader.remove();
+        return;
+    }
+    
+    // أول زيارة → عرض الشاشة ثم إخفاؤها
+    localStorage.setItem('hasVisited', 'true');
+    
     setTimeout(function() {
-        const loader = document.getElementById('loaderScreen');
-        if (loader) {
-            loader.classList.add('hidden');
-            // إزالة الشاشة من الصفحة بعد الاختفاء
-            setTimeout(() => loader.remove(), 700);
-        }
-    }, 1200); // 1.2 ثانية
+        loader.classList.add('hidden');
+        setTimeout(() => loader.remove(), 700);
+    }, 1500); // 1.5 ثانية
 });
