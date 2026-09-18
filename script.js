@@ -172,15 +172,29 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
         }
     });
 });
+// ===== عداد الزوار =====
 async function loadVisitorCount() {
     const counterElement = document.getElementById('visitorCount');
     if (!counterElement) return;
     
     try {
-        const response = await fetch('https://api.countapi.xyz/hit/directionteam2026.github.io/visits');
+        // استخدام v2 من CounterAPI
+        const response = await fetch('https://api.counterapi.dev/v2/directionteam/visits/up');
         const data = await response.json();
-        counterElement.textContent = data.value.toLocaleString('ar-EG');
+        
+        // استخراج الرقم من الاستجابة
+        if (data && data.data && typeof data.data.up_count === 'number') {
+            counterElement.textContent = data.data.up_count.toLocaleString('ar-EG');
+        } else if (data && data.count) {
+            counterElement.textContent = data.count.toLocaleString('ar-EG');
+        } else {
+            counterElement.textContent = '...';
+        }
     } catch (error) {
-        counterElement.textContent = '142';
+        counterElement.textContent = '...';
+        console.error('خطأ في عداد الزوار:', error);
     }
 }
+
+// تشغيل عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', loadVisitorCount);
