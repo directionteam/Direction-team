@@ -276,6 +276,71 @@ document.addEventListener('DOMContentLoaded', function() {
         addShareButtons();
     }
 });
+// ===== نظام المفضلة =====
+function toggleFavorite(materialName, materialUrl) {
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    
+    const existingIndex = favorites.findIndex(fav => fav.name === materialName);
+    
+    if (existingIndex > -1) {
+        favorites.splice(existingIndex, 1);
+    } else {
+        favorites.push({ name: materialName, url: materialUrl });
+    }
+    
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    updateFavoriteButtons();
+}
+
+function isFavorite(materialName) {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    return favorites.some(fav => fav.name === materialName);
+}
+
+function updateFavoriteButtons() {
+    document.querySelectorAll('.fav-material-btn').forEach(btn => {
+        const materialName = btn.dataset.material;
+        const icon = btn.querySelector('.fav-icon');
+        if (isFavorite(materialName)) {
+            btn.classList.add('active');
+            if (icon) icon.textContent = '⭐';
+        } else {
+            btn.classList.remove('active');
+            if (icon) icon.textContent = '☆';
+        }
+    });
+}
+
+// ===== إضافة زر المفضلة لكل مادة =====
+function addFavoriteButtons() {
+    const materialLinks = document.querySelectorAll('.year-content ul li a, .semester li a');
+    
+    materialLinks.forEach(link => {
+        const li = link.parentElement;
+        
+        // تجنب التكرار
+        if (li.querySelector('.fav-material-btn')) return;
+        
+        const materialName = link.textContent.trim();
+        const materialUrl = link.href;
+        
+        const favBtn = document.createElement('button');
+        favBtn.className = 'fav-material-btn';
+        favBtn.dataset.material = materialName;
+        favBtn.title = 'أضف للمفضلة';
+        favBtn.innerHTML = '<span class="fav-icon">☆</span>';
+        favBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleFavorite(materialName, materialUrl);
+        };
+        
+        li.appendChild(favBtn);
+    });
+    
+    updateFavoriteButtons();
+}
+
 // ===== عرض المفضلة في الصفحة الرئيسية =====
 function displayFavorites() {
     const container = document.getElementById('favoritesList');
@@ -311,8 +376,14 @@ function removeFavorite(materialName) {
     displayFavorites();
 }
 
-// تشغيل في الصفحة الرئيسية
+// ===== تشغيل عند تحميل الصفحة =====
 document.addEventListener('DOMContentLoaded', function() {
+    // صفحة المواد
+    if (document.getElementById('renewable') || document.getElementById('mechanical')) {
+        addFavoriteButtons();
+    }
+    
+    // الصفحة الرئيسية
     if (document.getElementById('favoritesList')) {
         displayFavorites();
     }
