@@ -276,3 +276,44 @@ document.addEventListener('DOMContentLoaded', function() {
         addShareButtons();
     }
 });
+// ===== عرض المفضلة في الصفحة الرئيسية =====
+function displayFavorites() {
+    const container = document.getElementById('favoritesList');
+    if (!container) return;
+    
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    
+    if (favorites.length === 0) {
+        container.innerHTML = `
+            <div class="empty-favorites">
+                <p>⭐ لا توجد مواد في المفضلة بعد</p>
+                <p>اذهب إلى <a href="materials.html">صفحة المواد</a> وأضف موادك المفضلة بنقرة على النجمة</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = favorites.map(fav => `
+        <div class="favorite-item">
+            <a href="${fav.url}" target="_blank" class="fav-link">
+                <span class="fav-icon">⭐</span>
+                <span class="fav-name">${fav.name}</span>
+            </a>
+            <button class="fav-remove" onclick="removeFavorite('${fav.name.replace(/'/g, "\\'")}')" title="إزالة">×</button>
+        </div>
+    `).join('');
+}
+
+function removeFavorite(materialName) {
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    favorites = favorites.filter(fav => fav.name !== materialName);
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    displayFavorites();
+}
+
+// تشغيل في الصفحة الرئيسية
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('favoritesList')) {
+        displayFavorites();
+    }
+});
