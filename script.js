@@ -172,3 +172,14 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
         }
     });
 });
+// ===== إخفاء شاشة التحميل =====
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        const loader = document.getElementById('loaderScreen');
+        if (loader) {
+            loader.classList.add('hidden');
+            // إزالة الشاشة من الصفحة بعد الاختفاء
+            setTimeout(() => loader.remove(), 700);
+        }
+    }, 1200); // 1.2 ثانية
+});
