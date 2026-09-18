@@ -217,3 +217,62 @@ function openWhatsAppShare(text) {
     const whatsappUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
     window.open(whatsappUrl, '_blank');
 }
+// ===== إضافة زر المشاركة لكل مادة تلقائياً =====
+function addShareButtons() {
+    const materialLinks = document.querySelectorAll('.year-content ul li a');
+    
+    materialLinks.forEach(link => {
+        // اسم المادة
+        const materialName = link.textContent.trim();
+        // الرابط
+        const materialUrl = link.href;
+        
+        // إنشاء زر المشاركة
+        const shareBtn = document.createElement('button');
+        shareBtn.className = 'share-material-btn';
+        shareBtn.innerHTML = '📤';
+        shareBtn.title = 'شارك هذه المادة';
+        shareBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            shareMaterialAdvanced(materialName, materialUrl);
+        };
+        
+        // إضافة الزر داخل الـ li
+        const li = link.parentElement;
+        li.style.position = 'relative';
+        li.appendChild(shareBtn);
+    });
+}
+
+// ===== مشاركة مادة (متقدم) =====
+function shareMaterialAdvanced(materialName, materialUrl) {
+    const siteUrl = 'https://directionteam.github.io/Direction-team/materials.html';
+    const text = `📚 ${materialName}\n\n` +
+                 `🔗 من موقع Direction Team:\n` +
+                 `${siteUrl}\n\n` +
+                 `💜 شاركها مع زملائك!`;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: materialName,
+            text: text,
+            url: siteUrl
+        }).catch(() => openWhatsAppShare(text));
+    } else {
+        openWhatsAppShare(text);
+    }
+}
+
+function openWhatsAppShare(text) {
+    const whatsappUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
+    window.open(whatsappUrl, '_blank');
+}
+
+// تشغيل عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    // إذا كنا في صفحة المواد
+    if (document.getElementById('renewable') || document.getElementById('mechanical')) {
+        addShareButtons();
+    }
+});
