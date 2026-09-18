@@ -172,3 +172,23 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
         }
     });
 });
+// ===== عداد الزوار =====
+async function loadVisitorCount() {
+    const counterElement = document.getElementById('visitorCount');
+    if (!counterElement) return;
+    
+    try {
+        // زيادة العداد
+        const response = await fetch('https://api.countapi.xyz/hit/directionteam-ahu/visits');
+        const data = await response.json();
+        
+        if (data && data.value) {
+            counterElement.textContent = data.value.toLocaleString('ar-EG');
+        }
+    } catch (error) {
+        counterElement.textContent = '...';
+    }
+}
+
+// تشغيل عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', loadVisitorCount);
