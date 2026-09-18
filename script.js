@@ -230,7 +230,7 @@ function addShareButtons() {
         // إنشاء زر المشاركة
         const shareBtn = document.createElement('button');
         shareBtn.className = 'share-material-btn';
-        shareBtn.innerHTML = '📤';
+       shareBtn.innerHTML = '📤 مشاركة';
         shareBtn.title = 'شارك هذه المادة';
         shareBtn.onclick = function(e) {
             e.preventDefault();
