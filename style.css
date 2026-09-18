@@ -1195,3 +1195,67 @@ body.dark-mode .theme-toggle {
         width: 150px;
     }
 }
+/* ===== زر مشاركة المادة ===== */
+.share-material-btn {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(156, 39, 176, 0.1);
+    border: 1px solid rgba(156, 39, 176, 0.3);
+    color: #9c27b0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    opacity: 0.6;
+    padding: 0;
+}
+
+.share-material-btn:hover {
+    background: #9c27b0;
+    color: #fff;
+    opacity: 1;
+    transform: translateY(-50%) scale(1.15);
+    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.4);
+}
+
+/* إضافة مساحة يسار الرابط للزر */
+.year-content ul li {
+    position: relative;
+}
+
+.year-content ul li a {
+    padding-left: 50px !important;
+}
+
+/* الوضع الليلي */
+body.dark-mode .share-material-btn {
+    background: rgba(187, 134, 252, 0.2);
+    border-color: rgba(187, 134, 252, 0.4);
+    color: #bb86fc;
+}
+
+body.dark-mode .share-material-btn:hover {
+    background: #bb86fc;
+    color: #1a1a2e;
+}
+
+/* للجوال - إخفاء الزر */
+@media (max-width: 700px) {
+    .share-material-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+        left: 8px;
+    }
+    
+    .year-content ul li a {
+        padding-left: 45px !important;
+    }
+}
