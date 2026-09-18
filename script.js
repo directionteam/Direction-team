@@ -194,3 +194,26 @@ window.addEventListener('load', function() {
         setTimeout(() => loader.remove(), 700);
     }, 1500); // 1.5 ثانية
 });
+// ===== مشاركة مادة =====
+function shareMaterial(materialName) {
+    const url = 'https://directionteam.github.io/Direction-team/materials.html';
+    const text = `📚 ${materialName}\n\n` +
+                 `🔗 من موقع Direction Team:\n` +
+                 `directionteam.github.io/Direction-team\n\n` +
+                 `💜 شاركها مع زملائك!`;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: materialName,
+            text: text,
+            url: url
+        }).catch(() => openWhatsAppShare(text));
+    } else {
+        openWhatsAppShare(text);
+    }
+}
+
+function openWhatsAppShare(text) {
+    const whatsappUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
+    window.open(whatsappUrl, '_blank');
+}
