@@ -1265,3 +1265,199 @@ body.dark-mode .share-material-btn:hover {
         padding-left: 45px !important;
     }
 }
+/* ===== صفحة 404 ===== */
+.error-section {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, #f9f5fb 0%, #f3e5f5 100%);
+}
+
+.error-content {
+    max-width: 700px;
+    text-align: center;
+    background: #ffffff;
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    box-shadow: 0 15px 50px rgba(106, 27, 154, 0.15);
+}
+
+.error-code {
+    font-size: 8rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    letter-spacing: -5px;
+}
+
+.error-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.error-content h1 {
+    color: #4a148c;
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.error-content > p {
+    color: #777;
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+    line-height: 1.8;
+}
+
+.error-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+}
+
+.error-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.error-btn.primary {
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.35);
+}
+
+.error-btn.primary:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(156, 39, 176, 0.5);
+}
+
+.error-btn.secondary {
+    background: #ffffff;
+    color: #6a1b9a;
+    border: 2px solid #9c27b0;
+}
+
+.error-btn.secondary:hover {
+    background: #f3e5f5;
+    transform: translateY(-5px);
+}
+
+.error-suggestions {
+    padding-top: 1.5rem;
+    border-top: 2px dashed #e0c8e8;
+}
+
+.error-suggestions h3 {
+    color: #6a1b9a;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.suggestion-links {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.suggestion-links a {
+    padding: 0.6rem 1.2rem;
+    background: #faf5fc;
+    color: #6a1b9a;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s;
+    border: 1px solid #e0c8e8;
+}
+
+.suggestion-links a:hover {
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    border-color: #9c27b0;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(156, 39, 176, 0.3);
+}
+
+/* الوضع الليلي */
+body.dark-mode .error-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .error-content {
+    background: #16213e;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .error-content h1 {
+    color: #bb86fc;
+}
+
+body.dark-mode .error-content > p {
+    color: #b0b0b0;
+}
+
+body.dark-mode .error-suggestions {
+    border-top-color: #2a1b4d;
+}
+
+body.dark-mode .error-suggestions h3 {
+    color: #bb86fc;
+}
+
+body.dark-mode .suggestion-links a {
+    background: #0f3460;
+    color: #e0e0e0;
+    border-color: #2a1b4d;
+}
+
+/* للجوال */
+@media (max-width: 700px) {
+    .error-code {
+        font-size: 5rem;
+    }
+    .error-icon {
+        font-size: 3rem;
+    }
+    .error-content {
+        padding: 2rem 1.2rem;
+    }
+    .error-content h1 {
+        font-size: 1.4rem;
+    }
+    .error-buttons {
+        flex-direction: column;
+    }
+    .error-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .suggestion-links {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .suggestion-links a {
+        text-align: center;
+    }
+}
