@@ -172,29 +172,3 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
         }
     });
 });
-// ===== عداد الزوار =====
-async function loadVisitorCount() {
-    const counterElement = document.getElementById('visitorCount');
-    if (!counterElement) return;
-    
-    try {
-        // استخدام v2 من CounterAPI
-        const response = await fetch('https://api.counterapi.dev/v2/directionteam/visits/up');
-        const data = await response.json();
-        
-        // استخراج الرقم من الاستجابة
-        if (data && data.data && typeof data.data.up_count === 'number') {
-            counterElement.textContent = data.data.up_count.toLocaleString('ar-EG');
-        } else if (data && data.count) {
-            counterElement.textContent = data.count.toLocaleString('ar-EG');
-        } else {
-            counterElement.textContent = '...';
-        }
-    } catch (error) {
-        counterElement.textContent = '...';
-        console.error('خطأ في عداد الزوار:', error);
-    }
-}
-
-// تشغيل عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', loadVisitorCount);
