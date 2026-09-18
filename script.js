@@ -49,7 +49,6 @@ function searchMaterials() {
     });
 }
 
-// ===== إعادة تعيين البحث =====
 function resetSearch() {
     document.querySelectorAll('.year-card').forEach(c => {
         c.style.display = '';
@@ -61,34 +60,12 @@ function resetSearch() {
     if (firstYear) firstYear.classList.add('active');
 }
 
-// ===== فتح السنة الأولى =====
-document.addEventListener('DOMContentLoaded', function() {
-    const firstYear = document.querySelector('.tab-content.active .year-card') || document.querySelector('.year-card');
-    if (firstYear) firstYear.classList.add('active');
-    
-    // تطبيق الوضع المحفوظ
-    applySavedTheme();
-});
-
-// ===== تمرير سلس =====
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener('click', function(e) {
-        const href = this.getAttribute('href');
-        if (href !== '#' && href.length > 1) {
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    });
-});
-
 // ===== الوضع الليلي =====
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
     const isDark = document.body.classList.contains('dark-mode');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
     
-    // تغيير أيقونة الزر
     const themeBtn = document.getElementById('themeToggle');
     if (themeBtn) {
         themeBtn.textContent = isDark ? '☀️' : '🌙';
@@ -115,18 +92,13 @@ function shareSite() {
                  url + '\n\n' +
                  '💜 انشروه لكل الطلاب!';
     
-    // إذا كان الجهاز يدعم المشاركة
     if (navigator.share) {
         navigator.share({
             title: 'Direction Team',
             text: text,
             url: url
-        }).catch(() => {
-            // إذا فشلت المشاركة، افتح واتساب
-            openWhatsApp(text);
-        });
+        }).catch(() => openWhatsApp(text));
     } else {
-        // إذا لم يدعم، افتح واتساب
         openWhatsApp(text);
     }
 }
@@ -136,7 +108,7 @@ function openWhatsApp(text) {
     window.open(whatsappUrl, '_blank');
 }
 
-// ===== زر الرجوع للأعلى =====
+// ===== الرجوع للأعلى =====
 window.addEventListener('scroll', function() {
     const btn = document.getElementById('scrollTop');
     if (btn) {
@@ -151,3 +123,52 @@ window.addEventListener('scroll', function() {
 function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// ===== عرض تاريخ آخر تعديل حقيقي من GitHub =====
+async function showRealLastUpdate() {
+    const updateElement = document.getElementById('lastUpdate');
+    if (!updateElement) return;
+    
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    
+    // عرض تاريخ اليوم مؤقتاً
+    const now = new Date();
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    updateElement.textContent = '🕐 آخر تحديث: ' + now.toLocaleDateString('ar-EG', options);
+    
+    // محاولة جلب التاريخ الحقيقي من GitHub
+    try {
+        const response = await fetch(
+            `https://api.github.com/repos/directionteam/Direction-team/commits?path=${currentPage}&per_page=1`
+        );
+        const data = await response.json();
+        
+        if (data && data[0] && data[0].commit) {
+            const commitDate = new Date(data[0].commit.committer.date);
+            updateElement.textContent = '🕐 آخر تحديث: ' + commitDate.toLocaleDateString('ar-EG', options);
+        }
+    } catch (error) {
+        // التاريخ الحالي كافتراضي
+    }
+}
+
+// ===== تشغيل عند تحميل الصفحة =====
+document.addEventListener('DOMContentLoaded', function() {
+    const firstYear = document.querySelector('.tab-content.active .year-card') || document.querySelector('.year-card');
+    if (firstYear) firstYear.classList.add('active');
+    
+    applySavedTheme();
+    showRealLastUpdate();
+});
+
+// ===== تمرير سلس =====
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href !== '#' && href.length > 1) {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
