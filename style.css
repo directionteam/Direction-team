@@ -1265,199 +1265,91 @@ body.dark-mode .share-material-btn:hover {
         padding-left: 45px !important;
     }
 }
-/* ===== صفحة 404 ===== */
-.error-section {
-    min-height: 70vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem 1rem;
-    background: linear-gradient(135deg, #f9f5fb 0%, #f3e5f5 100%);
-}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الصفحة غير موجودة - Direction Team</title>
+    <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
 
-.error-content {
-    max-width: 700px;
-    text-align: center;
-    background: #ffffff;
-    padding: 3rem 2rem;
-    border-radius: 20px;
-    box-shadow: 0 15px 50px rgba(106, 27, 154, 0.15);
-}
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
+            <ul class="nav-links">
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="materials.html">المواد</a></li>
+                <li><a href="plans.html">الخطط الدراسية</a></li>
+                <li><a href="exam.html">امتحان الكفاءة</a></li>
+                <li><a href="programs.html">برامج هندسية</a></li>
+                <li><a href="links.html">روابط تهمك</a></li>
+                <li><a href="contact.html">تواصل معنا</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="الوضع الليلي">🌙</button>
+        </div>
+    </nav>
 
-.error-code {
-    font-size: 8rem;
-    font-weight: 900;
-    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
-    margin-bottom: 0.5rem;
-    letter-spacing: -5px;
-}
+    <section class="page-header">
+        <h1>🚫 404</h1>
+        <p>الصفحة غير موجودة</p>
+    </section>
 
-.error-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    animation: bounce 2s infinite;
-}
+    <section class="notfound-section">
 
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
-}
+        <div class="notfound-card">
+            <div class="notfound-icon">🔍</div>
+            <h2>عذراً، الصفحة غير موجودة</h2>
+            <p>يبدو أن الرابط الذي تحاول الوصول إليه غير متوفر أو تم نقله</p>
 
-.error-content h1 {
-    color: #4a148c;
-    font-size: 1.8rem;
-    margin-bottom: 0.8rem;
-}
+            <div class="notfound-buttons">
+                <a href="index.html" class="notfound-btn primary">
+                    🏠 الرجوع للرئيسية
+                </a>
+                <a href="materials.html" class="notfound-btn secondary">
+                    📚 تصفح المواد
+                </a>
+            </div>
+        </div>
 
-.error-content > p {
-    color: #777;
-    font-size: 1.05rem;
-    margin-bottom: 2rem;
-    line-height: 1.8;
-}
+        <div class="notfound-suggestions">
+            <h3>💡 قد تجد ما تبحث عنه هنا:</h3>
+            <div class="suggestion-grid">
 
-.error-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 2.5rem;
-}
+                <a href="plans.html" class="suggestion-card">
+                    <div class="suggestion-icon">📋</div>
+                    <h4>الخطط الدراسية</h4>
+                </a>
 
-.error-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: all 0.3s;
-}
+                <a href="exam.html" class="suggestion-card">
+                    <div class="suggestion-icon">📝</div>
+                    <h4>امتحان الكفاءة</h4>
+                </a>
 
-.error-btn.primary {
-    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
-    color: #ffffff;
-    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.35);
-}
+                <a href="programs.html" class="suggestion-card">
+                    <div class="suggestion-icon">💻</div>
+                    <h4>برامج هندسية</h4>
+                </a>
 
-.error-btn.primary:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(156, 39, 176, 0.5);
-}
+                <a href="links.html" class="suggestion-card">
+                    <div class="suggestion-icon">🔗</div>
+                    <h4>روابط تهمك</h4>
+                </a>
 
-.error-btn.secondary {
-    background: #ffffff;
-    color: #6a1b9a;
-    border: 2px solid #9c27b0;
-}
+            </div>
+        </div>
 
-.error-btn.secondary:hover {
-    background: #f3e5f5;
-    transform: translateY(-5px);
-}
+    </section>
 
-.error-suggestions {
-    padding-top: 1.5rem;
-    border-top: 2px dashed #e0c8e8;
-}
+    <footer>
+        <img src="logo.png" alt="Direction Team" class="footer-logo">
+        <p class="last-update" id="lastUpdate">🕐 آخر تحديث: ...</p>
+        <p class="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
+        <p>صُنع بحب لطلبة الهندسة 💜</p>
+    </footer>
 
-.error-suggestions h3 {
-    color: #6a1b9a;
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-}
+    <script src="script.js"></script>
 
-.suggestion-links {
-    display: flex;
-    justify-content: center;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-}
-
-.suggestion-links a {
-    padding: 0.6rem 1.2rem;
-    background: #faf5fc;
-    color: #6a1b9a;
-    text-decoration: none;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.3s;
-    border: 1px solid #e0c8e8;
-}
-
-.suggestion-links a:hover {
-    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
-    color: #ffffff;
-    border-color: #9c27b0;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(156, 39, 176, 0.3);
-}
-
-/* الوضع الليلي */
-body.dark-mode .error-section {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-}
-
-body.dark-mode .error-content {
-    background: #16213e;
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
-}
-
-body.dark-mode .error-content h1 {
-    color: #bb86fc;
-}
-
-body.dark-mode .error-content > p {
-    color: #b0b0b0;
-}
-
-body.dark-mode .error-suggestions {
-    border-top-color: #2a1b4d;
-}
-
-body.dark-mode .error-suggestions h3 {
-    color: #bb86fc;
-}
-
-body.dark-mode .suggestion-links a {
-    background: #0f3460;
-    color: #e0e0e0;
-    border-color: #2a1b4d;
-}
-
-/* للجوال */
-@media (max-width: 700px) {
-    .error-code {
-        font-size: 5rem;
-    }
-    .error-icon {
-        font-size: 3rem;
-    }
-    .error-content {
-        padding: 2rem 1.2rem;
-    }
-    .error-content h1 {
-        font-size: 1.4rem;
-    }
-    .error-buttons {
-        flex-direction: column;
-    }
-    .error-btn {
-        width: 100%;
-        justify-content: center;
-    }
-    .suggestion-links {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .suggestion-links a {
-        text-align: center;
-    }
-}
+</body>
+</html>
