@@ -1260,3 +1260,9 @@ body.dark-mode .share-material-btn:hover {
         padding-left: 45px !important;
     }
 }
+.share-material-btn {
+    width: auto;
+    padding: 0 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
