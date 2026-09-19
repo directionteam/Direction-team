@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>القاموس الهندسي - Direction Team</title>
+    <link rel="stylesheet" href="style.css?v=8">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
+            <ul class="nav-links">
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="materials.html">المواد</a></li>
+                <li><a href="plans.html">الخطط الدراسية</a></li>
+                <li><a href="exam.html">امتحان الكفاءة</a></li>
+                <li><a href="programs.html">برامج هندسية</a></li>
+                <li><a href="calculator.html">الحاسبة</a></li>
+                <li><a href="map.html">خريطة الجامعة</a></li>
+                <li><a href="reminders.html">التذكيرات</a></li>
+                <li><a href="dictionary.html" class="active">القاموس الهندسي</a></li>
+                <li><a href="contact.html">تواصل معنا</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="الوضع الليلي">🌙</button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <h1>📖 القاموس الهندسي</h1>
+        <p>مصطلحات هندسية + رموز هندسية مصوّرة</p>
+    </section>
+
+    <section class="dictionary-section">
+
+        <!-- التابان الرئيسي -->
+        <div class="dict-main-tabs">
+            <button class="dict-main-tab active" onclick="switchMainTab(event, 'termsTab')">
+                📖 المصطلحات
+            </button>
+            <button class="dict-main-tab" onclick="switchMainTab(event, 'symbolsTab')">
+                🔣 الرموز
+            </button>
+        </div>
+
+        <!-- ==================== تاب المصطلحات ==================== -->
+        <div id="termsTab" class="dict-main-content active">
+
+            <!-- شريط البحث -->
+            <div class="dict-search">
+                <input type="text" id="dictSearch" placeholder="🔍 ابحث عن مصطلح بالعربي أو الإنجليزي..." onkeyup="searchTerms()">
+            </div>
+
+            <!-- فلترة التصنيفات -->
+            <div class="dict-categories">
+                <button class="dict-cat-btn active" onclick="filterCategory(event, 'all')">🌐 الكل</button>
+                <button class="dict-cat-btn" onclick="filterCategory(event, 'mechanics')">⚙️ ميكانيكا</button>
+                <button class="dict-cat-btn" onclick="filterCategory(event, 'thermo')">🔥 حراريات</button>
+                <button class="dict-cat-btn" onclick="filterCategory(event, 'fluids')">💧 موائع</button>
+                <button class="dict-cat-btn" onclick="filterCategory(event, 'materials')">🔬 مواد</button>
+                <button class="dict-cat-btn" onclick="filterCategory(event, 'electric')">⚡ كهرباء</button>
+                <button class="dict-cat-btn" onclick="filterCategory(event, 'energy')">🌱 طاقة</button>
+                <button class="dict-cat-btn" onclick="filterCategory(event, 'math')">📐 رياضيات</button>
+            </div>
+
+            <div class="dict-stats">
+                <span id="dictCount">0</span> مصطلح
+            </div>
+
+            <div id="dictList" class="dict-list"></div>
+
+            <div id="noResults" class="no-results" style="display: none;">
+                <div class="no-results-icon">🔍</div>
+                <h3>لا توجد نتائج</h3>
+                <p>جربي كلمة بحث أخرى أو تصنيفاً مختلفاً</p>
+            </div>
+
+        </div>
+
+        <!-- ==================== تاب الرموز ==================== -->
+        <div id="symbolsTab" class="dict-main-content">
+
+            <!-- شريط البحث -->
+            <div class="dict-search">
+                <input type="text" id="symbolSearch" placeholder="🔍 ابحث عن رمز..." onkeyup="searchSymbols()">
+            </div>
+
+            <!-- فلترة التصنيفات -->
+            <div class="dict-categories">
+                <button class="sym-cat-btn active" onclick="filterSymbolCategory(event, 'all')">🌐 الكل</button>
+                <button class="sym-cat-btn" onclick="filterSymbolCategory(event, 'electric')">⚡ كهربائية</button>
+                <button class="sym-cat-btn" onclick="filterSymbolCategory(event, 'mechanical')">🔧 ميكانيكية</button>
+                <button class="sym-cat-btn" onclick="filterSymbolCategory(event, 'civil')">🏗️ مدنية</button>
+                <button class="sym-cat-btn" onclick="filterSymbolCategory(event, 'programming')">💻 برمجية</button>
+                <button class="sym-cat-btn" onclick="filterSymbolCategory(event, 'math')">📐 رياضية</button>
+            </div>
+
+            <div class="dict-stats">
+                <span id="symbolCount">0</span> رمز
+            </div>
+
+            <div id="symbolList" class="symbols-grid"></div>
+
+            <div id="noSymbolResults" class="no-results" style="display: none;">
+                <div class="no-results-icon">🔍</div>
+                <h3>لا توجد نتائج</h3>
+                <p>جربي كلمة بحث أخرى أو تصنيفاً مختلفاً</p>
+            </div>
+
+        </div>
+
+    </section>
+
+    <footer>
+        <img src="logo.png" alt="Direction Team" class="footer-logo">
+        <p class="last-update" id="lastUpdate">🕐 آخر تحديث: ...</p>
+        <p class="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
+        <p>صُنع بحب لطلبة الهندسة 💜</p>
+    </footer>
+
+    <button class="share-button" onclick="shareSite()" title="شارك الموقع">
+        <span>📤</span>
+        <span>شارك الموقع</span>
+    </button>
+
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()" title="الرجوع للأعلى">⬆️</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
