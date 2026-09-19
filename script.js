@@ -852,3 +852,156 @@ document.addEventListener('DOMContentLoaded', function() {
         setInterval(checkUpcomingReminders, 60 * 60 * 1000);
     }
 });
+// ===== التبديل بين تاب المصطلحات والرموز =====
+function switchMainTab(event, tabId) {
+    document.querySelectorAll('.dict-main-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.dict-main-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+}
+
+// ===== رموز هندسية =====
+const engineeringSymbols = [
+    // كهربائية
+    { symbol: "V", name: "فولت", fullName: "Voltage", cat: "electric", desc: "وحدة قياس الجهد الكهربائي" },
+    { symbol: "A", name: "أمبير", fullName: "Ampere", cat: "electric", desc: "وحدة قياس التيار الكهربائي" },
+    { symbol: "Ω", name: "أوم", fullName: "Ohm", cat: "electric", desc: "وحدة قياس المقاومة الكهربائية" },
+    { symbol: "W", name: "واط", fullName: "Watt", cat: "electric", desc: "وحدة قياس القدرة الكهربائية" },
+    { symbol: "F", name: "فاراد", fullName: "Farad", cat: "electric", desc: "وحدة قياس السعة الكهربائية" },
+    { symbol: "H", name: "هنري", fullName: "Henry", cat: "electric", desc: "وحدة قياس الحث الكهربائي" },
+    { symbol: "Hz", name: "هرتز", fullName: "Hertz", cat: "electric", desc: "وحدة قياس التردد" },
+    { symbol: "~", name: "تيار متردد", fullName: "AC", cat: "electric", desc: "رمز التيار المتردد" },
+    { symbol: "⎓", name: "تيار مستمر", fullName: "DC", cat: "electric", desc: "رمز التيار المستمر" },
+    { symbol: "⏚", name: "أرضي", fullName: "Ground", cat: "electric", desc: "رمز التأريض" },
+
+    // ميكانيكية
+    { symbol: "N", name: "نيوتن", fullName: "Newton", cat: "mechanical", desc: "وحدة قياس القوة" },
+    { symbol: "J", name: "جول", fullName: "Joule", cat: "mechanical", desc: "وحدة قياس الطاقة" },
+    { symbol: "Pa", name: "باسكال", fullName: "Pascal", cat: "mechanical", desc: "وحدة قياس الضغط" },
+    { symbol: "kg", name: "كيلوغرام", fullName: "Kilogram", cat: "mechanical", desc: "وحدة قياس الكتلة" },
+    { symbol: "m/s", name: "متر/ثانية", fullName: "m/s", cat: "mechanical", desc: "وحدة قياس السرعة" },
+    { symbol: "m/s²", name: "متر/ث²", fullName: "m/s²", cat: "mechanical", desc: "وحدة قياس التسارع" },
+    { symbol: "N·m", name: "نيوتن.متر", fullName: "Newton-meter", cat: "mechanical", desc: "وحدة قياس العزم" },
+    { symbol: "τ", name: "تاو", fullName: "Tau", cat: "mechanical", desc: "رمز الإجهاد القصي" },
+    { symbol: "σ", name: "سيغما", fullName: "Sigma", cat: "mechanical", desc: "رمز الإجهاد العمودي" },
+    { symbol: "ε", name: "إبسيلون", fullName: "Epsilon", cat: "mechanical", desc: "رمز الانفعال" },
+
+    // مدنية
+    { symbol: "🏗️", name: "مبنى", fullName: "Building", cat: "civil", desc: "رمز المبنى في المخططات" },
+    { symbol: "🚪", name: "باب", fullName: "Door", cat: "civil", desc: "رمز الباب في المخططات المعمارية" },
+    { symbol: "🪟", name: "نافذة", fullName: "Window", cat: "civil", desc: "رمز النافذة في المخططات" },
+    { symbol: "🚿", name: "حمام", fullName: "Bathroom", cat: "civil", desc: "رمز الحمام" },
+    { symbol: "🛗", name: "مصعد", fullName: "Elevator", cat: "civil", desc: "رمز المصعد" },
+    { symbol: "🪜", name: "سلم", fullName: "Stairs", cat: "civil", desc: "رمز السلم" },
+    { symbol: "🛣️", name: "طريق", fullName: "Road", cat: "civil", desc: "رمز الطريق" },
+    { symbol: "🌉", name: "جسر", fullName: "Bridge", cat: "civil", desc: "رمز الجسر" },
+    { symbol: "🏛️", name: "عمود", fullName: "Column", cat: "civil", desc: "رمز العمود الإنشائي" },
+    { symbol: "⚖️", name: "توازن", fullName: "Balance", cat: "civil", desc: "رمز التوازن الإنشائي" },
+
+    // برمجية
+    { symbol: "{ }", name: "أقواس معقوفة", fullName: "Curly Braces", cat: "programming", desc: "تستخدم في الكتل البرمجية" },
+    { symbol: "( )", name: "أقواس", fullName: "Parentheses", cat: "programming", desc: "تستخدم في الدوال والتجميع" },
+    { symbol: "[ ]", name: "أقواس مربعة", fullName: "Square Brackets", cat: "programming", desc: "تستخدم للمصفوفات" },
+    { symbol: "=", name: "إسناد", fullName: "Assignment", cat: "programming", desc: "يُسند قيمة لمتغير" },
+    { symbol: "==", name: "مساواة", fullName: "Equality", cat: "programming", desc: "يقارن قيمتين" },
+    { symbol: "!=", name: "لا يساوي", fullName: "Not Equal", cat: "programming", desc: "يقارن عدم التساوي" },
+    { symbol: "&&", name: "و المنطقية", fullName: "Logical AND", cat: "programming", desc: "يعيد true إذا كان الشرطان صحيحين" },
+    { symbol: "||", name: "أو المنطقية", fullName: "Logical OR", cat: "programming", desc: "يعيد true إذا كان أحد الشرطين صحيحاً" },
+    { symbol: "//", name: "تعليق", fullName: "Comment", cat: "programming", desc: "تعليق سطر واحد" },
+    { symbol: "/* */", name: "تعليق متعدد", fullName: "Multi-line Comment", cat: "programming", desc: "تعليق متعدد الأسطر" },
+    { symbol: "→", name: "سهم", fullName: "Arrow", cat: "programming", desc: "يستخدم في الدوال السهمية" },
+    { symbol: "++", name: "زيادة", fullName: "Increment", cat: "programming", desc: "يزيد قيمة المتغير بمقدار 1" },
+
+    // رياضية
+    { symbol: "∑", name: "سيغما كبيرة", fullName: "Summation", cat: "math", desc: "رمز المجموع" },
+    { symbol: "∏", name: "باي كبيرة", fullName: "Product", cat: "math", desc: "رمز الجداء" },
+    { symbol: "∫", name: "تكامل", fullName: "Integral", cat: "math", desc: "رمز التكامل" },
+    { symbol: "∂", name: "مشتقة جزئية", fullName: "Partial Derivative", cat: "math", desc: "رمز الاشتقاق الجزئي" },
+    { symbol: "∇", name: "نابلا", fullName: "Nabla", cat: "math", desc: "عامل التدرج" },
+    { symbol: "∞", name: "ما لا نهاية", fullName: "Infinity", cat: "math", desc: "رمز اللانهاية" },
+    { symbol: "≈", name: "تقريباً", fullName: "Approximately", cat: "math", desc: "يساوي تقريباً" },
+    { symbol: "≠", name: "لا يساوي", fullName: "Not Equal", cat: "math", desc: "لا يساوي" },
+    { symbol: "≤", name: "أصغر أو يساوي", fullName: "Less or Equal", cat: "math", desc: "أصغر من أو يساوي" },
+    { symbol: "≥", name: "أكبر أو يساوي", fullName: "Greater or Equal", cat: "math", desc: "أكبر من أو يساوي" },
+    { symbol: "√", name: "جذر", fullName: "Square Root", cat: "math", desc: "رمز الجذر التربيعي" },
+    { symbol: "θ", name: "ثيتا", fullName: "Theta", cat: "math", desc: "رمز الزاوية" },
+    { symbol: "π", name: "باي", fullName: "Pi", cat: "math", desc: "النسبة التقريبية = 3.14159" },
+    { symbol: "Δ", name: "دلتا", fullName: "Delta", cat: "math", desc: "رمز التغير" }
+];
+
+let currentSymbolCategory = 'all';
+
+function renderSymbols(symbols) {
+    const container = document.getElementById('symbolList');
+    const noResults = document.getElementById('noSymbolResults');
+    const countEl = document.getElementById('symbolCount');
+
+    if (!container) return;
+
+    if (countEl) countEl.textContent = symbols.length;
+
+    if (symbols.length === 0) {
+        container.innerHTML = '';
+        if (noResults) noResults.style.display = 'block';
+        return;
+    }
+
+    if (noResults) noResults.style.display = 'none';
+
+    container.innerHTML = symbols.map(s => `
+        <div class="symbol-item">
+            <div class="symbol-display">${s.symbol}</div>
+            <div class="symbol-info">
+                <h3 class="symbol-name">${s.name}</h3>
+                <span class="symbol-full">${s.fullName}</span>
+                <p class="symbol-desc">${s.desc}</p>
+                <span class="symbol-category">${getSymbolCategoryName(s.cat)}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function getSymbolCategoryName(cat) {
+    const names = {
+        electric: '⚡ كهربائية',
+        mechanical: '🔧 ميكانيكية',
+        civil: '🏗️ مدنية',
+        programming: '💻 برمجية',
+        math: '📐 رياضية'
+    };
+    return names[cat] || cat;
+}
+
+function searchSymbols() {
+    const query = document.getElementById('symbolSearch').value.toLowerCase().trim();
+    let filtered = engineeringSymbols;
+
+    if (currentSymbolCategory !== 'all') {
+        filtered = filtered.filter(s => s.cat === currentSymbolCategory);
+    }
+
+    if (query) {
+        filtered = filtered.filter(s =>
+            s.name.toLowerCase().includes(query) ||
+            s.fullName.toLowerCase().includes(query) ||
+            s.symbol.toLowerCase().includes(query) ||
+            s.desc.toLowerCase().includes(query)
+        );
+    }
+
+    renderSymbols(filtered);
+}
+
+function filterSymbolCategory(event, category) {
+    currentSymbolCategory = category;
+    document.querySelectorAll('.sym-cat-btn').forEach(btn => btn.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    searchSymbols();
+}
+
+// تشغيل عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('symbolList')) {
+        renderSymbols(engineeringSymbols);
+    }
+});
