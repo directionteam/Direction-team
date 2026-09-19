@@ -500,3 +500,84 @@ function convertUnits() {
     document.getElementById('unitResult').textContent = result.toFixed(6) + ' ' + to;
     document.getElementById('unitsResult').style.display = 'block';
 }
+// ===== حكمة اليوم =====
+const wisdomData = {
+    quran: [
+        { text: "وَقُل رَّبِّ زِدْنِي عِلْمًا", source: "سورة طه - الآية 114" },
+        { text: "يَرْفَعِ اللَّهُ الَّذِينَ آمَنُوا مِنكُمْ وَالَّذِينَ أُوتُوا الْعِلْمَ دَرَجَاتٍ", source: "سورة المجادلة - الآية 11" },
+        { text: "وَعَلَّمَ آدَمَ الْأَسْمَاءَ كُلَّهَا", source: "سورة البقرة - الآية 31" },
+        { text: "اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ", source: "سورة العلق - الآية 1" },
+        { text: "وَاللَّهُ أَخْرَجَكُم مِّن بُطُونِ أُمَّهَاتِكُمْ لَا تَعْلَمُونَ شَيْئًا", source: "سورة النحل - الآية 78" },
+        { text: "إِنَّ فِي خَلْقِ السَّمَاوَاتِ وَالْأَرْضِ وَاخْتِلَافِ اللَّيْلِ وَالنَّهَارِ لَآيَاتٍ لِّأُولِي الْأَلْبَابِ", source: "سورة آل عمران - الآية 190" },
+        { text: "سَنُرِيهِمْ آيَاتِنَا فِي الْآفَاقِ وَفِي أَنفُسِهِمْ حَتَّىٰ يَتَبَيَّنَ لَهُمْ أَنَّهُ الْحَقُّ", source: "سورة فصلت - الآية 53" }
+    ],
+    engineering: [
+        { text: "الهندسة هي فن توجيه قوى الطبيعة لخدمة الإنسان", source: "حكمة هندسية" },
+        { text: "لا يوجد شيء مستحيل في الهندسة، فقط لم يتم تصميمه بعد", source: "مهندس مجهول" },
+        { text: "الرياضيات هي لغة الكون، والهندسة هي تطبيقها", source: "جاليليو جاليلي" },
+        { text: "أعطني نقطة ارتكاز وأرفع لك الأرض", source: "أرخميدس" },
+        { text: "الابتكار هو الفرق بين القائد والتابع", source: "ستيف جوبز" },
+        { text: "المشروع الجيد يحتاج إلى تصميم جيد، والتصميم الجيد يحتاج إلى مهندس جيد", source: "حكمة هندسية" },
+        { text: "كل مشكلة هندسية لها حل، فقط فكر بطريقة مختلفة", source: "حكمة هندسية" }
+    ],
+    motivational: [
+        { text: "النجاح ليس نهاية الطريق، والفشل ليس نهاية العالم", source: "ونستون تشرشل" },
+        { text: "لا تنتظر الفرصة، اصنعها", source: "جورج برنارد شو" },
+        { text: "العلم في الصغر كالنقش على الحجر", source: "مثل عربي" },
+        { text: "من جدّ وجد، ومن زرع حصد", source: "مثل عربي" },
+        { text: "اطلبوا العلم من المهد إلى اللحد", source: "حديث شريف" },
+        { text: "رحلة الألف ميل تبدأ بخطوة واحدة", source: "لاو تسي" },
+        { text: "أنت أقوى مما تعتقد، وأذكى مما تظن", source: "حكمة" }
+    ]
+};
+
+function getDayOfYear() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const diff = now - start;
+    const oneDay = 1000 * 60 * 60 * 24;
+    return Math.floor(diff / oneDay);
+}
+
+function loadDailyWisdom() {
+    const card = document.getElementById('wisdomCard');
+    if (!card) return;
+
+    const dayOfYear = getDayOfYear();
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+
+    let wisdom;
+    let icon;
+    let type;
+
+    // التناوب بين الفئات حسب اليوم
+    if (dayOfWeek === 5) {
+        // الجمعة: آية قرآنية
+        wisdom = wisdomData.quran[dayOfYear % wisdomData.quran.length];
+        icon = '📖';
+        type = 'آية قرآنية';
+    } else if (dayOfWeek === 0 || dayOfWeek === 3) {
+        // الأحد والأربعاء: اقتباس ملهم
+        wisdom = wisdomData.motivational[dayOfYear % wisdomData.motivational.length];
+        icon = '📜';
+        type = 'اقتباس ملهم';
+    } else {
+        // باقي الأيام: حكمة هندسية
+        wisdom = wisdomData.engineering[dayOfYear % wisdomData.engineering.length];
+        icon = '💡';
+        type = 'حكمة هندسية';
+    }
+
+    document.getElementById('wisdomIcon').textContent = icon;
+    document.getElementById('wisdomType').textContent = type;
+    document.getElementById('wisdomText').textContent = wisdom.text;
+    document.getElementById('wisdomAuthor').textContent = wisdom.source;
+}
+
+// تشغيل عند تحميل الصفحة الرئيسية
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('wisdomCard')) {
+        loadDailyWisdom();
+    }
+});
