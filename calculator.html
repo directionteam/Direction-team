@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آلة حاسبة هندسية - Direction Team</title>
+    <link rel="stylesheet" href="style.css?v=6">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
+            <ul class="nav-links">
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="materials.html">المواد</a></li>
+                <li><a href="plans.html">الخطط الدراسية</a></li>
+                <li><a href="exam.html">امتحان الكفاءة</a></li>
+                <li><a href="programs.html">برامج هندسية</a></li>
+                <li><a href="calculator.html" class="active">الحاسبة الهندسية</a></li>
+                <li><a href="links.html">روابط تهمك</a></li>
+                <li><a href="contact.html">تواصل معنا</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="الوضع الليلي">🌙</button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <h1>🧮 الحاسبة الهندسية المتعددة</h1>
+        <p>مجموعة حاسبات هندسية في مكان واحد</p>
+    </section>
+
+    <section class="calc-section">
+
+        <!-- التابان -->
+        <div class="calc-tabs">
+            <button class="calc-tab-btn active" onclick="switchCalc(event, 'triangle')">📐 المثلثات</button>
+            <button class="calc-tab-btn" onclick="switchCalc(event, 'power')">⚡ القدرة</button>
+            <button class="calc-tab-btn" onclick="switchCalc(event, 'heat')">🔥 الحرارة</button>
+            <button class="calc-tab-btn" onclick="switchCalc(event, 'pressure')">💧 الضغط</button>
+            <button class="calc-tab-btn" onclick="switchCalc(event, 'units')">🔄 الوحدات</button>
+        </div>
+
+        <!-- حاسبة المثلثات -->
+        <div id="triangle" class="calc-content active">
+            <div class="calc-card">
+                <h2>📐 حاسبة المثلثات</h2>
+                <p class="calc-desc">احسب قيم الدوال المثلثية للزوايا</p>
+                
+                <div class="calc-input-group">
+                    <label>الزاوية (بالدرجات):</label>
+                    <input type="number" id="angleInput" placeholder="مثال: 30" value="30">
+                </div>
+
+                <button class="calc-btn" onclick="calculateTrig()">احسب</button>
+
+                <div class="calc-result" id="triangleResult" style="display: none;">
+                    <div class="result-row"><span>sin (جيب):</span><strong id="sinResult">-</strong></div>
+                    <div class="result-row"><span>cos (جتا):</span><strong id="cosResult">-</strong></div>
+                    <div class="result-row"><span>tan (ظل):</span><strong id="tanResult">-</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- حاسبة القدرة -->
+        <div id="power" class="calc-content">
+            <div class="calc-card">
+                <h2>⚡ حاسبة القدرة الكهربائية</h2>
+                <p class="calc-desc">P = V × I</p>
+                
+                <div class="calc-input-group">
+                    <label>الجهد V (فولت):</label>
+                    <input type="number" id="voltageInput" placeholder="مثال: 220" value="220">
+                </div>
+
+                <div class="calc-input-group">
+                    <label>التيار I (أمبير):</label>
+                    <input type="number" id="currentInput" placeholder="مثال: 5" value="5">
+                </div>
+
+                <button class="calc-btn" onclick="calculatePower()">احسب</button>
+
+                <div class="calc-result" id="powerResult" style="display: none;">
+                    <div class="result-row"><span>القدرة P:</span><strong id="powerValue">-</strong></div>
+                    <div class="result-row"><span>بالكيلوواط:</span><strong id="powerKW">-</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- حاسبة الحرارة -->
+        <div id="heat" class="calc-content">
+            <div class="calc-card">
+                <h2>🔥 حاسبة الحرارة</h2>
+                <p class="calc-desc">Q = m × c × ΔT</p>
+                
+                <div class="calc-input-group">
+                    <label>الكتلة m (كغ):</label>
+                    <input type="number" id="massInput" placeholder="مثال: 2" value="2">
+                </div>
+
+                <div class="calc-input-group">
+                    <label>الحرارة النوعية c (J/kg·°C):</label>
+                    <input type="number" id="specificHeatInput" placeholder="مثال: 4186" value="4186">
+                </div>
+
+                <div class="calc-input-group">
+                    <label>فرق الحرارة ΔT (°C):</label>
+                    <input type="number" id="deltaTInput" placeholder="مثال: 50" value="50">
+                </div>
+
+                <button class="calc-btn" onclick="calculateHeat()">احسب</button>
+
+                <div class="calc-result" id="heatResult" style="display: none;">
+                    <div class="result-row"><span>الطاقة Q:</span><strong id="heatValue">-</strong></div>
+                    <div class="result-row"><span>بالكيلوجول:</span><strong id="heatKJ">-</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- حاسبة الضغط -->
+        <div id="pressure" class="calc-content">
+            <div class="calc-card">
+                <h2>💧 حاسبة الضغط</h2>
+                <p class="calc-desc">P = F / A</p>
+                
+                <div class="calc-input-group">
+                    <label>القوة F (نيوتن):</label>
+                    <input type="number" id="forceInput" placeholder="مثال: 100" value="100">
+                </div>
+
+                <div class="calc-input-group">
+                    <label>المساحة A (متر مربع):</label>
+                    <input type="number" id="areaInput" placeholder="مثال: 2" value="2" step="0.01">
+                </div>
+
+                <button class="calc-btn" onclick="calculatePressure()">احسب</button>
+
+                <div class="calc-result" id="pressureResult" style="display: none;">
+                    <div class="result-row"><span>الضغط P:</span><strong id="pressureValue">-</strong></div>
+                    <div class="result-row"><span>بالكيلوباسكال:</span><strong id="pressureKPA">-</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- محول الوحدات -->
+        <div id="units" class="calc-content">
+            <div class="calc-card">
+                <h2>🔄 محول الوحدات</h2>
+                <p class="calc-desc">حوّل بين وحدات القياس المختلفة</p>
+                
+                <div class="calc-input-group">
+                    <label>القيمة:</label>
+                    <input type="number" id="unitValue" placeholder="مثال: 100" value="100">
+                </div>
+
+                <div class="calc-input-group">
+                    <label>من وحدة:</label>
+                    <select id="fromUnit">
+                        <option value="m">متر (m)</option>
+                        <option value="cm">سنتيمتر (cm)</option>
+                        <option value="mm">مليمتر (mm)</option>
+                        <option value="km">كيلومتر (km)</option>
+                        <option value="inch">بوصة (inch)</option>
+                        <option value="ft">قدم (ft)</option>
+                    </select>
+                </div>
+
+                <div class="calc-input-group">
+                    <label>إلى وحدة:</label>
+                    <select id="toUnit">
+                        <option value="cm">سنتيمتر (cm)</option>
+                        <option value="m">متر (m)</option>
+                        <option value="mm">مليمتر (mm)</option>
+                        <option value="km">كيلومتر (km)</option>
+                        <option value="inch">بوصة (inch)</option>
+                        <option value="ft">قدم (ft)</option>
+                    </select>
+                </div>
+
+                <button class="calc-btn" onclick="convertUnits()">حوّل</button>
+
+                <div class="calc-result" id="unitsResult" style="display: none;">
+                    <div class="result-row"><span>النتيجة:</span><strong id="unitResult">-</strong></div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <footer>
+        <img src="logo.png" alt="Direction Team" class="footer-logo">
+        <p class="last-update" id="lastUpdate">🕐 آخر تحديث: ...</p>
+        <p class="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
+        <p>صُنع بحب لطلبة الهندسة 💜</p>
+    </footer>
+
+    <button class="share-button" onclick="shareSite()" title="شارك الموقع">
+        <span>📤</span>
+        <span>شارك الموقع</span>
+    </button>
+
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()" title="الرجوع للأعلى">⬆️</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
