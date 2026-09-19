@@ -1510,3 +1510,212 @@ body.dark-mode .empty-favorites a {
         grid-template-columns: 1fr;
     }
 }
+/* ===== الحاسبة الهندسية ===== */
+.calc-section {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+.calc-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.calc-tab-btn {
+    padding: 0.7rem 1.3rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: 2px solid #9c27b0;
+    background: #ffffff;
+    color: #6a1b9a;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.calc-tab-btn:hover {
+    background: #f3e5f5;
+    transform: translateY(-2px);
+}
+
+.calc-tab-btn.active {
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    box-shadow: 0 6px 15px rgba(156, 39, 176, 0.4);
+}
+
+.calc-content {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.calc-content.active {
+    display: block;
+}
+
+.calc-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(106, 27, 154, 0.1);
+    border-top: 5px solid #9c27b0;
+}
+
+.calc-card h2 {
+    color: #6a1b9a;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.calc-desc {
+    text-align: center;
+    color: #888;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+}
+
+.calc-input-group {
+    margin-bottom: 1rem;
+}
+
+.calc-input-group label {
+    display: block;
+    color: #4a148c;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+}
+
+.calc-input-group input,
+.calc-input-group select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid #e0c8e8;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border 0.3s;
+    background: #faf5fc;
+}
+
+.calc-input-group input:focus,
+.calc-input-group select:focus {
+    border-color: #9c27b0;
+    background: #ffffff;
+}
+
+.calc-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.05rem;
+    font-weight: bold;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 0.5rem;
+    box-shadow: 0 6px 15px rgba(156, 39, 176, 0.3);
+}
+
+.calc-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(156, 39, 176, 0.5);
+}
+
+.calc-result {
+    margin-top: 1.5rem;
+    padding: 1.2rem;
+    background: linear-gradient(135deg, #faf5fc, #f3e5f5);
+    border-radius: 12px;
+    border-right: 4px solid #9c27b0;
+}
+
+.result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    font-size: 1rem;
+    border-bottom: 1px dashed #e0c8e8;
+}
+
+.result-row:last-child {
+    border-bottom: none;
+}
+
+.result-row span {
+    color: #6a1b9a;
+    font-weight: 600;
+}
+
+.result-row strong {
+    color: #4a148c;
+    font-size: 1.1rem;
+    background: #ffffff;
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+}
+
+/* الوضع الليلي */
+body.dark-mode .calc-card {
+    background: #16213e;
+}
+
+body.dark-mode .calc-card h2,
+body.dark-mode .calc-input-group label,
+body.dark-mode .result-row span {
+    color: #bb86fc;
+}
+
+body.dark-mode .calc-input-group input,
+body.dark-mode .calc-input-group select {
+    background: #0f3460;
+    border-color: #2a1b4d;
+    color: #e0e0e0;
+}
+
+body.dark-mode .calc-result {
+    background: #0f3460;
+    border-right-color: #bb86fc;
+}
+
+body.dark-mode .result-row strong {
+    background: #1a1a2e;
+    color: #d0a2ff;
+}
+
+body.dark-mode .calc-tab-btn {
+    background: #16213e;
+    color: #bb86fc;
+    border-color: #2a1b4d;
+}
+
+/* للجوال */
+@media (max-width: 700px) {
+    .calc-card {
+        padding: 1.2rem;
+    }
+    .calc-card h2 {
+        font-size: 1.2rem;
+    }
+    .calc-tabs {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .calc-tab-btn {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+}
