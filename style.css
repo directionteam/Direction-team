@@ -2426,3 +2426,392 @@ body.dark-mode .clear-all-btn {
         font-size: 0.7rem;
     }
 }
+/* ===== صفحة الاقتراحات ===== */
+.suggestions-section {
+    max-width: 900px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+/* بطاقة المعلومات */
+.suggestion-info-card {
+    background: linear-gradient(135deg, #6a1b9a, #9c27b0);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    color: #ffffff;
+    box-shadow: 0 10px 30px rgba(106, 27, 154, 0.3);
+    margin-bottom: 2rem;
+}
+
+.info-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.suggestion-info-card h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+}
+
+.suggestion-info-card > p {
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
+}
+
+.info-types {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.info-type {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.info-type .type-icon {
+    font-size: 2rem;
+}
+
+.info-type .type-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* نموذج الاقتراح */
+.suggestion-form-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(106, 27, 154, 0.1);
+    border-top: 5px solid #9c27b0;
+    margin-bottom: 2rem;
+}
+
+.suggestion-form-card h2 {
+    color: #6a1b9a;
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.suggestion-form .form-group {
+    margin-bottom: 1.2rem;
+}
+
+.suggestion-form label {
+    display: block;
+    color: #4a148c;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.suggestion-form input[type="text"],
+.suggestion-form input[type="email"],
+.suggestion-form select,
+.suggestion-form textarea {
+    width: 100%;
+    padding: 0.9rem 1.1rem;
+    border: 2px solid #e0c8e8;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border 0.3s;
+    background: #faf5fc;
+    resize: vertical;
+}
+
+.suggestion-form input:focus,
+.suggestion-form select:focus,
+.suggestion-form textarea:focus {
+    border-color: #9c27b0;
+    background: #ffffff;
+}
+
+/* خيارات النوع */
+.type-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+}
+
+.type-option {
+    cursor: pointer;
+    margin: 0 !important;
+}
+
+.type-option input[type="radio"] {
+    display: none;
+}
+
+.type-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    padding: 1rem;
+    background: #faf5fc;
+    border: 2px solid #e0c8e8;
+    border-radius: 12px;
+    transition: all 0.3s;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4a148c;
+}
+
+.type-option input[type="radio"]:checked + .type-box {
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    border-color: #9c27b0;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.35);
+}
+
+.type-box:hover {
+    border-color: #9c27b0;
+    transform: translateY(-2px);
+}
+
+.type-emoji {
+    font-size: 1.5rem;
+}
+
+/* زر الإرسال */
+.submit-suggestion-btn {
+    width: 100%;
+    padding: 1.1rem;
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 6px 15px rgba(156, 39, 176, 0.3);
+    margin-top: 0.5rem;
+}
+
+.submit-suggestion-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(156, 39, 176, 0.5);
+}
+
+.form-note {
+    text-align: center;
+    color: #888;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #e0c8e8;
+}
+
+/* التواصل البديل */
+.alternative-contact {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(106, 27, 154, 0.1);
+    text-align: center;
+}
+
+.alternative-contact h3 {
+    color: #6a1b9a;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.contact-options {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.contact-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 600;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+}
+
+.contact-option.instagram {
+    background: linear-gradient(135deg, #f09433, #dc2743);
+}
+
+.contact-option.facebook {
+    background: linear-gradient(135deg, #1877f2, #0d5dbf);
+}
+
+.contact-option:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* صفحة الشكر */
+.thankyou-section {
+    max-width: 700px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+}
+
+.thankyou-card {
+    background: #ffffff;
+    border-radius: 25px;
+    padding: 3rem 2rem;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(106, 27, 154, 0.15);
+    border-top: 5px solid #9c27b0;
+}
+
+.thankyou-icon {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+.thankyou-card h2 {
+    color: #6a1b9a;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.thankyou-card p {
+    color: #777;
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 0.8rem;
+}
+
+.thankyou-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.thankyou-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.thankyou-btn.primary {
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.35);
+}
+
+.thankyou-btn.primary:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(156, 39, 176, 0.5);
+}
+
+.thankyou-btn.secondary {
+    background: #ffffff;
+    color: #6a1b9a;
+    border: 2px solid #9c27b0;
+}
+
+.thankyou-btn.secondary:hover {
+    background: #f3e5f5;
+    transform: translateY(-5px);
+}
+
+/* الوضع الليلي */
+body.dark-mode .suggestion-form-card,
+body.dark-mode .alternative-contact,
+body.dark-mode .thankyou-card {
+    background: #16213e;
+}
+
+body.dark-mode .suggestion-form-card h2,
+body.dark-mode .alternative-contact h3,
+body.dark-mode .thankyou-card h2,
+body.dark-mode .suggestion-form label {
+    color: #bb86fc;
+}
+
+body.dark-mode .suggestion-form input,
+body.dark-mode .suggestion-form select,
+body.dark-mode .suggestion-form textarea {
+    background: #0f3460;
+    border-color: #2a1b4d;
+    color: #e0e0e0;
+}
+
+body.dark-mode .type-box {
+    background: #0f3460;
+    border-color: #2a1b4d;
+    color: #e0e0e0;
+}
+
+body.dark-mode .thankyou-card p {
+    color: #b0b0b0;
+}
+
+body.dark-mode .form-note {
+    border-top-color: #2a1b4d;
+}
+
+/* للجوال */
+@media (max-width: 700px) {
+    .suggestion-info-card,
+    .suggestion-form-card,
+    .alternative-contact {
+        padding: 1.5rem;
+    }
+    .type-options {
+        grid-template-columns: 1fr;
+    }
+    .type-box {
+        flex-direction: row;
+        padding: 0.8rem;
+    }
+    .info-types {
+        gap: 1rem;
+    }
+    .thankyou-card {
+        padding: 2rem 1.2rem;
+    }
+    .thankyou-icon {
+        font-size: 3.5rem;
+    }
+    .thankyou-card h2 {
+        font-size: 1.4rem;
+    }
+    .thankyou-actions {
+        flex-direction: column;
+    }
+    .thankyou-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
