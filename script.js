@@ -388,3 +388,115 @@ document.addEventListener('DOMContentLoaded', function() {
         displayFavorites();
     }
 });
+// ===== التبديل بين الحاسبات =====
+function switchCalc(event, calcId) {
+    document.querySelectorAll('.calc-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.calc-tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(calcId).classList.add('active');
+    event.currentTarget.classList.add('active');
+}
+
+// ===== حاسبة المثلثات =====
+function calculateTrig() {
+    const angle = parseFloat(document.getElementById('angleInput').value);
+    if (isNaN(angle)) {
+        alert('الرجاء إدخال زاوية صحيحة');
+        return;
+    }
+    
+    const radians = angle * Math.PI / 180;
+    const sin = Math.sin(radians).toFixed(4);
+    const cos = Math.cos(radians).toFixed(4);
+    const tan = Math.tan(radians).toFixed(4);
+    
+    document.getElementById('sinResult').textContent = sin;
+    document.getElementById('cosResult').textContent = cos;
+    document.getElementById('tanResult').textContent = tan;
+    document.getElementById('triangleResult').style.display = 'block';
+}
+
+// ===== حاسبة القدرة =====
+function calculatePower() {
+    const v = parseFloat(document.getElementById('voltageInput').value);
+    const i = parseFloat(document.getElementById('currentInput').value);
+    
+    if (isNaN(v) || isNaN(i)) {
+        alert('الرجاء إدخال قيم صحيحة');
+        return;
+    }
+    
+    const p = v * i;
+    const kw = (p / 1000).toFixed(3);
+    
+    document.getElementById('powerValue').textContent = p.toFixed(2) + ' واط';
+    document.getElementById('powerKW').textContent = kw + ' كيلوواط';
+    document.getElementById('powerResult').style.display = 'block';
+}
+
+// ===== حاسبة الحرارة =====
+function calculateHeat() {
+    const m = parseFloat(document.getElementById('massInput').value);
+    const c = parseFloat(document.getElementById('specificHeatInput').value);
+    const dt = parseFloat(document.getElementById('deltaTInput').value);
+    
+    if (isNaN(m) || isNaN(c) || isNaN(dt)) {
+        alert('الرجاء إدخال قيم صحيحة');
+        return;
+    }
+    
+    const q = m * c * dt;
+    const kj = (q / 1000).toFixed(2);
+    
+    document.getElementById('heatValue').textContent = q.toFixed(2) + ' جول';
+    document.getElementById('heatKJ').textContent = kj + ' كيلوجول';
+    document.getElementById('heatResult').style.display = 'block';
+}
+
+// ===== حاسبة الضغط =====
+function calculatePressure() {
+    const f = parseFloat(document.getElementById('forceInput').value);
+    const a = parseFloat(document.getElementById('areaInput').value);
+    
+    if (isNaN(f) || isNaN(a) || a === 0) {
+        alert('الرجاء إدخال قيم صحيحة (المساحة لا يمكن أن تكون صفر)');
+        return;
+    }
+    
+    const p = f / a;
+    const kpa = (p / 1000).toFixed(3);
+    
+    document.getElementById('pressureValue').textContent = p.toFixed(2) + ' باسكال';
+    document.getElementById('pressureKPA').textContent = kpa + ' كيلوباسكال';
+    document.getElementById('pressureResult').style.display = 'block';
+}
+
+// ===== محول الوحدات =====
+function convertUnits() {
+    const value = parseFloat(document.getElementById('unitValue').value);
+    const from = document.getElementById('fromUnit').value;
+    const to = document.getElementById('toUnit').value;
+    
+    if (isNaN(value)) {
+        alert('الرجاء إدخال قيمة صحيحة');
+        return;
+    }
+    
+    // تحويل لكل الوحدات إلى متر أولاً
+    const toMeter = {
+        m: 1,
+        cm: 0.01,
+        mm: 0.001,
+        km: 1000,
+        inch: 0.0254,
+        ft: 0.3048
+    };
+    
+    // القيمة بالمتر
+    const inMeters = value * toMeter[from];
+    
+    // من متر إلى الوحدة المطلوبة
+    const result = inMeters / toMeter[to];
+    
+    document.getElementById('unitResult').textContent = result.toFixed(6) + ' ' + to;
+    document.getElementById('unitsResult').style.display = 'block';
+}
