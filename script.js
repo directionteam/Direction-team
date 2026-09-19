@@ -581,3 +581,274 @@ document.addEventListener('DOMContentLoaded', function() {
         loadDailyWisdom();
     }
 });
+// ===== نظام التذكيرات =====
+let reminderFilter = 'all';
+
+function getReminders() {
+    return JSON.parse(localStorage.getItem('reminders') || '[]');
+}
+
+function saveReminders(reminders) {
+    localStorage.setItem('reminders', JSON.stringify(reminders));
+}
+
+function addReminder() {
+    const title = document.getElementById('reminderTitle').value.trim();
+    const date = document.getElementById('reminderDate').value;
+    const time = document.getElementById('reminderTime').value;
+    const priority = document.getElementById('reminderPriority').value;
+    const type = document.getElementById('reminderType').value;
+
+    if (!title || !date) {
+        alert('⚠️ الرجاء إدخال العنوان والتاريخ على الأقل');
+        return;
+    }
+
+    const reminders = getReminders();
+    const newReminder = {
+        id: Date.now(),
+        title: title,
+        date: date,
+        time: time || '00:00',
+        priority: priority,
+        type: type,
+        completed: false,
+        createdAt: new Date().toISOString()
+    };
+
+    reminders.push(newReminder);
+    saveReminders(reminders);
+
+    // تفريغ الحقول
+    document.getElementById('reminderTitle').value = '';
+    document.getElementById('reminderDate').value = '';
+    document.getElementById('reminderTime').value = '';
+
+    renderReminders();
+
+    // رسالة نجاح
+    showNotification('✅ تم إضافة التذكير بنجاح!');
+
+    // طلب إذن الإشعارات
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+}
+
+function deleteReminder(id) {
+    if (!confirm('هل أنت متأكد من حذف هذا التذكير؟')) return;
+    let reminders = getReminders();
+    reminders = reminders.filter(r => r.id !== id);
+    saveReminders(reminders);
+    renderReminders();
+    showNotification('🗑️ تم حذف التذكير');
+}
+
+function toggleComplete(id) {
+    const reminders = getReminders();
+    const reminder = reminders.find(r => r.id === id);
+    if (reminder) {
+        reminder.completed = !reminder.completed;
+        saveReminders(reminders);
+        renderReminders();
+        if (reminder.completed) {
+            showNotification('✅ أحسنت! تم إنجاز التذكير');
+        }
+    }
+}
+
+function clearAllReminders() {
+    if (!confirm('هل أنت متأكد من حذف جميع التذكيرات؟')) return;
+    saveReminders([]);
+    renderReminders();
+    showNotification('🗑️ تم حذف جميع التذكيرات');
+}
+
+function filterReminders(filter) {
+    reminderFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    renderReminders();
+}
+
+function getTypeIcon(type) {
+    const icons = {
+        exam: '📝',
+        homework: '📚',
+        project: '🔬',
+        meeting: '👥',
+        other: '📌'
+    };
+    return icons[type] || '📌';
+}
+
+function getTypeName(type) {
+    const names = {
+        exam: 'امتحان',
+        homework: 'واجب',
+        project: 'مشروع',
+        meeting: 'اجتماع',
+        other: 'أخرى'
+    };
+    return names[type] || 'أخرى';
+}
+
+function getPriorityInfo(priority) {
+    const info = {
+        high: { label: 'عالية', color: '#e74c3c', icon: '🔴' },
+        medium: { label: 'متوسطة', color: '#f39c12', icon: '🟡' },
+        low: { label: 'منخفضة', color: '#27ae60', icon: '🟢' }
+    };
+    return info[priority] || info.medium;
+}
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+    return date.toLocaleDateString('ar-EG', options);
+}
+
+function getDaysLeft(dateStr) {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const target = new Date(dateStr);
+    target.setHours(0, 0, 0, 0);
+    const diff = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+    return diff;
+}
+
+function renderReminders() {
+    const container = document.getElementById('remindersList');
+    if (!container) return;
+
+    let reminders = getReminders();
+    const now = new Date();
+
+    // الترتيب حسب التاريخ
+    reminders.sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time));
+
+    // الفلترة
+    if (reminderFilter === 'upcoming') {
+        reminders = reminders.filter(r => !r.completed && new Date(r.date + 'T' + r.time) >= now);
+    } else if (reminderFilter === 'past') {
+        reminders = reminders.filter(r => r.completed || new Date(r.date + 'T' + r.time) < now);
+    }
+
+    if (reminders.length === 0) {
+        container.innerHTML = `
+            <div class="empty-reminders">
+                <div class="empty-icon">📭</div>
+                <p>لا توجد تذكيرات بعد</p>
+                <p class="empty-hint">أضف تذكيرك الأول من الأعلى ☝️</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = reminders.map(r => {
+        const priority = getPriorityInfo(r.priority);
+        const daysLeft = getDaysLeft(r.date);
+        const isPast = daysLeft < 0;
+        const isToday = daysLeft === 0;
+        const isTomorrow = daysLeft === 1;
+
+        let timeLeftText = '';
+        let timeLeftClass = '';
+
+        if (r.completed) {
+            timeLeftText = '✅ منجز';
+            timeLeftClass = 'completed';
+        } else if (isPast) {
+            timeLeftText = `⚠️ متأخر بـ ${Math.abs(daysLeft)} يوم`;
+            timeLeftClass = 'overdue';
+        } else if (isToday) {
+            timeLeftText = '🔥 اليوم!';
+            timeLeftClass = 'today';
+        } else if (isTomorrow) {
+            timeLeftText = '⏰ غداً';
+            timeLeftClass = 'tomorrow';
+        } else {
+            timeLeftText = `📅 بعد ${daysLeft} يوم`;
+            timeLeftClass = 'upcoming';
+        }
+
+        return `
+            <div class="reminder-item ${r.completed ? 'completed' : ''}" style="border-right-color: ${priority.color};">
+                <div class="reminder-priority-bar" style="background: ${priority.color};"></div>
+                <button class="reminder-check ${r.completed ? 'checked' : ''}" onclick="toggleComplete(${r.id})" title="${r.completed ? 'إلغاء الإنجاز' : 'تحديد كمنجز'}">
+                    ${r.completed ? '✓' : ''}
+                </button>
+                <div class="reminder-content">
+                    <div class="reminder-top">
+                        <span class="reminder-type-icon">${getTypeIcon(r.type)}</span>
+                        <h3 class="reminder-title">${r.title}</h3>
+                        <span class="reminder-priority-badge" style="background: ${priority.color};">${priority.icon} ${priority.label}</span>
+                    </div>
+                    <div class="reminder-meta">
+                        <span>📅 ${formatDate(r.date)}</span>
+                        <span>⏰ ${r.time}</span>
+                        <span>📂 ${getTypeName(r.type)}</span>
+                    </div>
+                    <div class="reminder-time-left ${timeLeftClass}">${timeLeftText}</div>
+                </div>
+                <button class="reminder-delete" onclick="deleteReminder(${r.id})" title="حذف">🗑️</button>
+            </div>
+        `;
+    }).join('');
+}
+
+function showNotification(message) {
+    // إشعار بسيط
+    const notif = document.createElement('div');
+    notif.className = 'temp-notification';
+    notif.textContent = message;
+    document.body.appendChild(notif);
+
+    setTimeout(() => notif.classList.add('show'), 10);
+    setTimeout(() => {
+        notif.classList.remove('show');
+        setTimeout(() => notif.remove(), 300);
+    }, 2500);
+}
+
+// فحص التذكيرات القريبة عند تحميل الصفحة
+function checkUpcomingReminders() {
+    const reminders = getReminders();
+    const now = new Date();
+    
+    reminders.forEach(r => {
+        if (r.completed) return;
+        const reminderTime = new Date(r.date + 'T' + r.time);
+        const diffHours = (reminderTime - now) / (1000 * 60 * 60);
+
+        // إذا كان التذكير خلال 24 ساعة
+        if (diffHours > 0 && diffHours <= 24) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('⏰ تذكير Direction Team', {
+                    body: `${r.title} - ${r.time}`,
+                    icon: 'logo.png'
+                });
+            }
+        }
+    });
+}
+
+// تشغيل عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('remindersList')) {
+        renderReminders();
+        
+        // تعيين التاريخ الافتراضي لليوم
+        const dateInput = document.getElementById('reminderDate');
+        if (dateInput) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+        }
+
+        // فحص التذكيرات القريبة
+        checkUpcomingReminders();
+        
+        // فحص كل ساعة
+        setInterval(checkUpcomingReminders, 60 * 60 * 1000);
+    }
+});
