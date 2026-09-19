@@ -1861,3 +1861,118 @@ body.dark-mode .legend-item {
         font-size: 0.7rem;
     }
 }
+/* ===== قسم حكمة اليوم ===== */
+.wisdom-section {
+    max-width: 900px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+}
+
+.wisdom-card {
+    background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%);
+    border-radius: 25px;
+    padding: 3rem 2rem;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(106, 27, 154, 0.3);
+    position: relative;
+    overflow: hidden;
+    color: #ffffff;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.wisdom-card::before {
+    content: '❝';
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    font-size: 8rem;
+    color: rgba(255, 255, 255, 0.1);
+    font-family: serif;
+    line-height: 1;
+}
+
+.wisdom-card::after {
+    content: '❞';
+    position: absolute;
+    bottom: 10px;
+    left: 25px;
+    font-size: 8rem;
+    color: rgba(255, 255, 255, 0.1);
+    font-family: serif;
+    line-height: 1;
+}
+
+.wisdom-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.wisdom-type {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.4rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.wisdom-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 2;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+    font-family: 'Amiri', 'Traditional Arabic', 'Segoe UI', serif;
+}
+
+.wisdom-author {
+    font-size: 1rem;
+    opacity: 0.9;
+    font-style: italic;
+    position: relative;
+    z-index: 1;
+}
+
+.wisdom-author::before {
+    content: '— ';
+    font-style: normal;
+}
+
+/* الوضع الليلي */
+body.dark-mode .wisdom-card {
+    background: linear-gradient(135deg, #2a1b4d 0%, #4a148c 100%);
+    border-color: rgba(187, 134, 252, 0.3);
+}
+
+/* للجوال */
+@media (max-width: 700px) {
+    .wisdom-card {
+        padding: 2rem 1.2rem;
+    }
+    .wisdom-text {
+        font-size: 1.15rem;
+        line-height: 1.9;
+    }
+    .wisdom-icon {
+        font-size: 2.2rem;
+    }
+    .wisdom-type {
+        font-size: 0.75rem;
+        padding: 0.3rem 1rem;
+    }
+    .wisdom-card::before,
+    .wisdom-card::after {
+        font-size: 5rem;
+    }
+}
