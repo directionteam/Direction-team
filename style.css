@@ -1866,18 +1866,23 @@ body.dark-mode .legend-item {
     max-width: 900px;
     margin: 4rem auto;
     padding: 0 1rem;
+    text-align: center;
 }
 
 .wisdom-card {
     background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%);
     border-radius: 25px;
     padding: 3rem 2rem;
-    text-align: center;
     box-shadow: 0 15px 40px rgba(106, 27, 154, 0.3);
     position: relative;
     overflow: hidden;
     color: #ffffff;
     border: 3px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .wisdom-card::before {
@@ -1889,6 +1894,7 @@ body.dark-mode .legend-item {
     color: rgba(255, 255, 255, 0.1);
     font-family: serif;
     line-height: 1;
+    pointer-events: none;
 }
 
 .wisdom-card::after {
@@ -1900,13 +1906,16 @@ body.dark-mode .legend-item {
     color: rgba(255, 255, 255, 0.1);
     font-family: serif;
     line-height: 1;
+    pointer-events: none;
 }
 
 .wisdom-icon {
     font-size: 3rem;
     margin-bottom: 1rem;
-    display: inline-block;
+    display: block;
     animation: float 3s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes float {
@@ -1923,7 +1932,8 @@ body.dark-mode .legend-item {
     font-weight: 600;
     margin-bottom: 1.5rem;
     letter-spacing: 1px;
-    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
 }
 
 .wisdom-text {
@@ -1934,6 +1944,11 @@ body.dark-mode .legend-item {
     position: relative;
     z-index: 1;
     font-family: 'Amiri', 'Traditional Arabic', 'Segoe UI', serif;
+    text-align: center;
+    width: 100%;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .wisdom-author {
@@ -1942,6 +1957,7 @@ body.dark-mode .legend-item {
     font-style: italic;
     position: relative;
     z-index: 1;
+    text-align: center;
 }
 
 .wisdom-author::before {
