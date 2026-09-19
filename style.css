@@ -2815,3 +2815,177 @@ body.dark-mode .form-note {
         justify-content: center;
     }
 }
+/* ===== التابان الرئيسي للقاموس ===== */
+.dict-main-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.dict-main-tab {
+    padding: 1rem 2rem;
+    font-size: 1.05rem;
+    font-weight: bold;
+    border: 3px solid #9c27b0;
+    background: #ffffff;
+    color: #6a1b9a;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.dict-main-tab:hover {
+    background: #f3e5f5;
+    transform: translateY(-3px);
+}
+
+.dict-main-tab.active {
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    box-shadow: 0 10px 25px rgba(156, 39, 176, 0.4);
+    transform: translateY(-3px);
+}
+
+.dict-main-content {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.dict-main-content.active {
+    display: block;
+}
+
+/* ===== شبكة الرموز ===== */
+.symbols-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.symbol-item {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 20px rgba(106, 27, 154, 0.08);
+    border-right: 4px solid #9c27b0;
+    transition: all 0.3s;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.symbol-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(106, 27, 154, 0.2);
+    border-right-color: #6a1b9a;
+}
+
+.symbol-display {
+    min-width: 70px;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.3);
+    flex-shrink: 0;
+    font-family: 'Courier New', monospace;
+}
+
+.symbol-info {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.symbol-name {
+    color: #6a1b9a;
+    font-size: 1.1rem;
+    margin: 0 0 0.2rem 0;
+    font-weight: bold;
+}
+
+.symbol-full {
+    color: #9c27b0;
+    font-size: 0.85rem;
+    font-style: italic;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.symbol-desc {
+    color: #555;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin: 0 0 0.5rem 0;
+}
+
+.symbol-category {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    background: #f3e5f5;
+    color: #6a1b9a;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* الوضع الليلي */
+body.dark-mode .dict-main-tab {
+    background: #16213e;
+    color: #bb86fc;
+    border-color: #2a1b4d;
+}
+
+body.dark-mode .symbol-item {
+    background: #16213e;
+}
+
+body.dark-mode .symbol-name {
+    color: #bb86fc;
+}
+
+body.dark-mode .symbol-full {
+    color: #d0a2ff;
+}
+
+body.dark-mode .symbol-desc {
+    color: #b0b0b0;
+}
+
+body.dark-mode .symbol-category {
+    background: #2a1b4d;
+    color: #bb86fc;
+}
+
+/* للجوال */
+@media (max-width: 700px) {
+    .symbols-grid {
+        grid-template-columns: 1fr;
+    }
+    .dict-main-tabs {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .dict-main-tab {
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+    }
+    .symbol-display {
+        width: 55px;
+        height: 55px;
+        min-width: 55px;
+        font-size: 1.4rem;
+    }
+    .symbol-name {
+        font-size: 1rem;
+    }
+}
