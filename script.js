@@ -1005,3 +1005,146 @@ document.addEventListener('DOMContentLoaded', function() {
         renderSymbols(engineeringSymbols);
     }
 });
+// ===== نظام تبديل اللغة =====
+const translations = {
+    ar: {
+        // Navigation
+        'nav-home': 'الرئيسية',
+        'nav-materials': 'المواد',
+        'nav-plans': 'الخطط الدراسية',
+        'nav-exam': 'امتحان الكفاءة',
+        'nav-programs': 'برامج هندسية',
+        'nav-calculator': 'الحاسبة الهندسية',
+        'nav-map': 'خريطة الجامعة',
+        'nav-reminders': 'التذكيرات',
+        'nav-dictionary': 'القاموس الهندسي',
+        'nav-feedback': 'شارك تجربتك',
+        'nav-suggestions': 'شاركنا اقتراحك',
+        'nav-links': 'روابط تهمك',
+        'nav-contact': 'تواصل معنا',
+        
+        // Hero
+        'hero-subtitle': 'Al-Hussein Bin Talal University',
+        'hero-desc': 'فريق أكاديمي تطوّعي - كلية الهندسة',
+        'hero-btn-materials': '📚 تصفح المواد',
+        'hero-btn-plans': '📋 الخطط الدراسية',
+        
+        // Sections
+        'about-title': 'من نحن',
+        'team-title': '👥 الفريق',
+        'team-desc': 'تعرّف على من نحن، رؤيتنا، ورسالتنا',
+        'team-about': 'من نحن',
+        'team-vision': 'رؤيتنا',
+        'team-message': 'رسالتنا',
+        
+        // Wisdom
+        'wisdom-title': '💡 حكمة اليوم',
+        'wisdom-desc': 'حكمة يومية تتجدد كل يوم',
+        
+        // Footer
+        'footer-contact': 'تواصل معنا',
+        'footer-copy': '© 2026 Direction Team - جامعة الحسين بن طلال',
+        'footer-love': 'صُنع بحب لطلبة الهندسة 💜',
+        
+        // Buttons
+        'btn-share': 'شارك الموقع',
+        'btn-top': 'الرجوع للأعلى',
+        'btn-toggle-theme': 'الوضع الليلي',
+        
+        // Team Cards Content
+        'team-about-text': 'فريق أكاديمي تطوّعي في قسمِ الهندسة الميكانيكيّة وهندسة الطاقة المتجددة في جامعة الحسين بن طلال، يهدف إلى الرقي بالمستوى الأكاديمي والإجتماعي لطلبة الهندسة الميكانيكيّة وهندسة الطاقة المتجددة بشكل خاص وطلبة كليّة الهندسة بشكل عام، من خلال تقديم المساعدة الأكاديميّة وتنظيم النشاطات اللامنهجيّة.',
+        'team-vision-text': 'توفير الأجواء الملائمة للتميز والإبداع في مجالات الهندسة الميكانيكيّة وهندسة الطاقة المتجددة وتطوير العمل الأكاديمي وتنميّة الطلبة من خلال الأنشطة اللامنهجيّة.',
+        'team-message-text': 'العمل المشترك للوصول إلى مجتمع طلابي مبادر واشراكه في التخطيط والتنفيذ لمختلف الأنشطة، وتنميته لمواكبة تطورات العصر سعياً للارتقاء بالمستوى الفكري والأكاديمي له.'
+    },
+    en: {
+        // Navigation
+        'nav-home': 'Home',
+        'nav-materials': 'Materials',
+        'nav-plans': 'Study Plans',
+        'nav-exam': 'Competency Exam',
+        'nav-programs': 'Engineering Programs',
+        'nav-calculator': 'Calculator',
+        'nav-map': 'Campus Map',
+        'nav-reminders': 'Reminders',
+        'nav-dictionary': 'Engineering Dictionary',
+        'nav-feedback': 'Share Your Experience',
+        'nav-suggestions': 'Send Suggestion',
+        'nav-links': 'Useful Links',
+        'nav-contact': 'Contact Us',
+        
+        // Hero
+        'hero-subtitle': 'Al-Hussein Bin Talal University',
+        'hero-desc': 'Volunteer Academic Team - College of Engineering',
+        'hero-btn-materials': '📚 Browse Materials',
+        'hero-btn-plans': '📋 Study Plans',
+        
+        // Sections
+        'about-title': 'About Us',
+        'team-title': '👥 The Team',
+        'team-desc': 'Get to know us, our vision, and our mission',
+        'team-about': 'About Us',
+        'team-vision': 'Our Vision',
+        'team-message': 'Our Mission',
+        
+        // Wisdom
+        'wisdom-title': '💡 Wisdom of the Day',
+        'wisdom-desc': 'Daily wisdom updated every day',
+        
+        // Footer
+        'footer-contact': 'Contact Us',
+        'footer-copy': '© 2026 Direction Team - Al-Hussein Bin Talal University',
+        'footer-love': 'Made with love for engineering students 💜',
+        
+        // Buttons
+        'btn-share': 'Share Website',
+        'btn-top': 'Back to Top',
+        'btn-toggle-theme': 'Dark Mode',
+        
+        // Team Cards Content
+        'team-about-text': 'A volunteer academic team in the Department of Mechanical Engineering and Renewable Energy Engineering at Al-Hussein Bin Talal University, aiming to elevate the academic and social level of mechanical and renewable energy engineering students in particular, and College of Engineering students in general, by providing academic assistance and organizing extracurricular activities.',
+        'team-vision-text': 'Providing the appropriate atmosphere for excellence and creativity in the fields of mechanical engineering and renewable energy engineering, developing academic work, and developing students through extracurricular activities.',
+        'team-message-text': 'Working together to reach a proactive student community, involving it in planning and implementing various activities, and developing it to keep pace with the developments of the age in pursuit of elevating its intellectual and academic level.'
+    }
+};
+
+let currentLang = localStorage.getItem('siteLanguage') || 'ar';
+
+function toggleLanguage() {
+    currentLang = currentLang === 'ar' ? 'en' : 'ar';
+    localStorage.setItem('siteLanguage', currentLang);
+    applyLanguage();
+}
+
+function applyLanguage() {
+    // تغيير اتجاه الصفحة
+    const html = document.documentElement;
+    
+    if (currentLang === 'en') {
+        html.setAttribute('dir', 'ltr');
+        html.setAttribute('lang', 'en');
+    } else {
+        html.setAttribute('dir', 'rtl');
+        html.setAttribute('lang', 'ar');
+    }
+    
+    // تغيير زر اللغة
+    const langBtn = document.getElementById('langToggle');
+    if (langBtn) {
+        langBtn.textContent = currentLang === 'ar' ? '🌐 EN' : '🌐 AR';
+    }
+    
+    // تطبيق الترجمات
+    document.querySelectorAll('[data-lang]').forEach(el => {
+        const key = el.dataset.lang;
+        if (translations[currentLang] && translations[currentLang][key]) {
+            el.textContent = translations[currentLang][key];
+        }
+    });
+}
+
+// تشغيل عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('siteLanguage') === 'en') {
+        applyLanguage();
+    }
+});
