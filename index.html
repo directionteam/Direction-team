@@ -3,84 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- العنوان - مهم جداً للبحث -->
-    <title>Direction Team - فريق أكاديمي تطوّعي | جامعة الحسين بن طلال</title>
-    
-    <!-- الوصف - يظهر في نتائج البحث -->
-    <meta name="description" content="Direction Team - فريق أكاديمي تطوّعي في جامعة الحسين بن طلال. مواد هندسة الميكانيك وهندسة الطاقة المتجددة، الخطط الدراسية، نماذج امتحان الكفاءة، وبرامج هندسية.">
-    
-    <!-- الكلمات المفتاحية -->
-    <meta name="keywords" content="Direction Team, AHU, جامعة الحسين بن طلال, هندسة الميكانيك, هندسة الطاقة المتجددة, مواد, خطط دراسية, امتحان الكفاءة, برامج هندسية">
-    
-    <!-- معلومات إضافية لجوجل -->
-    <meta name="author" content="Direction Team - AHU">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph (للمشاركة على فيسبوك وواتساب) -->
-    <meta property="og:title" content="Direction Team - فريق أكاديمي تطوّعي">
-    <meta property="og:description" content="مواد هندسة الميكانيك والطاقة المتجددة، الخطط الدراسية، وامتحان الكفاءة - جامعة الحسين بن طلال">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://directionteam.github.io/Direction-team/">
-    <meta property="og:image" content="https://directionteam.github.io/Direction-team/logo.png">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Direction Team - فريق أكاديمي تطوّعي">
-    <meta name="twitter:description" content="مواد هندسة الميكانيك والطاقة المتجددة - جامعة الحسين بن طلال">
-    <meta name="twitter:image" content="https://directionteam.github.io/Direction-team/logo.png">
-    
-    <!-- Google Verification -->
-    <meta name="google-site-verification" content="Hpsn3kvUPvbALNB9HMUGNFD3Uka5iQX48x4DEIsIv8" />
-    
-    <!-- ربط ملف التصميم -->
+    <title>Direction Team - فريق أكاديمي تطوّعي</title>
+    <meta name="description" content="Direction Team - فريق أكاديمي تطوّعي في جامعة الحسين بن طلال - مواد هندسة الميكانيك والطاقة المتجددة">
     <link rel="stylesheet" href="style.css?v=8">
 </head>
-    <!-- زر شارك الموقع -->
-<button class="share-button" onclick="shareSite()" title="شارك الموقع">
-    <span>📤</span>
-    <span>شارك الموقع</span>
-</button>
-
-<!-- زر الرجوع للأعلى -->
-<button class="scroll-top" id="scrollTop" onclick="scrollToTop()" title="الرجوع للأعلى">⬆️</button>
-
-<script src="script.js"></script>
 <body>
 
     <!-- شاشة التحميل -->
     <div class="loader-screen" id="loaderScreen">
         <img src="logo.png" alt="Direction Team" class="loader-logo">
         <h1 class="loader-title">Direction Team</h1>
-        <p class="loader-subtitle">Al-Hussein Bin Talal University</p>
+        <p class="loader-subtitle" data-lang="hero-subtitle">Al-Hussein Bin Talal University</p>
         <div class="loader-bar"></div>
     </div>
 
-    <!-- باقي المحتوى -->
     <!-- شريط التنقل -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
             <ul class="nav-links">
-                <li><a href="index.html" class="active">الرئيسية</a></li>
-                <li><a href="#about">من نحن</a></li>
-                <li><a href="#team">الفريق</a></li>
-                <li><a href="materials.html">المواد</a></li>
-                <li><a href="plans.html">الخطط الدراسية</a></li>
-                <li><a href="exam.html">امتحان الكفاءة</a></li>
-                <li><a href="programs.html">برامج هندسية</a></li>
-                <li><a href="calculator.html">الحاسبة الهندسية</a></li>
-                <li><a href="map.html">خريطة الجامعة</a></li>
-                <li><a href="reminders.html">التذكيرات</a></li>
-                <li><a href="dictionary.html"> قاموس المصطلحات والرموز </a></li>
-                <li><a href="suggestions.html">شاركنا اقتراحك</a></li>
-               <li><a href="links.html">روابط تهمك</a></li>
-<li><a href="contact.html">تواصل معنا</a></li>
-          </ul>
+                <li><a href="index.html" class="active" data-lang="nav-home">الرئيسية</a></li>
+                <li><a href="#about" data-lang="about-title">من نحن</a></li>
+                <li><a href="#team" data-lang="team-title">الفريق</a></li>
+                <li><a href="materials.html" data-lang="nav-materials">المواد</a></li>
+                <li><a href="plans.html" data-lang="nav-plans">الخطط الدراسية</a></li>
+                <li><a href="exam.html" data-lang="nav-exam">امتحان الكفاءة</a></li>
+                <li><a href="programs.html" data-lang="nav-programs">برامج هندسية</a></li>
+                <li><a href="calculator.html" data-lang="nav-calculator">الحاسبة</a></li>
+                <li><a href="map.html" data-lang="nav-map">خريطة الجامعة</a></li>
+                <li><a href="reminders.html" data-lang="nav-reminders">التذكيرات</a></li>
+                <li><a href="dictionary.html" data-lang="nav-dictionary">القاموس</a></li>
+                <li><a href="feedback.html" data-lang="nav-feedback">شارك تجربتك</a></li>
+                <li><a href="suggestions.html" data-lang="nav-suggestions">شاركنا اقتراحك</a></li>
+                <li><a href="contact.html" data-lang="nav-contact">تواصل معنا</a></li>
+            </ul>
             <button class="lang-toggle" id="langToggle" onclick="toggleLanguage()" title="Change Language">🌐 EN</button>
-                <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="الوضع الليلي">🌙</button>
-            </div>
-        </nav>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="الوضع الليلي">🌙</button>
+        </div>
+    </nav>
 
     <!-- الهيرو -->
     <section class="hero" id="home">
@@ -88,103 +48,141 @@
             <img src="logo.png" alt="Direction Team" class="hero-logo">
             <h1>Direction Team</h1>
             <p class="hero-subtitle">Al-Hussein Bin Talal University - AHU</p>
-            <p class="hero-desc">فريق أكاديمي تطوّعي - كلية الهندسة</p>
+            <p class="hero-desc" data-lang="hero-desc">فريق أكاديمي تطوّعي - كلية الهندسة</p>
 
             <div class="hero-buttons">
-                <a href="materials.html" class="hero-btn">📚 تصفح المواد</a>
-                <a href="plans.html" class="hero-btn">📋 الخطط الدراسية</a>
+                <a href="materials.html" class="hero-btn" data-lang="hero-btn-materials">📚 تصفح المواد</a>
+                <a href="plans.html" class="hero-btn" data-lang="hero-btn-plans">📋 الخطط الدراسية</a>
             </div>
         </div>
     </section>
 
     <!-- من نحن -->
     <section class="about" id="about">
-        <h2>من نحن</h2>
-        <p>
-            فريق أكاديمي تطوّعي في قسمِ الهندسة الميكانيكيّة وهندسة الطاقة المتجددة في جامعة الحسين بن طلال،
-            يهدف إلى الرقي بالمستوى الأكاديمي والإجتماعي لطلبة الهندسة الميكانيكيّة وهندسة الطاقة المتجددة
-            بشكل خاص وطلبة كليّة الهندسة بشكل عام، من خلال تقديم المساعدة الأكاديميّة وتنظيم النشاطات اللامنهجيّة.
-        </p>
+        <h2 data-lang="about-title">من نحن</h2>
+        <p data-lang="team-about-text">فريق أكاديمي تطوّعي في قسمِ الهندسة الميكانيكيّة وهندسة الطاقة المتجددة في جامعة الحسين بن طلال، يهدف إلى الرقي بالمستوى الأكاديمي والإجتماعي لطلبة الهندسة الميكانيكيّة وهندسة الطاقة المتجددة بشكل خاص وطلبة كليّة الهندسة بشكل عام، من خلال تقديم المساعدة الأكاديميّة وتنظيم النشاطات اللامنهجيّة.</p>
     </section>
 
-    <!-- الفريق (3 بطاقات) -->
+    <!-- قسم الفريق -->
     <section class="team-section" id="team">
-        <h2 class="section-title">👥 الفريق</h2>
-        <p class="section-desc">تعرّف على من نحن، رؤيتنا، ورسالتنا</p>
+        <h2 class="section-title" data-lang="team-title">👥 الفريق</h2>
+        <p class="section-desc" data-lang="team-desc">تعرّف على من نحن، رؤيتنا، ورسالتنا</p>
 
         <div class="team-cards">
 
             <div class="team-card">
                 <div class="team-icon">👥</div>
-                <h3>من نحن</h3>
+                <h3 data-lang="team-about">من نحن</h3>
                 <div class="team-line"></div>
-                <p>
-                    فريق أكاديمي تطوّعي في قسمِ الهندسة الميكانيكيّة وهندسة الطاقة المتجددة في جامعة الحسين بن طلال،
-                    يهدف إلى الرقي بالمستوى الأكاديمي والإجتماعي لطلبة الهندسة الميكانيكيّة وهندسة الطاقة المتجددة
-                    بشكل خاص وطلبة كليّة الهندسة بشكل عام.
-                </p>
+                <p data-lang="team-about-text">فريق أكاديمي تطوّعي في قسمِ الهندسة الميكانيكيّة وهندسة الطاقة المتجددة في جامعة الحسين بن طلال، يهدف إلى الرقي بالمستوى الأكاديمي والإجتماعي لطلبة الهندسة الميكانيكيّة وهندسة الطاقة المتجددة بشكل خاص وطلبة كليّة الهندسة بشكل عام، من خلال تقديم المساعدة الأكاديميّة وتنظيم النشاطات اللامنهجيّة.</p>
             </div>
 
             <div class="team-card">
                 <div class="team-icon">💡</div>
-                <h3>رؤيتنا</h3>
+                <h3 data-lang="team-vision">رؤيتنا</h3>
                 <div class="team-line"></div>
-                <p>
-                    توفير الأجواء الملائمة للتميز والإبداع في مجالات الهندسة الميكانيكيّة وهندسة الطاقة المتجددة
-                    وتطوير العمل الأكاديمي وتنميّة الطلبة من خلال الأنشطة اللامنهجيّة.
-                </p>
+                <p data-lang="team-vision-text">توفير الأجواء الملائمة للتميز والإبداع في مجالات الهندسة الميكانيكيّة وهندسة الطاقة المتجددة وتطوير العمل الأكاديمي وتنميّة الطلبة من خلال الأنشطة اللامنهجيّة.</p>
             </div>
 
             <div class="team-card">
                 <div class="team-icon">🎯</div>
-                <h3>رسالتنا</h3>
+                <h3 data-lang="team-message">رسالتنا</h3>
                 <div class="team-line"></div>
-                <p>
-                    العمل المشترك للوصول إلى مجتمع طلابي مبادر واشراكه في التخطيط والتنفيذ لمختلف الأنشطة،
-                    وتنميته لمواكبة تطورات العصر سعياً للارتقاء بالمستوى الفكري والأكاديمي له.
-                </p>
+                <p data-lang="team-message-text">العمل المشترك للوصول إلى مجتمع طلابي مبادر واشراكه في التخطيط والتنفيذ لمختلف الأنشطة، وتنميته لمواكبة تطورات العصر سعياً للارتقاء بالمستوى الفكري والأكاديمي له.</p>
             </div>
 
         </div>
     </section>
+
     <!-- قسم المفضلة -->
     <section class="favorites-section" id="favorites">
-        <h2 class="section-title">⭐ موادي المفضلة</h2>
-        <p class="section-desc">المواد التي حفظتها في متصفحك</p>
+        <h2 class="section-title" data-lang="favorites-title">⭐ موادي المفضلة</h2>
+        <p class="section-desc" data-lang="favorites-desc">المواد التي حفظتها في متصفحك</p>
 
         <div id="favoritesList" class="favorites-list">
             <!-- تُعرض تلقائياً بالجافاسكريبت -->
         </div>
     </section>
+
     <!-- قسم حكمة اليوم -->
     <section class="wisdom-section" id="wisdom">
-        <h2 class="section-title">💡 حكمة اليوم</h2>
-        <p class="section-desc">حكمة يومية تتجدد كل يوم</p>
+        <h2 class="section-title" data-lang="wisdom-title">💡 حكمة اليوم</h2>
+        <p class="section-desc" data-lang="wisdom-desc">حكمة يومية تتجدد كل يوم</p>
 
-        <div class="wisdom-card" id="wisdomCard">
-            <div class="wisdom-icon" id="wisdomIcon">💡</div>
-            <div class="wisdom-type" id="wisdomType">حكمة هندسية</div>
-            <p class="wisdom-text" id="wisdomText">جاري التحميل...</p>
-            <div class="wisdom-author" id="wisdomAuthor"></div>
+        <div style="
+            background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%);
+            border-radius: 25px;
+            padding: 3rem 2rem;
+            box-shadow: 0 15px 40px rgba(106, 27, 154, 0.3);
+            color: #ffffff;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        ">
+            <div id="wisdomIcon" style="
+                font-size: 3rem;
+                margin-bottom: 1rem;
+                display: block;
+                text-align: center;
+            ">💡</div>
+
+            <div id="wisdomType" style="
+                display: inline-block;
+                background: rgba(255, 255, 255, 0.2);
+                padding: 0.4rem 1.2rem;
+                border-radius: 50px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                margin-bottom: 1.5rem;
+                letter-spacing: 1px;
+                text-align: center;
+            ">حكمة هندسية</div>
+
+            <p id="wisdomText" style="
+                font-size: 1.5rem;
+                font-weight: 600;
+                line-height: 2;
+                margin: 0 auto 1.5rem;
+                text-align: center;
+                max-width: 700px;
+                font-family: 'Amiri', 'Traditional Arabic', 'Segoe UI', serif;
+            ">جاري التحميل...</p>
+
+            <div id="wisdomAuthor" style="
+                font-size: 1rem;
+                opacity: 0.9;
+                font-style: italic;
+                text-align: center;
+            "></div>
         </div>
-
     </section>
 
-
-    
     <!-- الفوتر -->
     <footer id="contact">
         <img src="logo.png" alt="Direction Team" class="footer-logo">
-        <h3>تواصل معنا</h3>
+        <p class="last-update" id="lastUpdate">🕐 آخر تحديث: ...</p>
+        <h3 data-lang="footer-contact">تواصل معنا</h3>
         <div class="social-icons-footer">
             <a href="https://www.instagram.com/direction_team_ahu/" target="_blank">📷 Instagram</a>
             <a href="https://web.facebook.com/direction.ahu.3" target="_blank">📘 Facebook</a>
         </div>
-        <p class="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
-        <p class="last-update" id="lastUpdate">🕐 آخر تحديث: ...</p>
-       
-        <p>صُنع بحب لخدمة طلبة الهندسة 💜</p>
+        <p class="footer-copy" data-lang="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
+        <p data-lang="footer-love">صُنع بحب لطلبة الهندسة 💜</p>
     </footer>
+
+    <!-- زر المشاركة -->
+    <button class="share-button" onclick="shareSite()" title="شارك الموقع">
+        <span>📤</span>
+        <span data-lang="btn-share">شارك الموقع</span>
+    </button>
+
+    <!-- زر الرجوع للأعلى -->
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()" title="الرجوع للأعلى">⬆️</button>
 
     <script src="script.js"></script>
 </body>
