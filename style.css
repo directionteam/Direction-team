@@ -1719,3 +1719,145 @@ body.dark-mode .calc-tab-btn {
         font-size: 0.85rem;
     }
 }
+/* ===== خريطة الجامعة ===== */
+.map-section {
+    max-width: 1000px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+.map-container {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 1rem;
+    box-shadow: 0 8px 25px rgba(106, 27, 154, 0.15);
+    border-top: 5px solid #9c27b0;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.map-container iframe {
+    display: block;
+    width: 100%;
+    min-height: 600px;
+    border-radius: 15px;
+}
+
+/* قائمة الأماكن */
+.map-legend {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(106, 27, 154, 0.1);
+}
+
+.map-legend h3 {
+    color: #6a1b9a;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.legend-desc {
+    text-align: center;
+    color: #777;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+
+.legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.legend-item {
+    background: #faf5fc;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 2px solid #f0e4f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    text-decoration: none;
+    color: #4a148c;
+}
+
+.legend-item:hover {
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    border-color: #9c27b0;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(106, 27, 154, 0.3);
+}
+
+.legend-icon {
+    font-size: 1.8rem;
+}
+
+.legend-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.legend-en {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    font-style: italic;
+}
+
+/* الوضع الليلي */
+body.dark-mode .map-container,
+body.dark-mode .map-legend {
+    background: #16213e;
+}
+
+body.dark-mode .map-legend h3 {
+    color: #bb86fc;
+}
+
+body.dark-mode .legend-desc {
+    color: #b0b0b0;
+}
+
+body.dark-mode .legend-item {
+    background: #0f3460;
+    color: #e0e0e0;
+    border-color: #2a1b4d;
+}
+
+/* للجوال */
+@media (max-width: 700px) {
+    .map-container {
+        padding: 0.5rem;
+    }
+    .map-container iframe {
+        min-height: 400px;
+    }
+    .map-legend {
+        padding: 1.2rem;
+    }
+    .map-legend h3 {
+        font-size: 1.2rem;
+    }
+    .legend-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+    }
+    .legend-item {
+        padding: 0.7rem 0.5rem;
+    }
+    .legend-icon {
+        font-size: 1.5rem;
+    }
+    .legend-name {
+        font-size: 0.85rem;
+    }
+    .legend-en {
+        font-size: 0.7rem;
+    }
+}
