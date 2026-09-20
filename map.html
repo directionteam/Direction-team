@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>خريطة الجامعة - Direction Team</title>
-    <meta name="description" content="خريطة تفاعلية لأهم أماكن جامعة الحسين بن طلال">
-    <link rel="stylesheet" href="style.css?v=6">
+    <link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
 
@@ -13,18 +12,18 @@
         <div class="nav-container">
             <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
             <ul class="nav-links">
-                <li><a href="index.html">الرئيسية</a></li>
-                <li><a href="materials.html">المواد</a></li>
-                <li><a href="plans.html">الخطط الدراسية</a></li>
-                <li><a href="exam.html">امتحان الكفاءة</a></li>
-                <li><a href="programs.html">برامج هندسية</a></li>
-                <li><a href="calculator.html">الحاسبة الهندسية</a></li>
-                <li><a href="map.html" class="active">خريطة الجامعة</a></li>
-                <li><a href="reminders.html">التذكيرات</a></li>
-                <li><a href="dictionary.html"> قاموس المصطلحات والرموز </a></li>
-                <li><a href="suggestions.html">شاركنا اقتراحك</a></li>
-                <li><a href="links.html">روابط تهمك</a></li>
-                <li><a href="contact.html">تواصل معنا</a></li>
+                <li><a href="index.html" data-lang="nav-home">الرئيسية</a></li>
+                <li><a href="materials.html" data-lang="nav-materials">المواد</a></li>
+                <li><a href="plans.html" data-lang="nav-plans">الخطط الدراسية</a></li>
+                <li><a href="exam.html" data-lang="nav-exam">امتحان الكفاءة</a></li>
+                <li><a href="programs.html" data-lang="nav-programs">برامج هندسية</a></li>
+                <li><a href="calculator.html" data-lang="nav-calculator">الحاسبة</a></li>
+                <li><a href="map.html" class="active" data-lang="nav-map">خريطة الجامعة</a></li>
+                <li><a href="reminders.html" data-lang="nav-reminders">التذكيرات</a></li>
+                <li><a href="dictionary.html" data-lang="nav-dictionary">القاموس</a></li>
+                <li><a href="suggestions.html" data-lang="nav-suggestions">شاركنا اقتراحك</a></li>
+                <li><a href="links.html" data-lang="nav-links">روابط تهمك</a></li>
+                <li><a href="contact.html" data-lang="nav-contact">تواصل معنا</a></li>
             </ul>
             <button class="lang-toggle" id="langToggle" onclick="toggleLanguage()" title="Change Language">🌐 EN</button>
             <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="الوضع الليلي">🌙</button>
@@ -32,8 +31,8 @@
     </nav>
 
     <section class="page-header">
-        <h1>🗺️ خريطة الجامعة التفاعلية</h1>
-        <p>اكتشف أهم أماكن جامعة الحسين بن طلال</p>
+        <h1 data-lang="map-title">🗺️ خريطة الجامعة التفاعلية</h1>
+        <p data-lang="map-desc">اكتشف أهم أماكن جامعة الحسين بن طلال</p>
     </section>
 
     <section class="map-section">
@@ -50,112 +49,111 @@
             </iframe>
         </div>
 
-        <!-- قائمة الأماكن -->
         <div class="map-legend">
-            <h3>📍 أماكن مهمة في الجامعة</h3>
-            <p class="legend-desc">اضغطي على أي مكان في الخريطة لعرض تفاصيله على Google Maps</p>
+            <h3 data-lang="map-places">📍 أماكن مهمة في الجامعة</h3>
+            <p class="legend-desc" data-lang="map-places-desc">اضغطي على أي مكان في الخريطة لعرض تفاصيله على Google Maps</p>
             
             <div class="legend-grid">
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">🏛️</span>
-                    <span class="legend-name">كلية الهندسة</span>
+                    <span class="legend-name" data-lang="map-engineering">كلية الهندسة</span>
                     <span class="legend-en">College of Engineering</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">💻</span>
-                    <span class="legend-name">كلية تكنولوجيا المعلومات</span>
+                    <span class="legend-name" data-lang="map-it">كلية تكنولوجيا المعلومات</span>
                     <span class="legend-en">IT College</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">🔬</span>
-                    <span class="legend-name">كلية العلوم</span>
+                    <span class="legend-name" data-lang="map-science">كلية العلوم</span>
                     <span class="legend-en">College of Science</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">📚</span>
-                    <span class="legend-name">كلية الآداب</span>
+                    <span class="legend-name" data-lang="map-literature">كلية الآداب</span>
                     <span class="legend-en">College of Literature</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">💼</span>
-                    <span class="legend-name">كلية إدارة الأعمال</span>
+                    <span class="legend-name" data-lang="map-business">كلية إدارة الأعمال</span>
                     <span class="legend-en">Business Administration</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">⚖️</span>
-                    <span class="legend-name">كلية القانون</span>
+                    <span class="legend-name" data-lang="map-law">كلية القانون</span>
                     <span class="legend-en">College of Law</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">🏥</span>
-                    <span class="legend-name">كلية الأميرة عائشة للتمريض</span>
+                    <span class="legend-name" data-lang="map-nursing">كلية الأميرة عائشة للتمريض</span>
                     <span class="legend-en">Princess Aisha Nursing</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">🏢</span>
-                    <span class="legend-name">مبنى الإدارة المالية</span>
+                    <span class="legend-name" data-lang="map-finance">مبنى الإدارة المالية</span>
                     <span class="legend-en">Financial Management</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">🎓</span>
-                    <span class="legend-name">قاعة الأردن</span>
+                    <span class="legend-name" data-lang="map-jordan-hall">قاعة الأردن</span>
                     <span class="legend-en">Jordan Hall</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">🖥️</span>
-                    <span class="legend-name">مركز الحاسوب</span>
+                    <span class="legend-name" data-lang="map-computer-center">مركز الحاسوب</span>
                     <span class="legend-en">Computer Center</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">🏛️</span>
-                    <span class="legend-name">مجمع القاعات</span>
+                    <span class="legend-name" data-lang="map-halls">مجمع القاعات</span>
                     <span class="legend-en">Halls Complex</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">🎯</span>
-                    <span class="legend-name">منصة الهندسة</span>
+                    <span class="legend-name" data-lang="map-booth">منصة الهندسة</span>
                     <span class="legend-en">Engineering Booth</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">🚌</span>
-                    <span class="legend-name">مجمع الباصات</span>
+                    <span class="legend-name" data-lang="map-bus">مجمع الباصات</span>
                     <span class="legend-en">Bus Complex</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">🏠</span>
-                    <span class="legend-name">سكن الطالبات (1)</span>
+                    <span class="legend-name" data-lang="map-dorm1">سكن الطالبات (1)</span>
                     <span class="legend-en">Female Dormitory 1</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">🏠</span>
-                    <span class="legend-name">سكن الطالبات (2)</span>
+                    <span class="legend-name" data-lang="map-dorm2">سكن الطالبات (2)</span>
                     <span class="legend-en">Female Dormitory 2</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">🚪</span>
-                    <span class="legend-name">بوابة السكن</span>
+                    <span class="legend-name" data-lang="map-housing-gate">بوابة السكن</span>
                     <span class="legend-en">Housing Gate</span>
                 </a>
 
                 <a href="https://www.google.com/maps/d/u/0/viewer?mid=14Utlwo8SxTi2ivxAvtkufKViEbrftrI" target="_blank" class="legend-item">
                     <span class="legend-icon">📦</span>
-                    <span class="legend-name">وحدة اللوازم</span>
+                    <span class="legend-name" data-lang="map-supplies">وحدة اللوازم</span>
                     <span class="legend-en">Supplies Unit</span>
                 </a>
 
@@ -167,13 +165,13 @@
     <footer>
         <img src="logo.png" alt="Direction Team" class="footer-logo">
         <p class="last-update" id="lastUpdate">🕐 آخر تحديث: ...</p>
-        <p class="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
-        <p>صُنع بحب لطلبة الهندسة 💜</p>
+        <p class="footer-copy" data-lang="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
+        <p data-lang="footer-love">صُنع بحب لطلبة الهندسة 💜</p>
     </footer>
 
     <button class="share-button" onclick="shareSite()" title="شارك الموقع">
         <span>📤</span>
-        <span>شارك الموقع</span>
+        <span data-lang="btn-share">شارك الموقع</span>
     </button>
 
     <button class="scroll-top" id="scrollTop" onclick="scrollToTop()" title="الرجوع للأعلى">⬆️</button>
