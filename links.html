@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>روابط تهمك - Direction Team</title>
-    <link rel="stylesheet" href="style.css?v=8">
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 
-   <nav class="navbar">
-    <div class="nav-container">
-        <button class="nav-toggle" id="navToggle" onclick="toggleMenu()" title="القائمة">☰</button>
-        <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
-        <ul class="nav-links" id="navLinks">
+    <nav class="navbar">
+        <div class="nav-container">
+            <button class="nav-toggle" onclick="toggleMenu()" title="القائمة">☰</button>
+            <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
+            <ul class="nav-links" id="navLinks">
                 <li><a href="index.html" data-lang="nav-home">الرئيسية</a></li>
                 <li><a href="materials.html" data-lang="nav-materials">المواد</a></li>
                 <li><a href="plans.html" data-lang="nav-plans">الخطط الدراسية</a></li>
@@ -31,13 +31,14 @@
         </div>
     </nav>
 
+    <div class="nav-overlay" id="navOverlay"></div>
+
     <section class="page-header">
         <h1 data-lang="links-title">🔗 روابط تهمك</h1>
         <p data-lang="links-desc">روابط مهمة لطلاب الجامعة</p>
     </section>
 
     <section class="box-section">
-
         <div class="box-card">
             <a href="https://ahu.edu.jo/" target="_blank">
                 <div class="box-circle circle-blue">🎓</div>
@@ -45,7 +46,6 @@
                 <p data-lang="links-university-desc">الموقع الرسمي لجامعة الحسين بن طلال</p>
             </a>
         </div>
-
         <div class="box-card">
             <a href="https://ora.ahu.edu.jo/" target="_blank">
                 <div class="box-circle circle-green">👤</div>
@@ -53,7 +53,6 @@
                 <p data-lang="links-portal-desc">سجّل موادك، شوف علاماتك، تابع جدولك</p>
             </a>
         </div>
-
         <div class="box-card">
             <a href="https://elearning.ahu.edu.jo/" target="_blank">
                 <div class="box-circle circle-purple">📚</div>
@@ -61,7 +60,6 @@
                 <p data-lang="links-elearning-desc">منصة eLearning للمواد الدراسية</p>
             </a>
         </div>
-
         <div class="box-card">
             <a href="https://ahu.edu.jo/AR-article-1774" target="_blank">
                 <div class="box-circle circle-red">🧮</div>
@@ -69,7 +67,6 @@
                 <p data-lang="links-calculator-desc">احسب معدلك التراكمي بسهولة</p>
             </a>
         </div>
-
     </section>
 
     <footer>
@@ -83,64 +80,7 @@
         <span>📤</span>
         <span data-lang="btn-share">شارك الموقع</span>
     </button>
-
-    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()" title="الرجوع للأعلى">⬆️</button>
-
-    <script src="script.js"></script>
-</body>
-</html>        <h1>🔗 روابط تهمك</h1>
-        <p>روابط مهمة لطلاب الجامعة</p>
-    </section>
-
-    <section class="box-section">
-
-        <div class="box-card">
-            <a href="https://ahu.edu.jo/" target="_blank">
-                <div class="box-circle circle-blue">🎓</div>
-                <h3>موقع الجامعة</h3>
-                <p>الموقع الرسمي لجامعة الحسين بن طلال</p>
-            </a>
-        </div>
-
-        <div class="box-card">
-            <a href="https://ora.ahu.edu.jo/" target="_blank">
-                <div class="box-circle circle-green">👤</div>
-                <h3>بوابة الطالب</h3>
-                <p>سجّل موادك، شوف علاماتك، تابع جدولك</p>
-            </a>
-        </div>
-
-        <div class="box-card">
-            <a href="https://elearning.ahu.edu.jo/" target="_blank">
-                <div class="box-circle circle-purple">📚</div>
-                <h3>التعليم الإلكتروني</h3>
-                <p>منصة eLearning للمواد الدراسية</p>
-            </a>
-        </div>
-
-        <div class="box-card">
-            <a href="https://ahu.edu.jo/AR-article-1774" target="_blank">
-                <div class="box-circle circle-red">🧮</div>
-                <h3>حاسبة المعدل التراكمي</h3>
-                <p>احسب معدلك التراكمي بسهولة</p>
-            </a>
-        </div>
-
-    </section>
-
-    <footer>
-        <img src="logo.png" alt="Direction Team" class="footer-logo">
-        <p class="last-update" id="lastUpdate">🕐 آخر تحديث: ...</p>
-        <p class="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
-        <p>صُنع بحب لطلبة الهندسة 💜</p>
-    </footer>
-
-    <button class="share-button" onclick="shareSite()" title="شارك الموقع">
-        <span>📤</span>
-        <span>شارك الموقع</span>
-    </button>
-
-    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()" title="الرجوع للأعلى">⬆️</button>
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">⬆️</button>
 
     <script src="script.js"></script>
 </body>
