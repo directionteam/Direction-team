@@ -3314,3 +3314,180 @@ body.dark-mode .enable-notifications-btn {
         border-right-color: #bb86fc;
     }
 }
+/* ============================================
+   اللابتوب - 4 روابط + ☰ للباقي
+   ============================================ */
+
+@media (min-width: 769px) {
+    
+    .nav-container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 1.5rem;
+        gap: 1rem;
+        flex-wrap: nowrap;
+    }
+    
+    .nav-logo {
+        height: 45px;
+        order: 5;
+        margin-left: auto;
+    }
+    
+    .nav-toggle {
+        display: flex;
+        order: 1;
+    }
+    
+    /* القائمة العادية */
+    .nav-links {
+        display: flex;
+        flex-direction: row;
+        position: static;
+        width: auto;
+        height: auto;
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+        gap: 0.6rem;
+        order: 2;
+        flex-wrap: nowrap;
+        right: auto;
+        left: auto;
+        overflow: visible;
+        list-style: none;
+    }
+    
+    /* إخفاء كل الروابط */
+    .nav-links li {
+        display: none;
+        width: auto;
+        border: none;
+        margin: 0;
+    }
+    
+    /* إظهار 4 روابط فقط */
+    .nav-links li:nth-child(1),
+    .nav-links li:nth-child(2),
+    .nav-links li:nth-child(3),
+    .nav-links li:nth-child(4) {
+        display: block;
+    }
+    
+    .nav-links a {
+        display: inline-block;
+        width: auto;
+        padding: 0.5rem 0.9rem;
+        font-size: 0.95rem;
+        border-radius: 6px;
+        text-align: center;
+        margin: 0;
+    }
+    
+    .lang-toggle {
+        order: 3;
+        padding: 0.5rem 0.9rem;
+        font-size: 0.85rem;
+        margin: 0;
+    }
+    
+    .theme-toggle {
+        order: 4;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+        margin: 0;
+    }
+    
+    /* ============================================
+       القائمة المنسدلة عند الضغط على ☰
+       ============================================ */
+    .nav-links.expanded {
+        position: fixed !important;
+        top: 0 !important;
+        right: 0 !important;
+        left: auto !important;
+        width: 300px !important;
+        height: 100vh !important;
+        background: #ffffff !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0 !important;
+        padding: 70px 0 1rem !important;
+        box-shadow: -5px 0 20px rgba(0,0,0,0.2) !important;
+        overflow-y: auto !important;
+        z-index: 9999 !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    .nav-links.expanded li {
+        display: block !important;
+        width: 100% !important;
+        border-bottom: 1px solid #f0e4f5 !important;
+    }
+    
+    .nav-links.expanded li:last-child {
+        border-bottom: none !important;
+    }
+    
+    .nav-links.expanded a {
+        display: block !important;
+        width: 100% !important;
+        padding: 1rem 1.5rem !important;
+        font-size: 1rem !important;
+        text-align: right !important;
+        border-radius: 0 !important;
+    }
+    
+    .nav-links.expanded a:hover,
+    .nav-links.expanded a.active {
+        background: #f3e5f5 !important;
+        color: #4a148c !important;
+        border-right: 4px solid #9c27b0 !important;
+    }
+    
+    /* الإنجليزية: القائمة من اليسار */
+    html[dir="ltr"] .nav-links.expanded {
+        right: auto !important;
+        left: 0 !important;
+        box-shadow: 5px 0 20px rgba(0,0,0,0.2) !important;
+    }
+    
+    html[dir="ltr"] .nav-links.expanded a {
+        text-align: left !important;
+    }
+    
+    html[dir="ltr"] .nav-links.expanded a:hover,
+    html[dir="ltr"] .nav-links.expanded a.active {
+        border-right: none !important;
+        border-left: 4px solid #9c27b0 !important;
+    }
+    
+    /* overlay */
+    .nav-overlay {
+        display: block;
+    }
+    
+    .nav-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* الوضع الليلي */
+    body.dark-mode .nav-links.expanded {
+        background: #16213e !important;
+    }
+    
+    body.dark-mode .nav-links.expanded li {
+        border-bottom-color: #2a1b4d !important;
+    }
+    
+    body.dark-mode .nav-links.expanded a:hover,
+    body.dark-mode .nav-links.expanded a.active {
+        background: #2a1b4d !important;
+        color: #bb86fc !important;
+        border-right-color: #bb86fc !important;
+    }
+}
