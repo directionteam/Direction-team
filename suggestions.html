@@ -12,17 +12,18 @@
         <div class="nav-container">
             <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
             <ul class="nav-links">
-                <li><a href="index.html">الرئيسية</a></li>
-                <li><a href="materials.html">المواد</a></li>
-                <li><a href="plans.html">الخطط الدراسية</a></li>
-                <li><a href="exam.html">امتحان الكفاءة</a></li>
-                <li><a href="programs.html">برامج هندسية</a></li>
-                <li><a href="calculator.html">الحاسبة</a></li>
-                <li><a href="map.html">خريطة الجامعة</a></li>
-                <li><a href="reminders.html">التذكيرات</a></li>
-                <li><a href="dictionary.html"> قاموس المصطلحات والرموز </a></li>
-                <li><a href="suggestions.html" class="active">شاركنا اقتراحك</a></li>
-                <li><a href="contact.html">تواصل معنا</a></li>
+                <li><a href="index.html" data-lang="nav-home">الرئيسية</a></li>
+                <li><a href="materials.html" data-lang="nav-materials">المواد</a></li>
+                <li><a href="plans.html" data-lang="nav-plans">الخطط الدراسية</a></li>
+                <li><a href="exam.html" data-lang="nav-exam">امتحان الكفاءة</a></li>
+                <li><a href="programs.html" data-lang="nav-programs">برامج هندسية</a></li>
+                <li><a href="calculator.html" data-lang="nav-calculator">الحاسبة</a></li>
+                <li><a href="map.html" data-lang="nav-map">خريطة الجامعة</a></li>
+                <li><a href="reminders.html" data-lang="nav-reminders">التذكيرات</a></li>
+                <li><a href="dictionary.html" data-lang="nav-dictionary">القاموس</a></li>
+                <li><a href="suggestions.html" class="active" data-lang="nav-suggestions">شاركنا اقتراحك</a></li>
+                <li><a href="links.html" data-lang="nav-links">روابط تهمك</a></li>
+                <li><a href="contact.html" data-lang="nav-contact">تواصل معنا</a></li>
             </ul>
             <button class="lang-toggle" id="langToggle" onclick="toggleLanguage()" title="Change Language">🌐 EN</button>
             <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="الوضع الليلي">🌙</button>
@@ -30,133 +31,122 @@
     </nav>
 
     <section class="page-header">
-        <h1>📮 شاركنا اقتراحك</h1>
-        <p>رأيك يهمنا — ساعدنا على تطوير الموقع</p>
+        <h1 data-lang="suggestions-title">📮 شاركنا اقتراحك</h1>
+        <p data-lang="suggestions-desc">رأيك يهمنا — ساعدنا على تطوير الموقع</p>
     </section>
 
     <section class="suggestions-section">
 
-        <!-- بطاقة المعلومات -->
         <div class="suggestion-info-card">
             <div class="info-icon">💌</div>
-            <h2>كيف نساعدك؟</h2>
-            <p>اختر نوع رسالتك، وسيصلنا إيميلك مباشرة</p>
+            <h2 data-lang="suggestions-how">كيف نساعدك؟</h2>
+            <p data-lang="suggestions-how-desc">اختر نوع رسالتك، وسيصلنا إيميلك مباشرة</p>
 
             <div class="info-types">
                 <div class="info-type">
                     <span class="type-icon">💡</span>
-                    <span class="type-name">اقتراح</span>
+                    <span class="type-name" data-lang="suggestions-type-suggestion">اقتراح</span>
                 </div>
                 <div class="info-type">
                     <span class="type-icon">🐛</span>
-                    <span class="type-name">مشكلة</span>
+                    <span class="type-name" data-lang="suggestions-type-problem">مشكلة</span>
                 </div>
                 <div class="info-type">
                     <span class="type-icon">💬</span>
-                    <span class="type-name">ملاحظة</span>
+                    <span class="type-name" data-lang="suggestions-type-note">ملاحظة</span>
                 </div>
             </div>
         </div>
 
-        <!-- نموذج الاقتراح -->
         <div class="suggestion-form-card">
-            <h2>📝 اكتب رسالتك</h2>
+            <h2 data-lang="suggestions-write">📝 اكتب رسالتك</h2>
 
-            <form action="https://formsubmit.co/sadeenkhateeb62@gmail.com" method="POST" class="suggestion-form" id="suggestionForm">
+            <form action="https://formsubmit.co/directionteamahu@gmail.com" method="POST" class="suggestion-form" id="suggestionForm">
                 
-                <!-- إعدادات FormSubmit -->
                 <input type="hidden" name="_subject" value="📮 اقتراح جديد من موقع Direction Team">
                 <input type="hidden" name="_template" value="table">
                 <input type="hidden" name="_captcha" value="false">
                 <input type="hidden" name="_next" value="https://directionteam.github.io/Direction-team/thankyou.html">
                 <input type="text" name="_honey" style="display:none">
 
-                <!-- نوع الرسالة -->
                 <div class="form-group">
-                    <label>📌 نوع الرسالة:</label>
+                    <label data-lang="suggestions-type-label">📌 نوع الرسالة:</label>
                     <div class="type-options">
                         <label class="type-option">
                             <input type="radio" name="نوع الرسالة" value="اقتراح 💡" checked>
                             <span class="type-box">
                                 <span class="type-emoji">💡</span>
-                                <span>اقتراح</span>
+                                <span data-lang="suggestions-type-suggestion">اقتراح</span>
                             </span>
                         </label>
                         <label class="type-option">
                             <input type="radio" name="نوع الرسالة" value="مشكلة 🐛">
                             <span class="type-box">
                                 <span class="type-emoji">🐛</span>
-                                <span>مشكلة</span>
+                                <span data-lang="suggestions-type-problem">مشكلة</span>
                             </span>
                         </label>
                         <label class="type-option">
                             <input type="radio" name="نوع الرسالة" value="ملاحظة 💬">
                             <span class="type-box">
                                 <span class="type-emoji">💬</span>
-                                <span>ملاحظة</span>
+                                <span data-lang="suggestions-type-note">ملاحظة</span>
                             </span>
                         </label>
                     </div>
                 </div>
 
-                <!-- الاسم -->
                 <div class="form-group">
-                    <label>👤 اسمك (اختياري):</label>
+                    <label data-lang="suggestions-name-label">👤 اسمك (اختياري):</label>
                     <input type="text" name="الاسم" placeholder="مثال: أحمد محمد" maxlength="50">
                 </div>
 
-                <!-- الإيميل -->
                 <div class="form-group">
-                    <label>📧 إيميلك (اختياري - للرد عليك):</label>
+                    <label data-lang="suggestions-email-label">📧 إيميلك (اختياري - للرد عليك):</label>
                     <input type="email" name="الإيميل" placeholder="example@email.com" maxlength="100">
                 </div>
 
-                <!-- التخصص -->
                 <div class="form-group">
-                    <label>🎓 تخصصك:</label>
+                    <label data-lang="suggestions-major-label">🎓 تخصصك:</label>
                     <select name="التخصص">
-                        <option value="غير محدد">اختر تخصصك</option>
-                        <option value="هندسة الميكانيك">هندسة الميكانيك</option>
-                        <option value="هندسة الطاقة المتجددة">هندسة الطاقة المتجددة</option>
-                        <option value="تخصص آخر">تخصص آخر</option>
+                        <option value="غير محدد" data-lang="suggestions-major-none">اختر تخصصك</option>
+                        <option value="هندسة الميكانيك" data-lang="plans-mechanical">هندسة الميكانيك</option>
+                        <option value="هندسة الطاقة المتجددة" data-lang="plans-renewable">هندسة الطاقة المتجددة</option>
+                        <option value="تخصص آخر" data-lang="suggestions-major-other">تخصص آخر</option>
                     </select>
                 </div>
 
-                <!-- الموضوع -->
                 <div class="form-group">
-                    <label>📝 الموضوع:</label>
+                    <label data-lang="suggestions-subject-label">📝 الموضوع:</label>
                     <input type="text" name="الموضوع" placeholder="مثال: اقتراح إضافة مادة" required maxlength="100">
                 </div>
 
-                <!-- التفاصيل -->
                 <div class="form-group">
-                    <label>💬 التفاصيل:</label>
+                    <label data-lang="suggestions-details-label">💬 التفاصيل:</label>
                     <textarea name="التفاصيل" rows="6" placeholder="اكتب تفاصيل رسالتك هنا..." required maxlength="2000"></textarea>
                 </div>
 
-                <!-- زر الإرسال -->
-                <button type="submit" class="submit-suggestion-btn" onclick="return confirmSubmit()">
+                <button type="submit" class="submit-suggestion-btn" onclick="return confirmSubmit()" data-lang="suggestions-submit">
                     📤 إرسال الرسالة
                 </button>
 
-                <p class="form-note">
+                <p class="form-note" data-lang="suggestions-form-note">
                     ⚠️ ملاحظة: رسالتك ستصل مباشرة لإيميل الفريق. سيتم الرد عليك خلال 48 ساعة.
                 </p>
 
             </form>
         </div>
 
-        <!-- بطاقة بديلة -->
         <div class="alternative-contact">
-            <h3>💡 أو تواصل معنا مباشرة</h3>
+            <h3 data-lang="suggestions-alt-contact">💡 أو تواصل معنا مباشرة</h3>
             <div class="contact-options">
                 <a href="https://www.instagram.com/direction_team_ahu/" target="_blank" class="contact-option instagram">
                     <span>📷</span>
-                    <span>إنستغرام</span>
+                    <span>Instagram</span>
                 </a>
                 <a href="https://web.facebook.com/direction.ahu.3" target="_blank" class="contact-option facebook">
                     <span>📘</span>
-                    <span>فيسبوك</span>
+                    <span>Facebook</span>
                 </a>
             </div>
         </div>
@@ -166,13 +156,13 @@
     <footer>
         <img src="logo.png" alt="Direction Team" class="footer-logo">
         <p class="last-update" id="lastUpdate">🕐 آخر تحديث: ...</p>
-        <p class="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
-        <p>صُنع بحب لطلبة الهندسة 💜</p>
+        <p class="footer-copy" data-lang="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
+        <p data-lang="footer-love">صُنع بحب لطلبة الهندسة 💜</p>
     </footer>
 
     <button class="share-button" onclick="shareSite()" title="شارك الموقع">
         <span>📤</span>
-        <span>شارك الموقع</span>
+        <span data-lang="btn-share">شارك الموقع</span>
     </button>
 
     <button class="scroll-top" id="scrollTop" onclick="scrollToTop()" title="الرجوع للأعلى">⬆️</button>
