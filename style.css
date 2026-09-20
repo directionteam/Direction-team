@@ -3095,3 +3095,40 @@ body.dark-mode .wisdom-card {
         color: #bb86fc;
     }
 }
+/* ===== زر تفعيل الإشعارات ===== */
+.enable-notifications-btn {
+    margin-top: 1.5rem;
+    padding: 0.9rem 2rem;
+    background: linear-gradient(135deg, #27ae60, #1e8449);
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 6px 15px rgba(39, 174, 96, 0.4);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.enable-notifications-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(39, 174, 96, 0.6);
+}
+
+.enable-notifications-btn.enabled {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.enable-notifications-btn.denied {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+body.dark-mode .enable-notifications-btn {
+    color: #ffffff;
+}
