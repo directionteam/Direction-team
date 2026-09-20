@@ -2911,3 +2911,151 @@ body.dark-mode .wisdom-card {
         font-size: 2.5rem;
     }
 }
+/* ============================================
+   قائمة الجوال المنسدلة
+   ============================================ */
+
+/* على الكمبيوتر - لا شيء يتغير */
+@media (min-width: 769px) {
+    .nav-toggle {
+        display: none;
+    }
+}
+
+/* على الجوال */
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 1rem;
+        gap: 0.5rem;
+        flex-wrap: nowrap;
+    }
+    
+    /* زر القائمة */
+    .nav-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+        color: #ffffff;
+        border: none;
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1.4rem;
+        transition: all 0.3s;
+        flex-shrink: 0;
+    }
+    
+    .nav-toggle:active {
+        transform: scale(0.95);
+    }
+    
+    /* اللوجو */
+    .nav-logo {
+        height: 40px;
+        order: 2;
+    }
+    
+    /* الأزرار - ترتيب */
+    .lang-toggle {
+        order: 3;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+    }
+    
+    .theme-toggle {
+        order: 4;
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+    
+    /* القائمة المنسدلة */
+    .nav-links {
+        position: fixed;
+        top: 65px;
+        right: 0;
+        width: 280px;
+        height: calc(100vh - 65px);
+        background: #ffffff;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 1rem;
+        box-shadow: -5px 0 20px rgba(0,0,0,0.15);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        overflow-y: auto;
+        z-index: 999;
+        display: flex;
+        flex-wrap: nowrap;
+    }
+    
+    .nav-links.open {
+        transform: translateX(0);
+    }
+    
+    .nav-links li {
+        width: 100%;
+        border-bottom: 1px solid #f0e4f5;
+    }
+    
+    .nav-links li:last-child {
+        border-bottom: none;
+    }
+    
+    .nav-links a {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+        text-align: right;
+        border-radius: 0;
+    }
+    
+    .nav-links a:hover,
+    .nav-links a.active {
+        background: #f3e5f5;
+        border-right: 4px solid #9c27b0;
+    }
+    
+    /* خلفية معتمة عند فتح القائمة */
+    .nav-overlay {
+        position: fixed;
+        top: 65px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s;
+    }
+    
+    .nav-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+/* الوضع الليلي للقائمة */
+@media (max-width: 768px) {
+    body.dark-mode .nav-links {
+        background: #16213e;
+    }
+    
+    body.dark-mode .nav-links li {
+        border-bottom-color: #2a1b4d;
+    }
+    
+    body.dark-mode .nav-links a:hover,
+    body.dark-mode .nav-links a.active {
+        background: #2a1b4d;
+        border-right-color: #bb86fc;
+    }
+}
