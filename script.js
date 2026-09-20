@@ -150,9 +150,38 @@ window.addEventListener('load', function() {
     }, 1500);
 });
 
-// ============================================
+// ===== قائمة الجوال واللابتوب =====
+function toggleMenu() {
+    const navLinks = document.getElementById('navLinks');
+    const overlay = document.getElementById('navOverlay');
+    
+    if (!navLinks) return;
+    
+    if (window.innerWidth > 768) {
+        // اللابتوب
+        navLinks.classList.toggle('expanded');
+    } else {
+        // الجوال
+        navLinks.classList.toggle('open');
+    }
+    
+    if (overlay) overlay.classList.toggle('show');
+}
+
+// إغلاق القائمة عند الضغط على رابط أو overlay
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.nav-links a') || e.target.id === 'navOverlay') {
+        const navLinks = document.getElementById('navLinks');
+        const overlay = document.getElementById('navOverlay');
+        if (navLinks) {
+            navLinks.classList.remove('open');
+            navLinks.classList.remove('expanded');
+        }
+        if (overlay) overlay.classList.remove('show');
+    }
+});
+
 // ===== نظام اللغة =====
-// ============================================
 let currentLang = localStorage.getItem('siteLanguage') || 'ar';
 
 // ===== أزرار المشاركة والمفضلة =====
@@ -372,9 +401,7 @@ const materialTranslations = {
     'موضوعات خاصة في الهندسة الميكانيكية': 'Special Topics in Mechanical Engineering'
 };
 
-// ============================================
 // ===== ترجمات الواجهة =====
-// ============================================
 const translations = {
     ar: {
         'nav-home': 'الرئيسية', 'nav-materials': 'المواد', 'nav-plans': 'الخطط الدراسية',
@@ -388,7 +415,6 @@ const translations = {
         'about-title': 'من نحن', 'team-title': '👥 الفريق',
         'team-desc': 'تعرّف على من نحن، رؤيتنا، ورسالتنا',
         'team-about': 'من نحن', 'team-vision': 'رؤيتنا', 'team-message': 'رسالتنا',
-        'wisdom-title': '💡 حكمة اليوم', 'wisdom-desc': 'حكمة يومية تتجدد كل يوم',
         'favorites-title': '⭐ موادي المفضلة', 'favorites-desc': 'المواد التي حفظتها في متصفحك',
         'footer-contact': 'تواصل معنا', 'footer-copy': '© 2026 Direction Team - جامعة الحسين بن طلال',
         'footer-love': 'صُنع بحب لطلبة الهندسة 💜', 'btn-share': 'شارك الموقع',
@@ -496,7 +522,6 @@ const translations = {
         'about-title': 'About Us', 'team-title': '👥 The Team',
         'team-desc': 'Get to know us, our vision, and our mission',
         'team-about': 'About Us', 'team-vision': 'Our Vision', 'team-message': 'Our Mission',
-        'wisdom-title': '💡 Wisdom of the Day', 'wisdom-desc': 'Daily wisdom updated every day',
         'favorites-title': '⭐ My Favorites', 'favorites-desc': 'Materials saved in your browser',
         'footer-contact': 'Contact Us', 'footer-copy': '© 2026 Direction Team - Al-Hussein Bin Talal University',
         'footer-love': 'Made with love for engineering students 💜', 'btn-share': 'Share Website',
@@ -633,7 +658,7 @@ function applyLanguage() {
     if (document.getElementById('enableNotifBtn')) updateNotifButton();
 }
 
-// ===== الحاسبة =====
+// ===== الحاسبة الهندسية =====
 function switchCalc(event, calcId) {
     document.querySelectorAll('.calc-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.calc-tab-btn').forEach(b => b.classList.remove('active'));
@@ -732,7 +757,6 @@ function addReminder() {
     const priority = document.getElementById('reminderPriority').value;
     const type = document.getElementById('reminderType').value;
 
-    // تحويل الأرقام العربية إلى إنجليزية
     const title = convertToEnglishNumbers(titleInput);
     const date = convertToEnglishNumbers(dateInput);
     const time = convertToEnglishNumbers(timeInput);
@@ -910,18 +934,13 @@ function showNotification(message) {
     }, 2500);
 }
 
-// ===== فحص التذكيرات القادمة =====
 function checkUpcomingReminders() {
     const reminders = getReminders();
     const now = new Date();
-    
     reminders.forEach(r => {
         if (r.completed) return;
-        
         const reminderTime = new Date(r.date + 'T' + r.time);
         const diffMinutes = (reminderTime - now) / (1000 * 60);
-        
-        // إذا كان التذكير قادماً خلال 24 ساعة (1440 دقيقة)
         if (diffMinutes > -1 && diffMinutes <= 1440) {
             if ('Notification' in window && Notification.permission === 'granted') {
                 try {
@@ -1098,23 +1117,6 @@ function confirmSubmit() {
     return confirm(currentLang === 'ar' ? '📤 إرسال الرسالة؟' : '📤 Send message?');
 }
 
-// ===== قائمة الجوال =====
-function toggleMenu() {
-    const navLinks = document.getElementById('navLinks');
-    const overlay = document.getElementById('navOverlay');
-    if (navLinks) navLinks.classList.toggle('open');
-    if (overlay) overlay.classList.toggle('show');
-}
-
-document.addEventListener('click', function(e) {
-    if (e.target.closest('.nav-links a') || e.target.id === 'navOverlay') {
-        const navLinks = document.getElementById('navLinks');
-        const overlay = document.getElementById('navOverlay');
-        if (navLinks) navLinks.classList.remove('open');
-        if (overlay) overlay.classList.remove('show');
-    }
-});
-
 // ============================================
 // تشغيل عند التحميل
 // ============================================
@@ -1142,7 +1144,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (document.getElementById('enableNotifBtn')) updateNotifButton();
         checkUpcomingReminders();
-        // فحص كل 30 ثانية
         setInterval(checkUpcomingReminders, 30 * 1000);
     }
     if (document.getElementById('symbolList')) {
@@ -1160,33 +1161,4 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
             if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     });
-});
-function toggleMenu() {
-    const navLinks = document.getElementById('navLinks');
-    const overlay = document.getElementById('navOverlay');
-    
-    if (navLinks) {
-        // على الجوال: نستخدم open
-        // على اللابتوب: نستخدم expanded
-        if (window.innerWidth > 768) {
-            navLinks.classList.toggle('expanded');
-        } else {
-            navLinks.classList.toggle('open');
-        }
-    }
-    if (overlay) overlay.classList.toggle('show');
-}
-
-// إغلاق القائمة عند الضغط على رابط أو overlay
-document.addEventListener('click', function(e) {
-    if (e.target.closest('.nav-links a') || e.target.id === 'navOverlay') {
-        const navLinks = document.getElementById('navLinks');
-        const overlay = document.getElementById('navOverlay');
-        
-        if (navLinks) {
-            navLinks.classList.remove('open');
-            navLinks.classList.remove('expanded');
-        }
-        if (overlay) overlay.classList.remove('show');
-    }
 });
