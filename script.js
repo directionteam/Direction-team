@@ -1161,3 +1161,32 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
         }
     });
 });
+function toggleMenu() {
+    const navLinks = document.getElementById('navLinks');
+    const overlay = document.getElementById('navOverlay');
+    
+    if (navLinks) {
+        // على الجوال: نستخدم open
+        // على اللابتوب: نستخدم expanded
+        if (window.innerWidth > 768) {
+            navLinks.classList.toggle('expanded');
+        } else {
+            navLinks.classList.toggle('open');
+        }
+    }
+    if (overlay) overlay.classList.toggle('show');
+}
+
+// إغلاق القائمة عند الضغط على رابط أو overlay
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.nav-links a') || e.target.id === 'navOverlay') {
+        const navLinks = document.getElementById('navLinks');
+        const overlay = document.getElementById('navOverlay');
+        
+        if (navLinks) {
+            navLinks.classList.remove('open');
+            navLinks.classList.remove('expanded');
+        }
+        if (overlay) overlay.classList.remove('show');
+    }
+});
