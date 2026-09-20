@@ -1295,3 +1295,114 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
         }
     });
 });
+// ===== قاموس ترجمة أسماء المواد =====
+const materialTranslations = {
+    // ===== الطاقة المتجددة =====
+    'لغة C++': 'C++ Language',
+    'مدخل الهندسة': 'Introduction to Engineering',
+    'كيمياء عامة (1) - General Chemistry (1)': 'General Chemistry (1)',
+    'تفاضل وتكامل (2) - Calculus (2)': 'Calculus (2)',
+    'مختبر فيزياء عامة (1)': 'General Physics Lab (1)',
+    'مختبر فيزياء عامة (2)': 'General Physics Lab (2)',
+    'الرسم الهندسي - Engineering Drawing': 'Engineering Drawing',
+    'مهارات الاتصال - Communication Skills': 'Communication Skills',
+    'الاقتصاد الهندسي - Engineering Economy': 'Engineering Economy',
+    'التحليل العددي للمهندسين - Numerical Analysis': 'Numerical Analysis for Engineers',
+    'رياضيات هندسية - Engineering Mathematics': 'Engineering Mathematics',
+    'الطاقة والبيئة - Energy and the Environment': 'Energy and the Environment',
+    'القياسات والأجهزة الهندسية': 'Engineering Measurements and Devices',
+    'الميكانيكا الهندسية - Engineering Mechanics': 'Engineering Mechanics',
+    'برمجة الحاسوب للمهندسين': 'Computer Programming for Engineers',
+    'ميكانيكا الموائع - Fluid Mechanics': 'Fluid Mechanics',
+    'مبادئ الهندسة الكهربائية والإلكترونيات': 'Electrical & Electronic Principles',
+    'الديناميكا الحرارية - Thermodynamics': 'Thermodynamics',
+    'مصادر الطاقة المتجددة': 'Renewable Energy Sources',
+    'ميكانيكا المواد وخصائصها': 'Mechanics of Materials & Properties',
+    'نقل الحرارة والكتلة': 'Heat and Mass Transfer',
+    'أساسيات أنظمة القدرة الكهربائية': 'Fundamentals of Power Systems',
+    'مختبر ميكانيكا الموائع': 'Fluid Mechanics Lab',
+    'مختبر الكهرباء والإلكترونيات': 'Electrical & Electronic Lab',
+    'أنظمة طاقة شمسية حرارية': 'Solar Thermal Energy Systems',
+    'الآلات التوربينية - Turbo-Machinery': 'Turbo-Machinery',
+    'تكنولوجيا أنظمة الخلايا الكهروضوئية': 'PV System Technology',
+    'إدارة الطاقة - Energy Management': 'Energy Management',
+    'مقدمة في التصميم الميكانيكي': 'Introduction to Mechanical Design',
+    'مختبر ديناميكا الموائع الحسابية (CFD) Lab': 'CFD Lab',
+    'مختبر التحكم - Control Lab': 'Control Lab',
+    'الطاقة الحرارية الارضية - Geothermal Energy': 'Geothermal Energy',
+    'طاقة الرياح - Wind Energy': 'Wind Energy',
+    
+    // ===== هندسة الميكانيك =====
+    'مدخل للهندسة': 'Introduction to Engineering',
+    'فيزياء عامة عملية (1)': 'General Physics Lab (1)',
+    'مختبر فيزياء عامة (2)': 'General Physics Lab (2)',
+    'كيمياء عامة (1)': 'General Chemistry (1)',
+    'تفاضل وتكامل (2)': 'Calculus (2)',
+    'رياضيات هندسية (1)': 'Engineering Mathematics (1)',
+    'رياضيات هندسية (2)': 'Engineering Mathematics (2)',
+    'استاتيكا': 'Statics',
+    'ديناميكا': 'Dynamics',
+    'تحليل عددي للمهندسين': 'Numerical Analysis for Engineers',
+    'علم المواد': 'Materials Science',
+    'رسم هندسي': 'Engineering Drawing',
+    'رسم آلات': 'Machine Drawing',
+    'اقتصاد هندسي': 'Engineering Economy',
+    'مهارات اتصال': 'Communication Skills',
+    'ميكانيكا الموائع (1)': 'Fluid Mechanics (1)',
+    'ميكانيكا الموائع (2)': 'Fluid Mechanics (2)',
+    'ديناميكا حرارية (1)': 'Thermodynamics (1)',
+    'ديناميكا حرارية (2)': 'Thermodynamics (2)',
+    'مقاومة المواد (1)': 'Mechanics of Materials (1)',
+    'مقاومة مواد (2)': 'Mechanics of Materials (2)',
+    'نظرية الآلات': 'Theory of Machines',
+    'انتقال الحرارة (1)': 'Heat Transfer (1)',
+    'القياسات الهندسية': 'Engineering Measurements',
+    'الدوائر والآلات الكهربائية': 'Electrical Circuits & Machines',
+    'عمليات الإنتاج (1)': 'Manufacturing Processes (1)',
+    'مختبر ديناميكا حرارية': 'Thermodynamics Lab',
+    'مختبر مقاومة المواد': 'Mechanics of Materials Lab',
+    'مختبر نظرية الآلات': 'Theory of Machines Lab',
+    'مختبر انتقال الحرارة': 'Heat Transfer Lab',
+    'مختبر الإنتاج والقياسات': 'Production & Measurements Lab',
+    'التصميم الميكانيكي (1)': 'Mechanical Design (1)',
+    'التصميم الميكانيكي (2)': 'Mechanical Design (2)',
+    'التصميم بواسطة الحاسوب': 'Computer-Aided Design',
+    'الآلات التوربينية': 'Turbo-Machinery',
+    'التكييف (1)': 'Air Conditioning (1)',
+    'الاهتزازات الميكانيكية': 'Mechanical Vibrations',
+    'محركات احتراق داخلي': 'Internal Combustion Engines',
+    'مختبر محركات الاحتراق الداخلي': 'IC Engines Lab',
+    'مختبر الاهتزازات الميكانيكية والتحكم': 'Vibrations & Control Lab',
+    'التحكم الآلي': 'Automatic Control',
+    'الأنظمة الديناميكية والتحكم': 'Dynamic Systems & Control',
+    'مختبر آلات كهربائية': 'Electrical Machines Lab',
+    'هندسة السلامة المهنية': 'Industrial Safety Engineering',
+    'أنظمة الطاقة المتجددة': 'Renewable Energy Systems',
+    'تحويل الطاقة': 'Energy Conversion',
+    'محطات القدرة الحرارية': 'Thermal Power Plants',
+    'موضوعات خاصة في الهندسة الميكانيكية': 'Special Topics in Mechanical Engineering'
+};
+
+// ===== ترجمة المواد تلقائياً =====
+function translateMaterials() {
+    const materialLinks = document.querySelectorAll('.year-content ul li a, .semester li a');
+    
+    materialLinks.forEach(link => {
+        // حفظ النص العربي الأصلي في data-ar-text
+        if (!link.hasAttribute('data-ar-text')) {
+            link.setAttribute('data-ar-text', link.textContent.trim());
+        }
+        
+        const arabicText = link.getAttribute('data-ar-text');
+        
+        if (currentLang === 'en') {
+            // ترجمة للإنجليزية
+            if (materialTranslations[arabicText]) {
+                link.textContent = materialTranslations[arabicText];
+            }
+        } else {
+            // رجوع للعربية
+            link.textContent = arabicText;
+        }
+    });
+}
