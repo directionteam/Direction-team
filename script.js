@@ -180,7 +180,7 @@ function addShareButtons() {
         const li = link.parentElement;
         if (li.querySelector('.share-material-btn')) return;
         
-        const materialName = link.textContent.trim();
+        const materialName = link.getAttribute('data-ar-text') || link.textContent.trim();
         
         const shareBtn = document.createElement('button');
         shareBtn.className = 'share-material-btn';
@@ -262,7 +262,7 @@ function addFavoriteButtons() {
         const li = link.parentElement;
         if (li.querySelector('.fav-material-btn')) return;
         
-        const materialName = link.textContent.trim();
+        const materialName = link.getAttribute('data-ar-text') || link.textContent.trim();
         const materialUrl = link.href;
         
         const favBtn = document.createElement('button');
@@ -293,7 +293,7 @@ function displayFavorites() {
         container.innerHTML = `
             <div class="empty-favorites">
                 <p>${isAr ? '⭐ لا توجد مواد في المفضلة بعد' : '⭐ No favorites yet'}</p>
-                <p>${isAr ? 'اذهب إلى <a href="materials.html">صفحة المواد</a> وأضف موادك المفضلة بنقرة على النجمة' : 'Go to <a href="materials.html">Materials page</a> and add your favorites'}</p>
+                <p>${isAr ? 'اذهب إلى <a href="materials.html">صفحة المواد</a> وأضف موادك المفضلة' : 'Go to <a href="materials.html">Materials page</a> and add favorites'}</p>
             </div>
         `;
         return;
@@ -305,7 +305,7 @@ function displayFavorites() {
                 <span class="fav-icon">⭐</span>
                 <span class="fav-name">${fav.name}</span>
             </a>
-            <button class="fav-remove" onclick="removeFavorite('${fav.name.replace(/'/g, "\\'")}')" title="${isAr ? 'إزالة' : 'Remove'}">×</button>
+            <button class="fav-remove" onclick="removeFavorite('${fav.name.replace(/'/g, "\\'")}')">×</button>
         </div>
     `).join('');
 }
@@ -1028,7 +1028,6 @@ const translations = {
 
 // ===== قاموس ترجمة أسماء المواد =====
 const materialTranslations = {
-    // الطاقة المتجددة
     'لغة C++': 'C++ Language',
     'مدخل الهندسة': 'Introduction to Engineering',
     'كيمياء عامة (1) - General Chemistry (1)': 'General Chemistry (1)',
@@ -1062,8 +1061,6 @@ const materialTranslations = {
     'مختبر التحكم - Control Lab': 'Control Lab',
     'الطاقة الحرارية الارضية - Geothermal Energy': 'Geothermal Energy',
     'طاقة الرياح - Wind Energy': 'Wind Energy',
-    
-    // الميكانيك
     'مدخل للهندسة': 'Introduction to Engineering',
     'فيزياء عامة عملية (1)': 'General Physics Lab (1)',
     'كيمياء عامة (1)': 'General Chemistry (1)',
@@ -1118,24 +1115,21 @@ function translateMaterials() {
     const materialLinks = document.querySelectorAll('.year-content ul li a, .semester li a');
     
     materialLinks.forEach(link => {
+        // احفظ النص الأصلي فقط (بدون الأزرار)
         if (!link.hasAttribute('data-ar-text')) {
-            link.setAttribute('data-ar-text', link.textContent.trim());
+            const clone = link.cloneNode(true);
+            clone.querySelectorAll('.share-material-btn, .fav-material-btn').forEach(el => el.remove());
+            const cleanText = clone.textContent.trim();
+            link.setAttribute('data-ar-text', cleanText);
         }
         
         const arabicText = link.getAttribute('data-ar-text');
         
         if (currentLang === 'en') {
-            if (materialTranslations[arabicText]) {
-                link.textContent = materialTranslations[arabicText];
-            }
+            link.textContent = materialTranslations[arabicText] || arabicText;
         } else {
             link.textContent = arabicText;
         }
-    });
-    
-    // ترجمة زر المشاركة والمفضلة
-    document.querySelectorAll('.share-material-btn').forEach(btn => {
-        btn.innerHTML = currentLang === 'ar' ? '📤 مشاركة' : '📤 Share';
     });
 }
 
@@ -1183,7 +1177,15 @@ function applyLanguage() {
     // ترجمة المواد
     translateMaterials();
     
-    // إعادة رسم التذكيرات إذا كانت الصفحة مفتوحة
+    // إعادة إضافة الأزرار بعد الترجمة
+    if (document.getElementById('renewable') || document.getElementById('mechanical')) {
+        setTimeout(() => {
+            addShareButtons();
+            addFavoriteButtons();
+        }, 50);
+    }
+    
+    // إعادة رسم التذكيرات
     if (document.getElementById('remindersList')) {
         renderReminders();
     }
