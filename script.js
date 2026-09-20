@@ -2,7 +2,7 @@
 // Direction Team - Main JavaScript File
 // ============================================
 
-// ===== التبديل بين التخصصين =====
+// ===== التبديل بين التخصصات =====
 function switchTab(event, tabId) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -175,31 +175,6 @@ window.addEventListener('load', function() {
     }, 1500);
 });
 
-// ===== مشاركة مادة =====
-function shareMaterial(materialName) {
-    const url = 'https://directionteam.github.io/Direction-team/materials.html';
-    const isAr = currentLang === 'ar';
-    
-    const text = isAr
-        ? `📚 ${materialName}\n\n🔗 من موقع Direction Team:\n${url}\n\n💜 شاركها مع زملائك!`
-        : `📚 ${materialName}\n\n🔗 From Direction Team:\n${url}\n\n💜 Share it with your colleagues!`;
-    
-    if (navigator.share) {
-        navigator.share({
-            title: materialName,
-            text: text,
-            url: url
-        }).catch(() => openWhatsAppShare(text));
-    } else {
-        openWhatsAppShare(text);
-    }
-}
-
-function openWhatsAppShare(text) {
-    const whatsappUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
-    window.open(whatsappUrl, '_blank');
-}
-
 // ===== إضافة زر المشاركة لكل مادة =====
 function addShareButtons() {
     const materialLinks = document.querySelectorAll('.year-content ul li a, .semester li a');
@@ -244,6 +219,11 @@ function shareMaterialAdvanced(materialName, materialUrl) {
     } else {
         openWhatsAppShare(text);
     }
+}
+
+function openWhatsAppShare(text) {
+    const whatsappUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
+    window.open(whatsappUrl, '_blank');
 }
 
 // ===== نظام المفضلة =====
@@ -491,7 +471,6 @@ function getDayOfYear() {
 }
 
 function loadDailyWisdom() {
-    const card = document.getElementById('wisdomCard');
     const iconEl = document.getElementById('wisdomIcon');
     const typeEl = document.getElementById('wisdomType');
     const textEl = document.getElementById('wisdomText');
@@ -503,9 +482,7 @@ function loadDailyWisdom() {
     const today = new Date();
     const dayOfWeek = today.getDay();
 
-    let wisdom;
-    let icon;
-    let type;
+    let wisdom, icon, type;
 
     if (dayOfWeek === 5) {
         wisdom = wisdomData.quran[dayOfYear % wisdomData.quran.length];
@@ -611,7 +588,9 @@ function clearAllReminders() {
 function filterReminders(filter) {
     reminderFilter = filter;
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+    }
     renderReminders();
 }
 
@@ -867,12 +846,19 @@ function renderSymbols(symbols) {
 }
 
 function getSymbolCategoryName(cat) {
-    const names = {
+    const isAr = currentLang === 'ar';
+    const names = isAr ? {
         electric: '⚡ كهربائية',
         mechanical: '🔧 ميكانيكية',
         civil: '🏗️ مدنية',
         programming: '💻 برمجية',
         math: '📐 رياضية'
+    } : {
+        electric: '⚡ Electrical',
+        mechanical: '🔧 Mechanical',
+        civil: '🏗️ Civil',
+        programming: '💻 Programming',
+        math: '📐 Math'
     };
     return names[cat] || cat;
 }
@@ -904,16 +890,34 @@ function filterSymbolCategory(event, category) {
     searchSymbols();
 }
 
+// ===== نموذج الاقتراحات =====
+function confirmSubmit() {
+    const subject = document.querySelector('input[name="الموضوع"]');
+    const details = document.querySelector('textarea[name="التفاصيل"]');
+
+    if (!subject || !details) return true;
+
+    if (!subject.value.trim() || !details.value.trim()) {
+        alert(currentLang === 'ar' ? '⚠️ الرجاء إكمال جميع الحقول المطلوبة' : '⚠️ Please fill all required fields');
+        return false;
+    }
+
+    return confirm(currentLang === 'ar' ? '📤 هل أنت متأكد من إرسال الرسالة؟' : '📤 Send this message?');
+}
+
 // ============================================
 // نظام تبديل اللغة
 // ============================================
 const translations = {
     ar: {
+        // Navigation
         'nav-home': 'الرئيسية', 'nav-materials': 'المواد', 'nav-plans': 'الخطط الدراسية',
         'nav-exam': 'امتحان الكفاءة', 'nav-programs': 'برامج هندسية', 'nav-calculator': 'الحاسبة',
         'nav-map': 'خريطة الجامعة', 'nav-reminders': 'التذكيرات', 'nav-dictionary': 'القاموس',
         'nav-feedback': 'شارك تجربتك', 'nav-suggestions': 'شاركنا اقتراحك',
         'nav-links': 'روابط تهمك', 'nav-contact': 'تواصل معنا',
+        
+        // Hero & Sections
         'hero-subtitle': 'Al-Hussein Bin Talal University',
         'hero-desc': 'فريق أكاديمي تطوّعي - كلية الهندسة',
         'hero-btn-materials': '📚 تصفح المواد', 'hero-btn-plans': '📋 الخطط الدراسية',
@@ -924,16 +928,136 @@ const translations = {
         'favorites-title': '⭐ موادي المفضلة', 'favorites-desc': 'المواد التي حفظتها في متصفحك',
         'footer-contact': 'تواصل معنا', 'footer-copy': '© 2026 Direction Team - جامعة الحسين بن طلال',
         'footer-love': 'صُنع بحب لطلبة الهندسة 💜', 'btn-share': 'شارك الموقع',
+        
+        // Team Cards
         'team-about-text': 'فريق أكاديمي تطوّعي في قسمِ الهندسة الميكانيكيّة وهندسة الطاقة المتجددة في جامعة الحسين بن طلال، يهدف إلى الرقي بالمستوى الأكاديمي والإجتماعي لطلبة الهندسة الميكانيكيّة وهندسة الطاقة المتجددة بشكل خاص وطلبة كليّة الهندسة بشكل عام، من خلال تقديم المساعدة الأكاديميّة وتنظيم النشاطات اللامنهجيّة.',
         'team-vision-text': 'توفير الأجواء الملائمة للتميز والإبداع في مجالات الهندسة الميكانيكيّة وهندسة الطاقة المتجددة وتطوير العمل الأكاديمي وتنميّة الطلبة من خلال الأنشطة اللامنهجيّة.',
-        'team-message-text': 'العمل المشترك للوصول إلى مجتمع طلابي مبادر واشراكه في التخطيط والتنفيذ لمختلف الأنشطة، وتنميته لمواكبة تطورات العصر سعياً للارتقاء بالمستوى الفكري والأكاديمي له.'
+        'team-message-text': 'العمل المشترك للوصول إلى مجتمع طلابي مبادر واشراكه في التخطيط والتنفيذ لمختلف الأنشطة، وتنميته لمواكبة تطورات العصر سعياً للارتقاء بالمستوى الفكري والأكاديمي له.',
+        
+        // Materials
+        'materials-title': '📚 مواد التخصص',
+        'materials-desc': 'اختر التخصص ثم السنة الدراسية لعرض المواد',
+        'materials-search': '🔍 ابحث عن مادة...',
+        'materials-tab-renewable': '🌱 هندسة الطاقة المتجددة',
+        'materials-tab-mechanical': '⚙️ هندسة الميكانيك',
+        'materials-year-1': '🎓 السنة الأولى', 'materials-year-2': '🎓 السنة الثانية',
+        'materials-year-3': '🎓 السنة الثالثة', 'materials-year-4': '🎓 السنة الرابعة',
+        'materials-year-5': '🎓 السنة الخامسة',
+        
+        // Plans
+        'plans-title': '📋 الخطط الدراسية', 'plans-desc': 'اختر التخصص والسنة التي تريد الاطلاع على خطتها',
+        'plans-mechanical': '⚙️ هندسة الميكانيك', 'plans-renewable': '🌱 هندسة الطاقة المتجددة',
+        'plans-new-2026': '🆕 الخطة الجديدة 2026', 'plans-2020': '📄 الخطة الدراسية (2020)',
+        'plans-2021': '📄 الخطة الدراسية (2021)', 'plans-tree': '🌳 الخطة الشجرية',
+        'plans-years': '📅 الخطة حسب السنوات',
+        
+        // Exam
+        'exam-title': '📝 نماذج امتحان الكفاءة الجامعية', 'exam-desc': 'كل ما تحتاجه للاستعداد لامتحان الكفاءة',
+        'exam-general': '📌 معلومات عامة', 'exam-instructions': '📋 تعليمات امتحان الكفاءة',
+        'exam-sample': '📄 نموذج مستوى عام', 'exam-mechanical': '⚙️ نماذج الهندسة الميكانيكية',
+        'exam-part-1': '1️⃣ الجزء الأول', 'exam-part-2': '2️⃣ الجزء الثاني',
+        'exam-part-3': '3️⃣ الجزء الثالث', 'exam-part-4': '4️⃣ الجزء الرابع',
+        
+        // Programs
+        'programs-title': '💻 برامج هندسية', 'programs-desc': 'روابط تحميل وشرح لأهم البرامج الهندسية',
+        'programs-download': 'رابط التحميل', 'programs-video': 'شرح طريقة التثبيت',
+        'program-solidworks-desc': 'برنامج التصميم الهندسي ثلاثي الأبعاد - الأشهر في كليات الهندسة. يُستخدم لتصميم القطع الميكانيكية والمجسمات ثلاثية الأبعاد.',
+        'program-matlab-desc': 'برنامج التحليل الرياضي والحسابات الهندسية. أساسي لمهندسي الطاقة والميكانيك لحل المعادلات والتحليل الرقمي.',
+        
+        // Calculator
+        'calc-title': '🧮 الحاسبة الهندسية المتعددة', 'calc-desc': 'مجموعة حاسبات هندسية في مكان واحد',
+        'calc-tab-triangle': '📐 المثلثات', 'calc-tab-power': '⚡ القدرة',
+        'calc-tab-heat': '🔥 الحرارة', 'calc-tab-pressure': '💧 الضغط', 'calc-tab-units': '🔄 الوحدات',
+        'calc-triangle-title': '📐 حاسبة المثلثات', 'calc-triangle-desc': 'احسب قيم الدوال المثلثية للزوايا',
+        'calc-angle-label': 'الزاوية (بالدرجات):', 'calc-calculate': 'احسب',
+        'calc-sin': 'sin (جيب):', 'calc-cos': 'cos (جتا):', 'calc-tan': 'tan (ظل):',
+        'calc-power-title': '⚡ حاسبة القدرة الكهربائية', 'calc-voltage-label': 'الجهد V (فولت):',
+        'calc-current-label': 'التيار I (أمبير):', 'calc-power-result': 'القدرة P:', 'calc-power-kw': 'بالكيلوواط:',
+        'calc-heat-title': '🔥 حاسبة الحرارة', 'calc-mass-label': 'الكتلة m (كغ):',
+        'calc-specific-label': 'الحرارة النوعية c (J/kg·°C):', 'calc-deltat-label': 'فرق الحرارة ΔT (°C):',
+        'calc-heat-result': 'الطاقة Q:', 'calc-heat-kj': 'بالكيلوجول:',
+        'calc-pressure-title': '💧 حاسبة الضغط', 'calc-force-label': 'القوة F (نيوتن):',
+        'calc-area-label': 'المساحة A (متر مربع):', 'calc-pressure-result': 'الضغط P:', 'calc-pressure-kpa': 'بالكيلوباسكال:',
+        'calc-units-title': '🔄 محول الوحدات', 'calc-units-desc': 'حوّل بين وحدات القياس المختلفة',
+        'calc-value-label': 'القيمة:', 'calc-from-label': 'من وحدة:', 'calc-to-label': 'إلى وحدة:',
+        'calc-convert': 'حوّل', 'calc-result-label': 'النتيجة:',
+        'calc-m': 'متر (m)', 'calc-cm': 'سنتيمتر (cm)', 'calc-mm': 'مليمتر (mm)',
+        'calc-km': 'كيلومتر (km)', 'calc-inch': 'بوصة (inch)', 'calc-ft': 'قدم (ft)',
+        
+        // Map
+        'map-title': '🗺️ خريطة الجامعة التفاعلية', 'map-desc': 'اكتشف أهم أماكن جامعة الحسين بن طلال',
+        'map-places': '📍 أماكن مهمة في الجامعة', 'map-places-desc': 'اضغطي على أي مكان في الخريطة لعرض تفاصيله على Google Maps',
+        'map-engineering': 'كلية الهندسة', 'map-it': 'كلية تكنولوجيا المعلومات',
+        'map-science': 'كلية العلوم', 'map-literature': 'كلية الآداب',
+        'map-business': 'كلية إدارة الأعمال', 'map-law': 'كلية القانون',
+        'map-nursing': 'كلية الأميرة عائشة للتمريض', 'map-finance': 'مبنى الإدارة المالية',
+        'map-jordan-hall': 'قاعة الأردن', 'map-computer-center': 'مركز الحاسوب',
+        'map-halls': 'مجمع القاعات', 'map-booth': 'منصة الهندسة',
+        'map-bus': 'مجمع الباصات', 'map-dorm1': 'سكن الطالبات (1)',
+        'map-dorm2': 'سكن الطالبات (2)', 'map-housing-gate': 'بوابة السكن', 'map-supplies': 'وحدة اللوازم',
+        
+        // Reminders
+        'reminders-title': '⏰ تذكيراتي', 'reminders-desc': 'سجّل تذكيراتك ولا تنسى مواعيدك المهمة',
+        'reminders-add': '➕ إضافة تذكير جديد', 'reminders-title-label': '📝 العنوان:',
+        'reminders-date-label': '📅 التاريخ:', 'reminders-time-label': '⏰ الوقت:',
+        'reminders-priority-label': '🎯 الأولوية:', 'reminders-type-label': '📂 النوع:',
+        'reminders-priority-high': '🔴 عالية', 'reminders-priority-medium': '🟡 متوسطة', 'reminders-priority-low': '🟢 منخفضة',
+        'reminders-type-exam': '📝 امتحان', 'reminders-type-homework': '📚 واجب',
+        'reminders-type-project': '🔬 مشروع', 'reminders-type-meeting': '👥 اجتماع', 'reminders-type-other': '📌 أخرى',
+        'reminders-add-btn': '➕ إضافة التذكير', 'reminders-list-title': '📋 تذكيراتي',
+        'reminders-filter-all': 'الكل', 'reminders-filter-upcoming': 'القادمة', 'reminders-filter-past': 'المنتهية',
+        'reminders-clear-all': '🗑️ حذف الكل',
+        
+        // Dictionary
+        'dict-title': '📖 القاموس الهندسي', 'dict-desc': 'مصطلحات هندسية + رموز هندسية مصوّرة',
+        'dict-tab-terms': '📖 المصطلحات', 'dict-tab-symbols': '🔣 الرموز',
+        'dict-search-term': '🔍 ابحث عن مصطلح بالعربي أو الإنجليزي...', 'dict-search-symbol': '🔍 ابحث عن رمز...',
+        'dict-all': '🌐 الكل', 'dict-mechanics': '⚙️ ميكانيكا', 'dict-thermo': '🔥 حراريات',
+        'dict-fluids': '💧 موائع', 'dict-materials': '🔬 مواد', 'dict-electric': '⚡ كهرباء',
+        'dict-energy': '🌱 طاقة', 'dict-math': '📐 رياضيات',
+        'dict-electric-sym': '⚡ كهربائية', 'dict-mechanical-sym': '🔧 ميكانيكية',
+        'dict-civil': '🏗️ مدنية', 'dict-programming': '💻 برمجية', 'dict-math-sym': '📐 رياضية',
+        'dict-term-count': 'مصطلح', 'dict-symbol-count': 'رمز',
+        'dict-no-results': 'لا توجد نتائج', 'dict-no-results-desc': 'جربي كلمة بحث أخرى أو تصنيفاً مختلفاً',
+        
+        // Suggestions
+        'suggestions-title': '📮 شاركنا اقتراحك', 'suggestions-desc': 'رأيك يهمنا — ساعدنا على تطوير الموقع',
+        'suggestions-how': 'كيف نساعدك؟', 'suggestions-how-desc': 'اختر نوع رسالتك، وسيصلنا إيميلك مباشرة',
+        'suggestions-type-suggestion': 'اقتراح', 'suggestions-type-problem': 'مشكلة', 'suggestions-type-note': 'ملاحظة',
+        'suggestions-write': '📝 اكتب رسالتك', 'suggestions-type-label': '📌 نوع الرسالة:',
+        'suggestions-name-label': '👤 اسمك (اختياري):', 'suggestions-email-label': '📧 إيميلك (اختياري - للرد عليك):',
+        'suggestions-major-label': '🎓 تخصصك:', 'suggestions-major-none': 'اختر تخصصك',
+        'suggestions-major-other': 'تخصص آخر', 'suggestions-subject-label': '📝 الموضوع:',
+        'suggestions-details-label': '💬 التفاصيل:', 'suggestions-submit': '📤 إرسال الرسالة',
+        'suggestions-form-note': '⚠️ ملاحظة: رسالتك ستصل مباشرة لإيميل الفريق. سيتم الرد عليك خلال 48 ساعة.',
+        'suggestions-alt-contact': '💡 أو تواصل معنا مباشرة',
+        
+        // Links
+        'links-title': '🔗 روابط تهمك', 'links-desc': 'روابط مهمة لطلاب الجامعة',
+        'links-university': 'موقع الجامعة', 'links-university-desc': 'الموقع الرسمي لجامعة الحسين بن طلال',
+        'links-portal': 'بوابة الطالب', 'links-portal-desc': 'سجّل موادك، شوف علاماتك، تابع جدولك',
+        'links-elearning': 'التعليم الإلكتروني', 'links-elearning-desc': 'منصة eLearning للمواد الدراسية',
+        'links-calculator': 'حاسبة المعدل التراكمي', 'links-calculator-desc': 'احسب معدلك التراكمي بسهولة',
+        
+        // Contact
+        'contact-title': '📞 تواصل معنا', 'contact-desc': 'تابعنا على مواقع التواصل الاجتماعي',
+        
+        // 404
+        'notfound-title': '🚫 404', 'notfound-subtitle': 'الصفحة غير موجودة',
+        'notfound-message': 'عذراً، الصفحة غير موجودة',
+        'notfound-desc': 'يبدو أن الرابط الذي تحاول الوصول إليه غير متوفر أو تم نقله',
+        'notfound-home': '🏠 الرجوع للرئيسية', 'notfound-materials': '📚 تصفح المواد',
+        'notfound-suggestions-title': '💡 قد تجد ما تبحث عنه هنا:'
     },
     en: {
+        // Navigation
         'nav-home': 'Home', 'nav-materials': 'Materials', 'nav-plans': 'Study Plans',
         'nav-exam': 'Competency Exam', 'nav-programs': 'Engineering Programs', 'nav-calculator': 'Calculator',
         'nav-map': 'Campus Map', 'nav-reminders': 'Reminders', 'nav-dictionary': 'Dictionary',
         'nav-feedback': 'Share Experience', 'nav-suggestions': 'Send Suggestion',
         'nav-links': 'Useful Links', 'nav-contact': 'Contact Us',
+        
+        // Hero & Sections
         'hero-subtitle': 'Al-Hussein Bin Talal University',
         'hero-desc': 'Volunteer Academic Team - College of Engineering',
         'hero-btn-materials': '📚 Browse Materials', 'hero-btn-plans': '📋 Study Plans',
@@ -944,9 +1068,126 @@ const translations = {
         'favorites-title': '⭐ My Favorites', 'favorites-desc': 'Materials saved in your browser',
         'footer-contact': 'Contact Us', 'footer-copy': '© 2026 Direction Team - Al-Hussein Bin Talal University',
         'footer-love': 'Made with love for engineering students 💜', 'btn-share': 'Share Website',
+        
+        // Team Cards
         'team-about-text': 'A volunteer academic team in the Department of Mechanical Engineering and Renewable Energy Engineering at Al-Hussein Bin Talal University, aiming to elevate the academic and social level of mechanical and renewable energy engineering students in particular, and College of Engineering students in general, by providing academic assistance and organizing extracurricular activities.',
         'team-vision-text': 'Providing the appropriate atmosphere for excellence and creativity in the fields of mechanical engineering and renewable energy engineering, developing academic work, and developing students through extracurricular activities.',
-        'team-message-text': 'Working together to reach a proactive student community, involving it in planning and implementing various activities, and developing it to keep pace with the developments of the age in pursuit of elevating its intellectual and academic level.'
+        'team-message-text': 'Working together to reach a proactive student community, involving it in planning and implementing various activities, and developing it to keep pace with the developments of the age in pursuit of elevating its intellectual and academic level.',
+        
+        // Materials
+        'materials-title': '📚 Major Materials',
+        'materials-desc': 'Choose your major and year to view materials',
+        'materials-search': '🔍 Search for a material...',
+        'materials-tab-renewable': '🌱 Renewable Energy Engineering',
+        'materials-tab-mechanical': '⚙️ Mechanical Engineering',
+        'materials-year-1': '🎓 First Year', 'materials-year-2': '🎓 Second Year',
+        'materials-year-3': '🎓 Third Year', 'materials-year-4': '🎓 Fourth Year',
+        'materials-year-5': '🎓 Fifth Year',
+        
+        // Plans
+        'plans-title': '📋 Study Plans', 'plans-desc': 'Choose your major and year to view the study plan',
+        'plans-mechanical': '⚙️ Mechanical Engineering', 'plans-renewable': '🌱 Renewable Energy Engineering',
+        'plans-new-2026': '🆕 New Plan 2026', 'plans-2020': '📄 Study Plan (2020)',
+        'plans-2021': '📄 Study Plan (2021)', 'plans-tree': '🌳 Tree Plan',
+        'plans-years': '📅 Plan by Years',
+        
+        // Exam
+        'exam-title': '📝 Competency Exam Samples', 'exam-desc': 'Everything you need to prepare for the competency exam',
+        'exam-general': '📌 General Information', 'exam-instructions': '📋 Exam Instructions',
+        'exam-sample': '📄 General Level Sample', 'exam-mechanical': '⚙️ Mechanical Engineering Samples',
+        'exam-part-1': '1️⃣ Part One', 'exam-part-2': '2️⃣ Part Two',
+        'exam-part-3': '3️⃣ Part Three', 'exam-part-4': '4️⃣ Part Four',
+        
+        // Programs
+        'programs-title': '💻 Engineering Programs', 'programs-desc': 'Download links and tutorials for top engineering programs',
+        'programs-download': 'Download Link', 'programs-video': 'Installation Tutorial',
+        'program-solidworks-desc': 'The most famous 3D engineering design software in engineering colleges. Used for designing mechanical parts and 3D models.',
+        'program-matlab-desc': 'Mathematical analysis and engineering calculations software. Essential for energy and mechanical engineers.',
+        
+        // Calculator
+        'calc-title': '🧮 Multi Engineering Calculator', 'calc-desc': 'A group of engineering calculators in one place',
+        'calc-tab-triangle': '📐 Triangle', 'calc-tab-power': '⚡ Power',
+        'calc-tab-heat': '🔥 Heat', 'calc-tab-pressure': '💧 Pressure', 'calc-tab-units': '🔄 Units',
+        'calc-triangle-title': '📐 Triangle Calculator', 'calc-triangle-desc': 'Calculate trigonometric values for angles',
+        'calc-angle-label': 'Angle (degrees):', 'calc-calculate': 'Calculate',
+        'calc-sin': 'sin:', 'calc-cos': 'cos:', 'calc-tan': 'tan:',
+        'calc-power-title': '⚡ Electrical Power Calculator', 'calc-voltage-label': 'Voltage V (Volt):',
+        'calc-current-label': 'Current I (Ampere):', 'calc-power-result': 'Power P:', 'calc-power-kw': 'In kW:',
+        'calc-heat-title': '🔥 Heat Calculator', 'calc-mass-label': 'Mass m (kg):',
+        'calc-specific-label': 'Specific Heat c (J/kg·°C):', 'calc-deltat-label': 'Temperature Diff. ΔT (°C):',
+        'calc-heat-result': 'Energy Q:', 'calc-heat-kj': 'In kJ:',
+        'calc-pressure-title': '💧 Pressure Calculator', 'calc-force-label': 'Force F (Newton):',
+        'calc-area-label': 'Area A (m²):', 'calc-pressure-result': 'Pressure P:', 'calc-pressure-kpa': 'In kPa:',
+        'calc-units-title': '🔄 Unit Converter', 'calc-units-desc': 'Convert between different units',
+        'calc-value-label': 'Value:', 'calc-from-label': 'From:', 'calc-to-label': 'To:',
+        'calc-convert': 'Convert', 'calc-result-label': 'Result:',
+        'calc-m': 'Meter (m)', 'calc-cm': 'Centimeter (cm)', 'calc-mm': 'Millimeter (mm)',
+        'calc-km': 'Kilometer (km)', 'calc-inch': 'Inch', 'calc-ft': 'Foot (ft)',
+        
+        // Map
+        'map-title': '🗺️ Interactive Campus Map', 'map-desc': 'Discover important places at Al-Hussein Bin Talal University',
+        'map-places': '📍 Important Places on Campus', 'map-places-desc': 'Click any place on the map to view details on Google Maps',
+        'map-engineering': 'College of Engineering', 'map-it': 'IT College',
+        'map-science': 'College of Science', 'map-literature': 'College of Literature',
+        'map-business': 'Business Administration', 'map-law': 'College of Law',
+        'map-nursing': 'Princess Aisha Nursing', 'map-finance': 'Financial Management',
+        'map-jordan-hall': 'Jordan Hall', 'map-computer-center': 'Computer Center',
+        'map-halls': 'Halls Complex', 'map-booth': 'Engineering Booth',
+        'map-bus': 'Bus Complex', 'map-dorm1': 'Female Dormitory 1',
+        'map-dorm2': 'Female Dormitory 2', 'map-housing-gate': 'Housing Gate', 'map-supplies': 'Supplies Unit',
+        
+        // Reminders
+        'reminders-title': '⏰ My Reminders', 'reminders-desc': 'Record your reminders and don\'t miss important dates',
+        'reminders-add': '➕ Add New Reminder', 'reminders-title-label': '📝 Title:',
+        'reminders-date-label': '📅 Date:', 'reminders-time-label': '⏰ Time:',
+        'reminders-priority-label': '🎯 Priority:', 'reminders-type-label': '📂 Type:',
+        'reminders-priority-high': '🔴 High', 'reminders-priority-medium': '🟡 Medium', 'reminders-priority-low': '🟢 Low',
+        'reminders-type-exam': '📝 Exam', 'reminders-type-homework': '📚 Homework',
+        'reminders-type-project': '🔬 Project', 'reminders-type-meeting': '👥 Meeting', 'reminders-type-other': '📌 Other',
+        'reminders-add-btn': '➕ Add Reminder', 'reminders-list-title': '📋 My Reminders',
+        'reminders-filter-all': 'All', 'reminders-filter-upcoming': 'Upcoming', 'reminders-filter-past': 'Past',
+        'reminders-clear-all': '🗑️ Clear All',
+        
+        // Dictionary
+        'dict-title': '📖 Engineering Dictionary', 'dict-desc': 'Engineering terms + illustrated symbols',
+        'dict-tab-terms': '📖 Terms', 'dict-tab-symbols': '🔣 Symbols',
+        'dict-search-term': '🔍 Search for a term in Arabic or English...', 'dict-search-symbol': '🔍 Search for a symbol...',
+        'dict-all': '🌐 All', 'dict-mechanics': '⚙️ Mechanics', 'dict-thermo': '🔥 Thermo',
+        'dict-fluids': '💧 Fluids', 'dict-materials': '🔬 Materials', 'dict-electric': '⚡ Electric',
+        'dict-energy': '🌱 Energy', 'dict-math': '📐 Math',
+        'dict-electric-sym': '⚡ Electrical', 'dict-mechanical-sym': '🔧 Mechanical',
+        'dict-civil': '🏗️ Civil', 'dict-programming': '💻 Programming', 'dict-math-sym': '📐 Math',
+        'dict-term-count': 'Terms', 'dict-symbol-count': 'Symbols',
+        'dict-no-results': 'No results found', 'dict-no-results-desc': 'Try another search term or category',
+        
+        // Suggestions
+        'suggestions-title': '📮 Send Us Your Suggestion', 'suggestions-desc': 'Your opinion matters — help us improve the website',
+        'suggestions-how': 'How can we help?', 'suggestions-how-desc': 'Choose your message type and we\'ll receive it directly',
+        'suggestions-type-suggestion': 'Suggestion', 'suggestions-type-problem': 'Problem', 'suggestions-type-note': 'Note',
+        'suggestions-write': '📝 Write Your Message', 'suggestions-type-label': '📌 Message Type:',
+        'suggestions-name-label': '👤 Your Name (optional):', 'suggestions-email-label': '📧 Your Email (optional):',
+        'suggestions-major-label': '🎓 Your Major:', 'suggestions-major-none': 'Choose your major',
+        'suggestions-major-other': 'Other major', 'suggestions-subject-label': '📝 Subject:',
+        'suggestions-details-label': '💬 Details:', 'suggestions-submit': '📤 Send Message',
+        'suggestions-form-note': '⚠️ Note: Your message will be sent directly to the team\'s email. We will reply within 48 hours.',
+        'suggestions-alt-contact': '💡 Or contact us directly',
+        
+        // Links
+        'links-title': '🔗 Useful Links', 'links-desc': 'Important links for university students',
+        'links-university': 'University Website', 'links-university-desc': 'Official website of Al-Hussein Bin Talal University',
+        'links-portal': 'Student Portal', 'links-portal-desc': 'Register courses, view grades, follow your schedule',
+        'links-elearning': 'E-Learning', 'links-elearning-desc': 'eLearning platform for courses',
+        'links-calculator': 'GPA Calculator', 'links-calculator-desc': 'Calculate your GPA easily',
+        
+        // Contact
+        'contact-title': '📞 Contact Us', 'contact-desc': 'Follow us on social media',
+        
+        // 404
+        'notfound-title': '🚫 404', 'notfound-subtitle': 'Page Not Found',
+        'notfound-message': 'Sorry, page not found',
+        'notfound-desc': 'It seems the link you are trying to access is unavailable or has been moved',
+        'notfound-home': '🏠 Back to Home', 'notfound-materials': '📚 Browse Materials',
+        'notfound-suggestions-title': '💡 You may find what you are looking for here:'
     }
 };
 
@@ -956,6 +1197,7 @@ function toggleLanguage() {
     currentLang = currentLang === 'ar' ? 'en' : 'ar';
     localStorage.setItem('siteLanguage', currentLang);
     applyLanguage();
+    location.reload();
 }
 
 function applyLanguage() {
@@ -978,6 +1220,13 @@ function applyLanguage() {
         const key = el.dataset.lang;
         if (translations[currentLang] && translations[currentLang][key]) {
             el.textContent = translations[currentLang][key];
+        }
+    });
+    
+    document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
+        const key = el.dataset.langPlaceholder;
+        if (translations[currentLang] && translations[currentLang][key]) {
+            el.placeholder = translations[currentLang][key];
         }
     });
 }
