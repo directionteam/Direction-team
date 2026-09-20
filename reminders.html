@@ -12,18 +12,18 @@
         <div class="nav-container">
             <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
             <ul class="nav-links">
-                <li><a href="index.html">الرئيسية</a></li>
-                <li><a href="materials.html">المواد</a></li>
-                <li><a href="plans.html">الخطط الدراسية</a></li>
-                <li><a href="exam.html">امتحان الكفاءة</a></li>
-                <li><a href="programs.html">برامج هندسية</a></li>
-                <li><a href="calculator.html">الحاسبة الهندسية</a></li>
-                <li><a href="map.html">خريطة الجامعة</a></li>
-                <li><a href="reminders.html" class="active">التذكيرات</a></li>
-                <li><a href="dictionary.html"> قاموس المصطلحات والرموز </a></li>
-                <li><a href="suggestions.html">شاركنا اقتراحك</a></li>
-                <li><a href="links.html">روابط تهمك</a></li>
-                <li><a href="contact.html">تواصل معنا</a></li>
+                <li><a href="index.html" data-lang="nav-home">الرئيسية</a></li>
+                <li><a href="materials.html" data-lang="nav-materials">المواد</a></li>
+                <li><a href="plans.html" data-lang="nav-plans">الخطط الدراسية</a></li>
+                <li><a href="exam.html" data-lang="nav-exam">امتحان الكفاءة</a></li>
+                <li><a href="programs.html" data-lang="nav-programs">برامج هندسية</a></li>
+                <li><a href="calculator.html" data-lang="nav-calculator">الحاسبة</a></li>
+                <li><a href="map.html" data-lang="nav-map">خريطة الجامعة</a></li>
+                <li><a href="reminders.html" class="active" data-lang="nav-reminders">التذكيرات</a></li>
+                <li><a href="dictionary.html" data-lang="nav-dictionary">القاموس</a></li>
+                <li><a href="suggestions.html" data-lang="nav-suggestions">شاركنا اقتراحك</a></li>
+                <li><a href="links.html" data-lang="nav-links">روابط تهمك</a></li>
+                <li><a href="contact.html" data-lang="nav-contact">تواصل معنا</a></li>
             </ul>
             <button class="lang-toggle" id="langToggle" onclick="toggleLanguage()" title="Change Language">🌐 EN</button>
             <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="الوضع الليلي">🌙</button>
@@ -31,68 +31,66 @@
     </nav>
 
     <section class="page-header">
-        <h1>⏰ تذكيراتي</h1>
-        <p>سجّل تذكيراتك ولا تنسى مواعيدك المهمة</p>
+        <h1 data-lang="reminders-title">⏰ تذكيراتي</h1>
+        <p data-lang="reminders-desc">سجّل تذكيراتك ولا تنسى مواعيدك المهمة</p>
     </section>
 
     <section class="reminders-section">
 
-        <!-- إضافة تذكير جديد -->
         <div class="reminder-add-card">
-            <h2>➕ إضافة تذكير جديد</h2>
+            <h2 data-lang="reminders-add">➕ إضافة تذكير جديد</h2>
 
             <div class="reminder-form">
                 <div class="form-group">
-                    <label>📝 العنوان:</label>
+                    <label data-lang="reminders-title-label">📝 العنوان:</label>
                     <input type="text" id="reminderTitle" placeholder="مثال: تسليم مشروع CFD">
                 </div>
 
                 <div class="form-group">
-                    <label>📅 التاريخ:</label>
+                    <label data-lang="reminders-date-label">📅 التاريخ:</label>
                     <input type="date" id="reminderDate">
                 </div>
 
                 <div class="form-group">
-                    <label>⏰ الوقت:</label>
+                    <label data-lang="reminders-time-label">⏰ الوقت:</label>
                     <input type="time" id="reminderTime">
                 </div>
 
                 <div class="form-group">
-                    <label>🎯 الأولوية:</label>
+                    <label data-lang="reminders-priority-label">🎯 الأولوية:</label>
                     <select id="reminderPriority">
-                        <option value="high">🔴 عالية</option>
-                        <option value="medium" selected>🟡 متوسطة</option>
-                        <option value="low">🟢 منخفضة</option>
+                        <option value="high" data-lang="reminders-priority-high">🔴 عالية</option>
+                        <option value="medium" selected data-lang="reminders-priority-medium">🟡 متوسطة</option>
+                        <option value="low" data-lang="reminders-priority-low">🟢 منخفضة</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>📂 النوع:</label>
+                    <label data-lang="reminders-type-label">📂 النوع:</label>
                     <select id="reminderType">
-                        <option value="exam">📝 امتحان</option>
-                        <option value="homework">📚 واجب</option>
-                        <option value="project">🔬 مشروع</option>
-                        <option value="meeting">👥 اجتماع</option>
-                        <option value="other" selected>📌 أخرى</option>
+                        <option value="exam" data-lang="reminders-type-exam">📝 امتحان</option>
+                        <option value="homework" data-lang="reminders-type-homework">📚 واجب</option>
+                        <option value="project" data-lang="reminders-type-project">🔬 مشروع</option>
+                        <option value="meeting" data-lang="reminders-type-meeting">👥 اجتماع</option>
+                        <option value="other" selected data-lang="reminders-type-other">📌 أخرى</option>
                     </select>
                 </div>
 
-                <button class="add-reminder-btn" onclick="addReminder()">
+                <button class="add-reminder-btn" onclick="addReminder()" data-lang="reminders-add-btn">
                     ➕ إضافة التذكير
                 </button>
             </div>
         </div>
 
-        <!-- قائمة التذكيرات -->
         <div class="reminders-list-section">
             <div class="reminders-header">
-                <h2>📋 تذكيراتي</h2>
+                <h2 data-lang="reminders-list-title">📋 تذكيراتي</h2>
                 <div class="reminder-filters">
-                    <button class="filter-btn active" onclick="filterReminders('all')">الكل</button>
-                    <button class="filter-btn" onclick="filterReminders('upcoming')">القادمة</button>
-                    <button class="filter-btn" onclick="filterReminders('past')">المنتهية</button>
+                    <button class="filter-btn active" onclick="filterReminders('all')" data-lang="reminders-filter-all">الكل</button>
+                    <button class="filter-btn" onclick="filterReminders('upcoming')" data-lang="reminders-filter-upcoming">القادمة</button>
+                    <button class="filter-btn" onclick="filterReminders('past')" data-lang="reminders-filter-past">المنتهية</button>
                 </div>
-                <button class="clear-all-btn" onclick="clearAllReminders()">🗑️ حذف الكل</button>
+                <button class="clear-all-btn" onclick="clearAllReminders()" data-lang="reminders-clear-all">🗑️ حذف الكل</button>
             </div>
 
             <div id="remindersList" class="reminders-list">
@@ -105,13 +103,13 @@
     <footer>
         <img src="logo.png" alt="Direction Team" class="footer-logo">
         <p class="last-update" id="lastUpdate">🕐 آخر تحديث: ...</p>
-        <p class="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
-        <p>صُنع بحب لطلبة الهندسة 💜</p>
+        <p class="footer-copy" data-lang="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
+        <p data-lang="footer-love">صُنع بحب لطلبة الهندسة 💜</p>
     </footer>
 
     <button class="share-button" onclick="shareSite()" title="شارك الموقع">
         <span>📤</span>
-        <span>شارك الموقع</span>
+        <span data-lang="btn-share">شارك الموقع</span>
     </button>
 
     <button class="scroll-top" id="scrollTop" onclick="scrollToTop()" title="الرجوع للأعلى">⬆️</button>
