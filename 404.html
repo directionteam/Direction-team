@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الصفحة غير موجودة - Direction Team</title>
-   <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
 
@@ -12,18 +12,18 @@
         <div class="nav-container">
             <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
             <ul class="nav-links">
-                <li><a href="index.html">الرئيسية</a></li>
-                <li><a href="materials.html">المواد</a></li>
-                <li><a href="plans.html">الخطط الدراسية</a></li>
-                <li><a href="exam.html">امتحان الكفاءة</a></li>
-                <li><a href="programs.html">برامج هندسية</a></li>
-                <li><a href="calculator.html">الحاسبة الهندسية</a></li>
-                <li><a href="map.html">خريطة الجامعة</a></li>
-                <li><a href="reminders.html">التذكيرات</a></li>
-                <li><a href="dictionary.html"> قاموس المصطلحات والرموز </a></li>
-                <li><a href="suggestions.html">شاركنا اقتراحك</a></li>
-                <li><a href="links.html">روابط تهمك</a></li>
-                <li><a href="contact.html">تواصل معنا</a></li>
+                <li><a href="index.html" data-lang="nav-home">الرئيسية</a></li>
+                <li><a href="materials.html" data-lang="nav-materials">المواد</a></li>
+                <li><a href="plans.html" data-lang="nav-plans">الخطط الدراسية</a></li>
+                <li><a href="exam.html" data-lang="nav-exam">امتحان الكفاءة</a></li>
+                <li><a href="programs.html" data-lang="nav-programs">برامج هندسية</a></li>
+                <li><a href="calculator.html" data-lang="nav-calculator">الحاسبة</a></li>
+                <li><a href="map.html" data-lang="nav-map">خريطة الجامعة</a></li>
+                <li><a href="reminders.html" data-lang="nav-reminders">التذكيرات</a></li>
+                <li><a href="dictionary.html" data-lang="nav-dictionary">القاموس</a></li>
+                <li><a href="suggestions.html" data-lang="nav-suggestions">شاركنا اقتراحك</a></li>
+                <li><a href="links.html" data-lang="nav-links">روابط تهمك</a></li>
+                <li><a href="contact.html" data-lang="nav-contact">تواصل معنا</a></li>
             </ul>
             <button class="lang-toggle" id="langToggle" onclick="toggleLanguage()" title="Change Language">🌐 EN</button>
             <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="الوضع الليلي">🌙</button>
@@ -31,49 +31,49 @@
     </nav>
 
     <section class="page-header">
-        <h1>🚫 404</h1>
-        <p>الصفحة غير موجودة</p>
+        <h1 data-lang="notfound-title">🚫 404</h1>
+        <p data-lang="notfound-subtitle">الصفحة غير موجودة</p>
     </section>
 
     <section class="notfound-section">
 
         <div class="notfound-card">
             <div class="notfound-icon">🔍</div>
-            <h2>عذراً، الصفحة غير موجودة</h2>
-            <p>يبدو أن الرابط الذي تحاول الوصول إليه غير متوفر أو تم نقله</p>
+            <h2 data-lang="notfound-message">عذراً، الصفحة غير موجودة</h2>
+            <p data-lang="notfound-desc">يبدو أن الرابط الذي تحاول الوصول إليه غير متوفر أو تم نقله</p>
 
             <div class="notfound-buttons">
-                <a href="index.html" class="notfound-btn primary">
+                <a href="index.html" class="notfound-btn primary" data-lang="notfound-home">
                     🏠 الرجوع للرئيسية
                 </a>
-                <a href="materials.html" class="notfound-btn secondary">
+                <a href="materials.html" class="notfound-btn secondary" data-lang="notfound-materials">
                     📚 تصفح المواد
                 </a>
             </div>
         </div>
 
         <div class="notfound-suggestions">
-            <h3>💡 قد تجد ما تبحث عنه هنا:</h3>
+            <h3 data-lang="notfound-suggestions-title">💡 قد تجد ما تبحث عنه هنا:</h3>
             <div class="suggestion-grid">
 
                 <a href="plans.html" class="suggestion-card">
                     <div class="suggestion-icon">📋</div>
-                    <h4>الخطط الدراسية</h4>
+                    <h4 data-lang="nav-plans">الخطط الدراسية</h4>
                 </a>
 
                 <a href="exam.html" class="suggestion-card">
                     <div class="suggestion-icon">📝</div>
-                    <h4>امتحان الكفاءة</h4>
+                    <h4 data-lang="nav-exam">امتحان الكفاءة</h4>
                 </a>
 
                 <a href="programs.html" class="suggestion-card">
                     <div class="suggestion-icon">💻</div>
-                    <h4>برامج هندسية</h4>
+                    <h4 data-lang="nav-programs">برامج هندسية</h4>
                 </a>
 
                 <a href="links.html" class="suggestion-card">
                     <div class="suggestion-icon">🔗</div>
-                    <h4>روابط تهمك</h4>
+                    <h4 data-lang="nav-links">روابط تهمك</h4>
                 </a>
 
             </div>
@@ -84,8 +84,8 @@
     <footer>
         <img src="logo.png" alt="Direction Team" class="footer-logo">
         <p class="last-update" id="lastUpdate">🕐 آخر تحديث: ...</p>
-        <p class="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
-        <p>صُنع بحب لطلبة الهندسة 💜</p>
+        <p class="footer-copy" data-lang="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
+        <p data-lang="footer-love">صُنع بحب لطلبة الهندسة 💜</p>
     </footer>
 
     <script src="script.js"></script>
