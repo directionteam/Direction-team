@@ -1209,47 +1209,17 @@ function toggleMenu() {
     const navLinks = document.getElementById('navLinks');
     const overlay = document.getElementById('navOverlay');
     
-    if (navLinks) {
-        navLinks.classList.toggle('open');
-    }
-    
-    if (overlay) {
-        overlay.classList.toggle('show');
-    }
-    
-    // تغيير أيقونة الزر
-    const navToggle = document.getElementById('navToggle');
-    if (navToggle) {
-        if (navLinks && navLinks.classList.contains('open')) {
-            navToggle.textContent = '✕';
-        } else {
-            navToggle.textContent = '☰';
-        }
-    }
+    if (navLinks) navLinks.classList.toggle('open');
+    if (overlay) overlay.classList.toggle('show');
 }
 
 // إغلاق القائمة عند الضغط على رابط
 document.addEventListener('click', function(e) {
-    if (e.target.closest('.nav-links a')) {
+    if (e.target.closest('.nav-links a') || e.target.id === 'navOverlay') {
         const navLinks = document.getElementById('navLinks');
         const overlay = document.getElementById('navOverlay');
-        const navToggle = document.getElementById('navToggle');
         
         if (navLinks) navLinks.classList.remove('open');
         if (overlay) overlay.classList.remove('show');
-        if (navToggle) navToggle.textContent = '☰';
-    }
-});
-
-// إغلاق القائمة عند الضغط على الـ overlay
-document.addEventListener('click', function(e) {
-    if (e.target.id === 'navOverlay') {
-        const navLinks = document.getElementById('navLinks');
-        const overlay = document.getElementById('navOverlay');
-        const navToggle = document.getElementById('navToggle');
-        
-        if (navLinks) navLinks.classList.remove('open');
-        if (overlay) overlay.classList.remove('show');
-        if (navToggle) navToggle.textContent = '☰';
     }
 });
