@@ -357,6 +357,8 @@ function translateMaterials() {
 // ===== قاموس ترجمة أسماء المواد =====
 // ============================================
 const materialTranslations = {
+        'لغة البرمجة C++': 'C++ Programming Language',
+    'المختبر الكهرباء والإلكترونيات': 'Electrical & Electronics Lab',
     'لغة C++': 'C++ Language',
     'مدخل الهندسة': 'Introduction to Engineering',
     'كيمياء عامة (1) - General Chemistry (1)': 'General Chemistry (1)',
