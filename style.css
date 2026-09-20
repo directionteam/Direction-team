@@ -2912,18 +2912,66 @@ body.dark-mode .wisdom-card {
     }
 }
 /* ============================================
-   قائمة الجوال المنسدلة
+   قائمة الجوال (Hamburger Menu)
    ============================================ */
 
-/* على الكمبيوتر - لا شيء يتغير */
-@media (min-width: 769px) {
-    .nav-toggle {
-        display: none;
-    }
+/* إخفاء زر القائمة على الكمبيوتر */
+.nav-toggle {
+    display: none;
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    border: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.4rem;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    flex-shrink: 0;
+    padding: 0;
+    font-family: inherit;
 }
 
-/* على الجوال */
+.nav-toggle:active {
+    transform: scale(0.95);
+}
+
+/* طبقة معتمة */
+.nav-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+/* ============================================
+   على الجوال
+   ============================================ */
 @media (max-width: 768px) {
+    /* إظهار زر القائمة */
+    .nav-toggle {
+        display: flex;
+    }
+    
+    .nav-overlay {
+        display: block;
+    }
+    
+    .nav-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* ترتيب الشريط */
     .nav-container {
         flex-direction: row;
         justify-content: space-between;
@@ -2933,38 +2981,17 @@ body.dark-mode .wisdom-card {
         flex-wrap: nowrap;
     }
     
-    /* زر القائمة */
-    .nav-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #9c27b0, #6a1b9a);
-        color: #ffffff;
-        border: none;
-        width: 42px;
-        height: 42px;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 1.4rem;
-        transition: all 0.3s;
-        flex-shrink: 0;
-    }
-    
-    .nav-toggle:active {
-        transform: scale(0.95);
-    }
-    
-    /* اللوجو */
     .nav-logo {
         height: 40px;
         order: 2;
+        margin: 0 auto;
     }
     
-    /* الأزرار - ترتيب */
     .lang-toggle {
         order: 3;
         padding: 0.4rem 0.8rem;
         font-size: 0.75rem;
+        margin: 0;
     }
     
     .theme-toggle {
@@ -2972,36 +2999,39 @@ body.dark-mode .wisdom-card {
         width: 38px;
         height: 38px;
         font-size: 1rem;
+        margin: 0;
     }
     
     /* القائمة المنسدلة */
     .nav-links {
         position: fixed;
-        top: 65px;
-        right: 0;
+        top: 0;
+        right: -100%;
         width: 280px;
-        height: calc(100vh - 65px);
+        height: 100vh;
         background: #ffffff;
         flex-direction: column;
         align-items: stretch;
         gap: 0;
-        padding: 1rem;
+        padding: 70px 0 1rem;
         box-shadow: -5px 0 20px rgba(0,0,0,0.15);
-        transform: translateX(100%);
-        transition: transform 0.3s ease;
+        transform: translateX(0);
+        transition: right 0.3s ease;
         overflow-y: auto;
         z-index: 999;
         display: flex;
         flex-wrap: nowrap;
+        list-style: none;
     }
     
     .nav-links.open {
-        transform: translateX(0);
+        right: 0;
     }
     
     .nav-links li {
         width: 100%;
         border-bottom: 1px solid #f0e4f5;
+        margin: 0;
     }
     
     .nav-links li:last-child {
@@ -3011,40 +3041,40 @@ body.dark-mode .wisdom-card {
     .nav-links a {
         display: block;
         width: 100%;
-        padding: 1rem;
+        padding: 1rem 1.5rem;
         font-size: 1rem;
         text-align: right;
         border-radius: 0;
+        margin: 0;
     }
     
     .nav-links a:hover,
     .nav-links a.active {
         background: #f3e5f5;
+        color: #4a148c;
         border-right: 4px solid #9c27b0;
     }
     
-    /* خلفية معتمة عند فتح القائمة */
-    .nav-overlay {
-        position: fixed;
-        top: 65px;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 998;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s;
+    /* زر إغلاق القائمة */
+    .nav-links::before {
+        content: '✕';
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        font-size: 1.5rem;
+        color: #6a1b9a;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #f3e5f5;
+        pointer-events: none;
     }
     
-    .nav-overlay.show {
-        opacity: 1;
-        visibility: visible;
-    }
-}
-
-/* الوضع الليلي للقائمة */
-@media (max-width: 768px) {
+    /* الوضع الليلي */
     body.dark-mode .nav-links {
         background: #16213e;
     }
@@ -3056,6 +3086,12 @@ body.dark-mode .wisdom-card {
     body.dark-mode .nav-links a:hover,
     body.dark-mode .nav-links a.active {
         background: #2a1b4d;
+        color: #bb86fc;
         border-right-color: #bb86fc;
+    }
+    
+    body.dark-mode .nav-links::before {
+        background: #2a1b4d;
+        color: #bb86fc;
     }
 }
