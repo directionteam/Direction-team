@@ -1162,11 +1162,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // تاريخ آخر تحديث
     showRealLastUpdate();
     
-    // حكمة اليوم
-    if (document.getElementById('wisdomText')) {
-        loadDailyWisdom();
-    }
-    
     // المفضلة
     if (document.getElementById('favoritesList')) {
         displayFavorites();
