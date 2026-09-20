@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امتحان الكفاءة - Direction Team</title>
-    <meta name="description" content="نماذج امتحان الكفاءة الجامعية">
+    <title>المواد الدراسية - Direction Team</title>
+    <meta name="description" content="مواد هندسة الميكانيك وهندسة الطاقة المتجددة">
     <link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
@@ -14,9 +14,9 @@
             <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
             <ul class="nav-links">
                 <li><a href="index.html" data-lang="nav-home">الرئيسية</a></li>
-                <li><a href="materials.html" data-lang="nav-materials">المواد</a></li>
+                <li><a href="materials.html" class="active" data-lang="nav-materials">المواد</a></li>
                 <li><a href="plans.html" data-lang="nav-plans">الخطط الدراسية</a></li>
-                <li><a href="exam.html" class="active" data-lang="nav-exam">امتحان الكفاءة</a></li>
+                <li><a href="exam.html" data-lang="nav-exam">امتحان الكفاءة</a></li>
                 <li><a href="programs.html" data-lang="nav-programs">برامج هندسية</a></li>
                 <li><a href="calculator.html" data-lang="nav-calculator">الحاسبة</a></li>
                 <li><a href="map.html" data-lang="nav-map">خريطة الجامعة</a></li>
@@ -32,60 +32,221 @@
     </nav>
 
     <section class="page-header">
-        <h1 data-lang="exam-title">📝 نماذج امتحان الكفاءة الجامعية</h1>
-        <p data-lang="exam-desc">كل ما تحتاجه للاستعداد لامتحان الكفاءة</p>
+        <h1 data-lang="materials-title">📚 مواد التخصص</h1>
+        <p data-lang="materials-desc">اختر التخصص ثم السنة الدراسية لعرض المواد</p>
+        <div class="search-box-page">
+            <input type="text" id="searchInput" placeholder="🔍 ابحث عن مادة..." data-lang-placeholder="materials-search" onkeyup="searchMaterials()">
+        </div>
     </section>
 
-    <section class="exam-section">
+    <section class="materials-section">
 
-        <div class="exam-group">
-            <h2 class="exam-group-title" data-lang="exam-general">📌 معلومات عامة</h2>
-            <div class="exam-buttons">
-
-                <a href="https://drive.google.com/file/d/1mDX4ecNlVgzFATAwn0AFcS-1ED4rFhRG/view?usp=sharing" target="_blank" class="exam-btn">
-                    <span class="exam-icon">📋</span>
-                    <span class="exam-text" data-lang="exam-instructions">تعليمات امتحان الكفاءة</span>
-                    <span class="exam-arrow">←</span>
-                </a>
-
-                <a href="https://drive.google.com/file/d/1-0YuNqgE9wx1S7MwPhU4kfFS-LkmJp-4/view?usp=sharing" target="_blank" class="exam-btn">
-                    <span class="exam-icon">📄</span>
-                    <span class="exam-text" data-lang="exam-sample">نموذج مستوى عام</span>
-                    <span class="exam-arrow">←</span>
-                </a>
-
-            </div>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'renewable')" data-lang="materials-tab-renewable">🌱 هندسة الطاقة المتجددة</button>
+            <button class="tab-btn" onclick="switchTab(event, 'mechanical')" data-lang="materials-tab-mechanical">⚙️ هندسة الميكانيك</button>
         </div>
 
-        <div class="exam-group">
-            <h2 class="exam-group-title" data-lang="exam-mechanical">⚙️ نماذج الهندسة الميكانيكية</h2>
-            <div class="exam-buttons">
+        <!-- ==================== الطاقة المتجددة ==================== -->
+        <div id="renewable" class="tab-content active">
 
-                <a href="https://drive.google.com/file/d/1Iaq0i4k-10TT3plUuv-BdfqQvJxb3Grk/view?usp=sharing" target="_blank" class="exam-btn">
-                    <span class="exam-icon">1️⃣</span>
-                    <span class="exam-text" data-lang="exam-part-1">الجزء الأول</span>
-                    <span class="exam-arrow">←</span>
-                </a>
-
-                <a href="https://drive.google.com/file/d/1nwsIvA333YBYwCNUN0IHcu84ubA6-6g9/view?usp=sharing" target="_blank" class="exam-btn">
-                    <span class="exam-icon">2️⃣</span>
-                    <span class="exam-text" data-lang="exam-part-2">الجزء الثاني</span>
-                    <span class="exam-arrow">←</span>
-                </a>
-
-                <a href="https://drive.google.com/file/d/1J5braAhzDIogCHLMCMJfIcy9R8HFFutl/view?usp=sharing" target="_blank" class="exam-btn">
-                    <span class="exam-icon">3️⃣</span>
-                    <span class="exam-text" data-lang="exam-part-3">الجزء الثالث</span>
-                    <span class="exam-arrow">←</span>
-                </a>
-
-                <a href="https://drive.google.com/file/d/11qWEHR7tbRigvuPY4Ek58MaT5IPRFOwB/view?usp=sharing" target="_blank" class="exam-btn">
-                    <span class="exam-icon">4️⃣</span>
-                    <span class="exam-text" data-lang="exam-part-4">الجزء الرابع</span>
-                    <span class="exam-arrow">←</span>
-                </a>
-
+            <div class="year-card">
+                <button class="year-header" onclick="toggleYear(this)">
+                    <span data-lang="materials-year-1">🎓 السنة الأولى</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="year-content">
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/10j35c8RHxFHLPlOMoTLOKF3Hd8fo6wo5?usp=sharing" target="_blank">لغة C++</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1lmSEfgHD5Mj7IqMRzUxVyYakVkgtrNgD?usp=sharing" target="_blank">مدخل الهندسة</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1x_CMDD1CmbVbLT9Kp7YnykpQr8BN2nMy?usp=sharing" target="_blank">كيمياء عامة (1) - General Chemistry (1)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1fmY5FgL12SjGTj-1CDays5ZW3v-rTbke?usp=sharing" target="_blank">تفاضل وتكامل (2) - Calculus (2)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1usiPWmUhrEzqbcnlK6w4j_FYFgx83shN?usp=drive_link" target="_blank">مختبر فيزياء عامة (1)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1p2IUpPyBhddhK4kz6_JNxr60NggFpVlF?usp=sharing" target="_blank">مختبر فيزياء عامة (2)</a></li>
+                    </ul>
+                </div>
             </div>
+
+            <div class="year-card">
+                <button class="year-header" onclick="toggleYear(this)">
+                    <span data-lang="materials-year-2">🎓 السنة الثانية</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="year-content">
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/10-TOWMKDP8RzgHIr67R5XZ9hW7OvxdgU?usp=drive_link" target="_blank">الرسم الهندسي - Engineering Drawing</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1LENP2WR9nDouVUA1Kdr4gE0UcQwUS5tl?usp=sharing" target="_blank">مهارات الاتصال - Communication Skills</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1BulRP31gM7BYzbReFJvEea0tHncitiEn?usp=sharing" target="_blank">الاقتصاد الهندسي - Engineering Economy</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/17_0NFi1j4pyYTnDx-0RfLoeR-AP8s9_k?usp=sharing" target="_blank">التحليل العددي للمهندسين - Numerical Analysis</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1alY5-RbDwpkLZFDdvhtrOMJB-f0QzzQq?usp=sharing" target="_blank">رياضيات هندسية - Engineering Mathematics</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1_mcD5vtbL3B9bzZdUQ2huJ21uXnDloof?usp=sharing" target="_blank">الطاقة والبيئة - Energy and the Environment</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1jSR__e_cuiWXTcaBeizMBGLpvbvIasQO?usp=sharing" target="_blank">القياسات والأجهزة الهندسية</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1wRqvuvPA29-NkyH4ohsMvPR7_RBVKLdR?usp=sharing" target="_blank">الميكانيكا الهندسية - Engineering Mechanics</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="year-card">
+                <button class="year-header" onclick="toggleYear(this)">
+                    <span data-lang="materials-year-3">🎓 السنة الثالثة</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="year-content">
+                    <ul>
+                        <li><a href="https://drive.google.com/file/d/1wJsyACF3zaZjJ4FggRDHPpX1hGgXXBBP/view?usp=sharing" target="_blank">برمجة الحاسوب للمهندسين</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1FK2OuTBC21V4b-AQTaDzqREa2Eh4T73s?usp=sharing" target="_blank">ميكانيكا الموائع - Fluid Mechanics</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1-gXAYnoxL_ejP2wlgVVjg5viAU9kD_Sm?usp=sharing" target="_blank">مبادئ الهندسة الكهربائية والإلكترونيات</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/15aCMP-cMvMLP4XDu13PZp83iLr6O1o3l?usp=sharing" target="_blank">الديناميكا الحرارية - Thermodynamics</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1FK2OuTBC21V4b-AQTaDzqREa2Eh4T73s?usp=sharing" target="_blank">مصادر الطاقة المتجددة</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/14zAzE5yudy40tkGBLMd2itWB_YBqZ5s-?usp=sharing" target="_blank">ميكانيكا المواد وخصائصها</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1crJS5GV38gWmCIjDRh8HWMbvp9GYSGT8?usp=sharing" target="_blank">نقل الحرارة والكتلة</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1kFJd6Nr76desDUjFyP_1x9XEe8KrJdtJ?usp=sharing" target="_blank">أساسيات أنظمة القدرة الكهربائية</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/140_6GT1hnJSsLpZ29Y8yf0bh_LpJGUsc?usp=sharing" target="_blank">مختبر ميكانيكا الموائع</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1AIkscbMceUFXFMQArlugi0fi_yQHReQK?usp=sharing" target="_blank">مختبر الكهرباء والإلكترونيات</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="year-card">
+                <button class="year-header" onclick="toggleYear(this)">
+                    <span data-lang="materials-year-4">🎓 السنة الرابعة</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="year-content">
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/10tgtLlcEsOfwPtVdANNyZN1FV7yQ7pIK?usp=sharing" target="_blank">أنظمة طاقة شمسية حرارية</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1UjD9zJgyqjQtqaw--1dlZfWkiz54PZAt?usp=sharing" target="_blank">الآلات التوربينية - Turbo-Machinery</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1xirgaZ_Nn0X-qOwgKLPLDVjMF6QiJdIz?usp=sharing" target="_blank">تكنولوجيا أنظمة الخلايا الكهروضوئية</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1lVaHg2sIGLpsYK9oN5E1q6a8mDq9Qn8u?usp=sharing" target="_blank">إدارة الطاقة - Energy Management</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1C78HI_p9mnblSosWxNk6Ap_BcV5F_VQT?usp=sharing" target="_blank">مقدمة في التصميم الميكانيكي</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1DDrPyXVAugAx0AkF02atJvLQgHmueycg?usp=sharing" target="_blank">مختبر ديناميكا الموائع الحسابية (CFD) Lab</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1T_Qc2GQIH86jdHF-k8w3YArWNQrZ56Cz?usp=sharing" target="_blank">مختبر التحكم - Control Lab</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="year-card">
+                <button class="year-header" onclick="toggleYear(this)">
+                    <span data-lang="materials-year-5">🎓 السنة الخامسة</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="year-content">
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/17FOwGMN2HJrlr2bV6GohTR1b6BRE5m-s?usp=sharing" target="_blank">الطاقة الحرارية الأرضية - Geothermal Energy</a></li>
+                        <li><a href="https://drive.google.com/file/d/1ZV3khJQxD6Y5T7IvPiL9yanMbvGm8bzj/view?usp=sharing" target="_blank">طاقة الرياح - Wind Energy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== هندسة الميكانيك ==================== -->
+        <div id="mechanical" class="tab-content">
+
+            <div class="year-card">
+                <button class="year-header" onclick="toggleYear(this)">
+                    <span data-lang="materials-year-1">🎓 السنة الأولى</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="year-content">
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/1lmSEfgHD5Mj7IqMRzUxVyYakVkgtrNgD?usp=sharing" target="_blank">مدخل للهندسة</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/10j35c8RHxFHLPlOMoTLOKF3Hd8fo6wo5?usp=sharing" target="_blank">لغة البرمجة C++</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1usiPWmUhrEzqbcnlK6w4j_FYFgx83shN?usp=drive_link" target="_blank">فيزياء عامة عملية (1)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1p2IUpPyBhddhK4kz6_JNxr60NggFpVlF?usp=sharing" target="_blank">مختبر فيزياء عامة (2)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1x_CMDD1CmbVbLT9Kp7YnykpQr8BN2nMy?usp=sharing" target="_blank">كيمياء عامة (1)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1fmY5FgL12SjGTj-1CDays5ZW3v-rTbke?usp=sharing" target="_blank">تفاضل وتكامل (2)</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="year-card">
+                <button class="year-header" onclick="toggleYear(this)">
+                    <span data-lang="materials-year-2">🎓 السنة الثانية</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="year-content">
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/1-pewA5dOf54iFcRtWs3tOSTBNH1h1M7C?usp=sharing" target="_blank">رياضيات هندسية (1)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1CYW56r8Y1xLLIatYo-j2j9yQyUtG3rdj?usp=sharing" target="_blank">رياضيات هندسية (2)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1VihU7kfJuKhtcMQ873EARMGl--mlTV_M?usp=sharing" target="_blank">استاتيكا</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/12sQ3cqDOQznQ3S-NccqF-PhWqbVXUlYh?usp=sharing" target="_blank">ديناميكا</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/17_0NFi1j4pyYTnDx-0RfLoeR-AP8s9_k?usp=sharing" target="_blank">تحليل عددي للمهندسين</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1rLIAUjwASnOoPohn9YqVS2XAsdosy9t4?usp=sharing" target="_blank">علم المواد</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/10-TOWMKDP8RzgHIr67R5XZ9hW7OvxdgU?usp=drive_link" target="_blank">رسم هندسي</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1VtFhTn-YwrGNSYDLND0AgvSyldhDByi3?usp=sharing" target="_blank">رسم آلات</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1BulRP31gM7BYzbReFJvEea0tHncitiEn?usp=sharing" target="_blank">اقتصاد هندسي</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1LENP2WR9nDouVUA1Kdr4gE0UcQwUS5tl?usp=sharing" target="_blank">مهارات اتصال</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="year-card">
+                <button class="year-header" onclick="toggleYear(this)">
+                    <span data-lang="materials-year-3">🎓 السنة الثالثة</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="year-content">
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/1BTkU-z-CttE18Pu9dj5MFHPyZfgAin_s?usp=sharing" target="_blank">ميكانيكا الموائع (1)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1u8rDBB-ps1uhLPATz8UkClZjtvP49uHe?usp=sharing" target="_blank">ميكانيكا الموائع (2)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/19-xA4WYzXilQ4Q4AxJk171hu-SlgsMsn?usp=sharing" target="_blank">ديناميكا حرارية (1)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/17LAlPjiuAuuMKpZ1p_mmvJF2cYN9h03W?usp=drive_link" target="_blank">ديناميكا حرارية (2)</a></li>
+                        <li><a href="https://docs.google.com/document/d/1xe_5KNv2CXgvgtiE_Pb6sffxGDwVjdgD/edit?usp=sharing" target="_blank">مقاومة المواد (1)</a></li>
+                        <li><a href="https://drive.google.com/file/d/1YX6QYO70G7ChkVnX-S7qgx56ULgQPMK3/view?usp=sharing" target="_blank">مقاومة مواد (2)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1yrgDlVTcQIX011RTfvv887m53CF6jrcg?usp=sharing" target="_blank">نظرية الآلات</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1bUcTkbH6edtgzGL99OzjMKkZKJD4A3Rq?usp=sharing" target="_blank">انتقال الحرارة (1)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1KCOH-CD640xoelm7d0REeL_YZ5Xc7I76?usp=sharing" target="_blank">القياسات الهندسية</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1dNKYg3r2BfBWQCVanRyRhUsRG10GD_H8?usp=sharing" target="_blank">الدوائر والآلات الكهربائية</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1OnVdEG018Xwty4DeN9Tk7N68HlpHmGV0?usp=sharing" target="_blank">عمليات الإنتاج (1)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1h2oTlGqADgQ7-tqaGXo0-d2CDnHZg2h3?usp=sharing" target="_blank">مختبر ديناميكا حرارية</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1pnIJAgXY-am7xl_LtvVLego1nNOmfVc3?usp=sharing" target="_blank">مختبر مقاومة المواد</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1ZLij0yfvpUy74a6Wm5H0IXLzge_ZXuUp?usp=sharing" target="_blank">مختبر نظرية الآلات</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1tUvu21vMe7CNOp_A4W4lGnzP0FMIYcbp?usp=sharing" target="_blank">مختبر انتقال الحرارة</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1IZ7n7d6_maHZeN9OaUtKIJ8IcwBI1kd5?usp=sharing" target="_blank">مختبر ميكانيكا الموائع</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="year-card">
+                <button class="year-header" onclick="toggleYear(this)">
+                    <span data-lang="materials-year-4">🎓 السنة الرابعة</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="year-content">
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/1N6g-GDK5FjEs6YHiE0aCdPLNw08x7SQm?usp=sharing" target="_blank">مختبر الإنتاج والقياسات</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1Lj2ci3-xFWbuX222Vb-eCiimZ4NAG4Nd?usp=sharing" target="_blank">التصميم الميكانيكي (1)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1GA7Q3_tggmaQPBnEwiV4q6AMBFdPMl3f?usp=sharing" target="_blank">التصميم الميكانيكي (2)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/11SQWONM-8re8PaK4ufDvLNg6ytZWwhkm?usp=sharing" target="_blank">التصميم بواسطة الحاسوب</a></li>
+                        <li><a href="https://drive.google.com/file/d/1-cVOS5pyJGMh5Ky_D4-Let7aFEvUWhLD/view?usp=sharing" target="_blank">الآلات التوربينية</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1tpF5LkcVTBZrgdIhM9EgkH_UhXco0Mvc?usp=sharing" target="_blank">التكييف (1)</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1gomq_bqnTPRJGF0mKlsqbdb8sEszP1Iu?usp=sharing" target="_blank">الاهتزازات الميكانيكية</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1x9rVswnUUq0zKijCMRolhDJrawCbsBjP?usp=sharing" target="_blank">محركات احتراق داخلي</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1Pj-Zu9zbGt5ODA_5SFglHmIufG0_JOzv?usp=sharing" target="_blank">مختبر محركات الاحتراق الداخلي</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/15lZ89R_i7oGBZa80zMDN2HRDztvKdxLM?usp=sharing" target="_blank">مختبر الاهتزازات الميكانيكية والتحكم</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1mPR9ExCl1uHdcfo6VqRbbQWNFeUbniwl?usp=sharing" target="_blank">التحكم الآلي</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1YkAsjKTUMIBgEaR9lo4bjgmplgbBx2Ym?usp=sharing" target="_blank">الأنظمة الديناميكية والتحكم</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1m3kwXEJ_-Xiw_tDyCjI55d1LLa0NdoqP?usp=sharing" target="_blank">مختبر آلات كهربائية</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1JnTCM9m0t6ipOsx02lc0b_Qe6suxCumc?usp=sharing" target="_blank">هندسة السلامة المهنية</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="year-card">
+                <button class="year-header" onclick="toggleYear(this)">
+                    <span data-lang="materials-year-5">🎓 السنة الخامسة</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="year-content">
+                    <ul>
+                        <li><a href="https://drive.google.com/drive/folders/1H5nyTYAUZr3kzIXR35ru19HbG2cqmufg?usp=sharing" target="_blank">أنظمة الطاقة المتجددة</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1_Oa4YgBM1z6p4QoBy-_44fTVdCipP1O5?usp=sharing" target="_blank">تحويل الطاقة</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1ZYEp5bDq6hsHenA80aDru7X3cG1B09B2?usp=sharing" target="_blank">محطات القدرة الحرارية</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1LNVq1R1HQBusGmPH1Dapx9EUxxKOzdux?usp=sharing" target="_blank">موضوعات خاصة في الهندسة الميكانيكية</a></li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
 
     </section>
