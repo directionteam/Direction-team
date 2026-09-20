@@ -1223,3 +1223,82 @@ document.addEventListener('click', function(e) {
         if (overlay) overlay.classList.remove('show');
     }
 });
+// ===== تفعيل الإشعارات =====
+function requestNotificationPermission() {
+    const btn = document.getElementById('enableNotifBtn');
+    
+    if (!('Notification' in window)) {
+        showNotification(currentLang === 'ar' ? 
+            '⚠️ متصفحك لا يدعم الإشعارات' : 
+            '⚠️ Your browser does not support notifications');
+        return;
+    }
+    
+    if (Notification.permission === 'granted') {
+        showNotification(currentLang === 'ar' ? 
+            '✅ الإشعارات مفعّلة مسبقاً' : 
+            '✅ Notifications already enabled');
+        updateNotifButton();
+        return;
+    }
+    
+    if (Notification.permission === 'denied') {
+        showNotification(currentLang === 'ar' ? 
+            '❌ الإشعارات مرفوضة. يرجى تفعيلها من إعدادات المتصفح' : 
+            '❌ Notifications denied. Enable from browser settings');
+        updateNotifButton();
+        return;
+    }
+    
+    // طلب الإذن
+    Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+            showNotification(currentLang === 'ar' ? 
+                '🎉 تم تفعيل الإشعارات بنجاح!' : 
+                '🎉 Notifications enabled successfully!');
+            
+            // إشعار تجريبي
+            new Notification('⏰ Direction Team', {
+                body: currentLang === 'ar' ? 
+                    'ستصلك إشعارات التذكيرات هنا' : 
+                    'You will receive reminder notifications here',
+                icon: 'logo.png'
+            });
+        } else {
+            showNotification(currentLang === 'ar' ? 
+                '❌ لم يتم تفعيل الإشعارات' : 
+                '❌ Notifications not enabled');
+        }
+        updateNotifButton();
+    });
+}
+
+function updateNotifButton() {
+    const btn = document.getElementById('enableNotifBtn');
+    if (!btn) return;
+    
+    if (!('Notification' in window)) {
+        btn.classList.add('denied');
+        btn.innerHTML = '❌ <span>' + (currentLang === 'ar' ? 'غير مدعوم' : 'Not supported') + '</span>';
+        btn.disabled = true;
+        return;
+    }
+    
+    if (Notification.permission === 'granted') {
+        btn.classList.add('enabled');
+        btn.innerHTML = '✅ <span>' + (currentLang === 'ar' ? 'الإشعارات مفعّلة' : 'Notifications enabled') + '</span>';
+        btn.disabled = true;
+    } else if (Notification.permission === 'denied') {
+        btn.classList.add('denied');
+        btn.innerHTML = '❌ <span>' + (currentLang === 'ar' ? 'الإشعارات مرفوضة' : 'Notifications denied') + '</span>';
+    } else {
+        btn.innerHTML = '🔔 <span>' + (currentLang === 'ar' ? 'تفعيل الإشعارات' : 'Enable Notifications') + '</span>';
+    }
+}
+
+// تحديث حالة الزر عند التحميل
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('enableNotifBtn')) {
+        updateNotifButton();
+    }
+});
