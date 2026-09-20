@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>التذكيرات - Direction Team</title>
-    <link rel="stylesheet" href="style.css?v=9">
+    <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 
-   <nav class="navbar">
-    <div class="nav-container">
-        <button class="nav-toggle" id="navToggle" onclick="toggleMenu()" title="القائمة">☰</button>
-        <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
-        <ul class="nav-links" id="navLinks">
+    <nav class="navbar">
+        <div class="nav-container">
+            <button class="nav-toggle" onclick="toggleMenu()" title="القائمة">☰</button>
+            <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
+            <ul class="nav-links" id="navLinks">
                 <li><a href="index.html" data-lang="nav-home">الرئيسية</a></li>
                 <li><a href="materials.html" data-lang="nav-materials">المواد</a></li>
                 <li><a href="plans.html" data-lang="nav-plans">الخطط الدراسية</a></li>
@@ -30,16 +30,15 @@
             <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="الوضع الليلي">🌙</button>
         </div>
     </nav>
+
     <div class="nav-overlay" id="navOverlay"></div>
-        <section class="page-header">
+
+    <section class="page-header">
         <h1 data-lang="reminders-title">⏰ تذكيراتي</h1>
         <p data-lang="reminders-desc">سجّل تذكيراتك ولا تنسى مواعيدك المهمة</p>
         <button class="enable-notifications-btn" id="enableNotifBtn" onclick="requestNotificationPermission()">
             🔔 <span data-lang="enable-notifications">تفعيل الإشعارات</span>
         </button>
-    </section>
-        <h1 data-lang="reminders-title">⏰ تذكيراتي</h1>
-        <p data-lang="reminders-desc">سجّل تذكيراتك ولا تنسى مواعيدك المهمة</p>
     </section>
 
     <section class="reminders-section">
@@ -100,9 +99,7 @@
                 <button class="clear-all-btn" onclick="clearAllReminders()" data-lang="reminders-clear-all">🗑️ حذف الكل</button>
             </div>
 
-            <div id="remindersList" class="reminders-list">
-                <!-- تُعرض التذكيرات هنا -->
-            </div>
+            <div id="remindersList" class="reminders-list"></div>
         </div>
 
     </section>
@@ -118,8 +115,7 @@
         <span>📤</span>
         <span data-lang="btn-share">شارك الموقع</span>
     </button>
-
-    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()" title="الرجوع للأعلى">⬆️</button>
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">⬆️</button>
 
     <script src="script.js"></script>
 </body>
