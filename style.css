@@ -3132,3 +3132,168 @@ body.dark-mode .wisdom-card {
 body.dark-mode .enable-notifications-btn {
     color: #ffffff;
 }
+/* ============================================
+   القائمة المنسدلة على اللابتوب/الكمبيوتر
+   ============================================ */
+
+/* على الشاشات الكبيرة (اللابتوب والكمبيوتر) */
+@media (min-width: 769px) {
+    
+    /* إظهار زر القائمة */
+    .nav-toggle {
+        display: flex;
+    }
+    
+    .nav-overlay {
+        display: block;
+    }
+    
+    .nav-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* القائمة المنسدلة - مخفية افتراضياً */
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -350px;
+        width: 300px;
+        height: 100vh;
+        background: #ffffff;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 70px 0 1rem;
+        box-shadow: -5px 0 20px rgba(0,0,0,0.15);
+        transform: translateX(0);
+        transition: right 0.3s ease;
+        overflow-y: auto;
+        z-index: 999;
+        display: flex;
+        flex-wrap: nowrap;
+        list-style: none;
+    }
+    
+    .nav-links.open {
+        right: 0;
+    }
+    
+    .nav-links li {
+        width: 100%;
+        border-bottom: 1px solid #f0e4f5;
+        margin: 0;
+    }
+    
+    .nav-links li:last-child {
+        border-bottom: none;
+    }
+    
+    .nav-links a {
+        display: block;
+        width: 100%;
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+        text-align: right;
+        border-radius: 0;
+        margin: 0;
+    }
+    
+    /* في الإنجليزية: القائمة من اليسار */
+    html[dir="ltr"] .nav-links {
+        right: auto;
+        left: -350px;
+        box-shadow: 5px 0 20px rgba(0,0,0,0.15);
+    }
+    
+    html[dir="ltr"] .nav-links.open {
+        left: 0;
+        right: auto;
+    }
+    
+    html[dir="ltr"] .nav-links a {
+        text-align: left;
+    }
+    
+    .nav-links a:hover,
+    .nav-links a.active {
+        background: #f3e5f5;
+        color: #4a148c;
+        border-right: 4px solid #9c27b0;
+    }
+    
+    html[dir="ltr"] .nav-links a:hover,
+    html[dir="ltr"] .nav-links a.active {
+        border-right: none;
+        border-left: 4px solid #9c27b0;
+    }
+    
+    /* زر إغلاق القائمة */
+    .nav-links::before {
+        content: '✕';
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        font-size: 1.5rem;
+        color: #6a1b9a;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #f3e5f5;
+        pointer-events: none;
+    }
+    
+    /* الوضع الليلي */
+    body.dark-mode .nav-links {
+        background: #16213e;
+    }
+    
+    body.dark-mode .nav-links li {
+        border-bottom-color: #2a1b4d;
+    }
+    
+    body.dark-mode .nav-links a:hover,
+    body.dark-mode .nav-links a.active {
+        background: #2a1b4d;
+        color: #bb86fc;
+        border-right-color: #bb86fc;
+    }
+    
+    body.dark-mode .nav-links::before {
+        background: #2a1b4d;
+        color: #bb86fc;
+    }
+    
+    /* ترتيب الشريط العلوي على اللابتوب */
+    .nav-container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 1.5rem;
+        gap: 1rem;
+        flex-wrap: nowrap;
+    }
+    
+    .nav-logo {
+        height: 45px;
+        order: 2;
+        margin: 0 auto;
+    }
+    
+    .lang-toggle {
+        order: 3;
+        padding: 0.5rem 0.9rem;
+        font-size: 0.85rem;
+    }
+    
+    .theme-toggle {
+        order: 4;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}
