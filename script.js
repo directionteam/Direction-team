@@ -2,13 +2,19 @@
 // Direction Team - Main JavaScript File
 // ============================================
 
+// ===== تحويل الأرقام العربية إلى إنجليزية =====
+function convertToEnglishNumbers(str) {
+    if (!str) return str;
+    const arabicNumbers = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+    return String(str).replace(/[٠-٩]/g, d => arabicNumbers.indexOf(d));
+}
+
 // ===== التبديل بين التخصصات =====
 function switchTab(event, tabId) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
     event.currentTarget.classList.add('active');
-
     const searchInput = document.getElementById('searchInput');
     if (searchInput) searchInput.value = '';
     resetSearch();
@@ -22,7 +28,6 @@ function toggleYear(button) {
 // ===== البحث في المواد =====
 function searchMaterials() {
     const input = document.getElementById('searchInput').value.toLowerCase().trim();
-
     document.querySelectorAll('.year-card').forEach(c => { c.style.display = ''; c.classList.remove('active'); });
     document.querySelectorAll('.semester').forEach(s => s.style.display = '');
     document.querySelectorAll('.semester li').forEach(li => li.style.display = '');
@@ -34,19 +39,16 @@ function searchMaterials() {
     }
 
     document.querySelectorAll('.tab-content.active .year-card').forEach(c => c.classList.add('active'));
-
     const activeTab = document.querySelector('.tab-content.active');
     if (!activeTab) return;
 
     activeTab.querySelectorAll('.semester li').forEach(li => {
         li.style.display = li.textContent.toLowerCase().includes(input) ? '' : 'none';
     });
-
     activeTab.querySelectorAll('.semester').forEach(sem => {
         const hasVisible = Array.from(sem.querySelectorAll('li')).some(li => li.style.display !== 'none');
         sem.style.display = hasVisible ? '' : 'none';
     });
-
     activeTab.querySelectorAll('.year-card').forEach(card => {
         const hasVisible = Array.from(card.querySelectorAll('li')).some(li => li.style.display !== 'none');
         card.style.display = hasVisible ? '' : 'none';
@@ -69,11 +71,8 @@ function toggleTheme() {
     document.body.classList.toggle('dark-mode');
     const isDark = document.body.classList.contains('dark-mode');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    
     const themeBtn = document.getElementById('themeToggle');
-    if (themeBtn) {
-        themeBtn.textContent = isDark ? '☀️' : '🌙';
-    }
+    if (themeBtn) themeBtn.textContent = isDark ? '☀️' : '🌙';
 }
 
 function applySavedTheme() {
@@ -89,36 +88,27 @@ function applySavedTheme() {
 function shareSite() {
     const url = 'https://directionteam.github.io/Direction-team/';
     const isAr = currentLang === 'ar';
-    
     const text = isAr 
         ? '🔗 موقع Direction Team الرسمي\n\n📚 مواد هندسة الميكانيك والطاقة المتجددة\n📋 الخطط الدراسية\n📝 امتحان الكفاءة\n💻 برامج هندسية\n\n' + url + '\n\n💜 انشروه لكل الطلاب!'
         : '🔗 Direction Team Official Website\n\n📚 Mechanical & Renewable Energy Materials\n📋 Study Plans\n📝 Competency Exam\n💻 Engineering Programs\n\n' + url + '\n\n💜 Share it with all students!';
     
     if (navigator.share) {
-        navigator.share({
-            title: 'Direction Team',
-            text: text,
-            url: url
-        }).catch(() => openWhatsApp(text));
+        navigator.share({ title: 'Direction Team', text: text, url: url }).catch(() => openWhatsApp(text));
     } else {
         openWhatsApp(text);
     }
 }
 
 function openWhatsApp(text) {
-    const whatsappUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
-    window.open(whatsappUrl, '_blank');
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
 }
 
 // ===== الرجوع للأعلى =====
 window.addEventListener('scroll', function() {
     const btn = document.getElementById('scrollTop');
     if (btn) {
-        if (window.scrollY > 300) {
-            btn.classList.add('show');
-        } else {
-            btn.classList.remove('show');
-        }
+        if (window.scrollY > 300) btn.classList.add('show');
+        else btn.classList.remove('show');
     }
 });
 
@@ -130,22 +120,16 @@ function scrollToTop() {
 async function showRealLastUpdate() {
     const updateElement = document.getElementById('lastUpdate');
     if (!updateElement) return;
-    
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const isAr = currentLang === 'ar';
     const prefix = isAr ? '🕐 آخر تحديث: ' : '🕐 Last update: ';
     const locale = isAr ? 'ar-EG' : 'en-US';
-    
     const now = new Date();
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     updateElement.textContent = prefix + now.toLocaleDateString(locale, options);
-    
     try {
-        const response = await fetch(
-            `https://api.github.com/repos/directionteam/Direction-team/commits?path=${currentPage}&per_page=1`
-        );
+        const response = await fetch(`https://api.github.com/repos/directionteam/Direction-team/commits?path=${currentPage}&per_page=1`);
         const data = await response.json();
-        
         if (data && data[0] && data[0].commit) {
             const commitDate = new Date(data[0].commit.committer.date);
             updateElement.textContent = prefix + commitDate.toLocaleDateString(locale, options);
@@ -157,15 +141,9 @@ async function showRealLastUpdate() {
 window.addEventListener('load', function() {
     const loader = document.getElementById('loaderScreen');
     if (!loader) return;
-    
     const hasVisited = localStorage.getItem('hasVisited');
-    if (hasVisited) {
-        loader.remove();
-        return;
-    }
-    
+    if (hasVisited) { loader.remove(); return; }
     localStorage.setItem('hasVisited', 'true');
-    
     setTimeout(function() {
         loader.classList.add('hidden');
         setTimeout(() => loader.remove(), 700);
@@ -173,21 +151,17 @@ window.addEventListener('load', function() {
 });
 
 // ============================================
-// ===== نظام الترجمة - الدوال الأساسية =====
+// ===== نظام اللغة =====
 // ============================================
-
 let currentLang = localStorage.getItem('siteLanguage') || 'ar';
 
-// ===== إضافة أزرار المشاركة والمفضلة (تضاف إلى li وليس a) =====
+// ===== أزرار المشاركة والمفضلة =====
 function addShareButtons() {
     const materialLinks = document.querySelectorAll('.year-content ul li a, .semester li a');
-    
     materialLinks.forEach(link => {
         const li = link.parentElement;
         if (!li || li.querySelector('.share-material-btn')) return;
-        
         const materialName = link.getAttribute('data-ar-text') || link.textContent.trim();
-        
         const shareBtn = document.createElement('button');
         shareBtn.className = 'share-material-btn';
         shareBtn.innerHTML = currentLang === 'ar' ? '📤 مشاركة' : '📤 Share';
@@ -196,7 +170,6 @@ function addShareButtons() {
             e.stopPropagation();
             shareMaterialAdvanced(materialName);
         };
-        
         li.style.position = 'relative';
         li.appendChild(shareBtn);
     });
@@ -204,14 +177,11 @@ function addShareButtons() {
 
 function addFavoriteButtons() {
     const materialLinks = document.querySelectorAll('.year-content ul li a, .semester li a');
-    
     materialLinks.forEach(link => {
         const li = link.parentElement;
         if (!li || li.querySelector('.fav-material-btn')) return;
-        
         const materialName = link.getAttribute('data-ar-text') || link.textContent.trim();
         const materialUrl = link.href;
-        
         const favBtn = document.createElement('button');
         favBtn.className = 'fav-material-btn';
         favBtn.dataset.material = materialName;
@@ -221,48 +191,34 @@ function addFavoriteButtons() {
             e.stopPropagation();
             toggleFavorite(materialName, materialUrl);
         };
-        
         li.appendChild(favBtn);
     });
-    
     updateFavoriteButtons();
 }
 
 function shareMaterialAdvanced(materialName) {
     const siteUrl = 'https://directionteam.github.io/Direction-team/materials.html';
     const isAr = currentLang === 'ar';
-    
     const text = isAr
         ? `📚 ${materialName}\n\n🔗 من موقع Direction Team:\n${siteUrl}\n\n💜 شاركها مع زملائك!`
         : `📚 ${materialName}\n\n🔗 From Direction Team:\n${siteUrl}\n\n💜 Share it with your colleagues!`;
-    
     if (navigator.share) {
-        navigator.share({
-            title: materialName,
-            text: text,
-            url: siteUrl
-        }).catch(() => openWhatsAppShare(text));
+        navigator.share({ title: materialName, text: text, url: siteUrl }).catch(() => openWhatsAppShare(text));
     } else {
         openWhatsAppShare(text);
     }
 }
 
 function openWhatsAppShare(text) {
-    const whatsappUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
-    window.open(whatsappUrl, '_blank');
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
 }
 
 // ===== نظام المفضلة =====
 function toggleFavorite(materialName, materialUrl) {
     let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     const existingIndex = favorites.findIndex(fav => fav.name === materialName);
-    
-    if (existingIndex > -1) {
-        favorites.splice(existingIndex, 1);
-    } else {
-        favorites.push({ name: materialName, url: materialUrl });
-    }
-    
+    if (existingIndex > -1) favorites.splice(existingIndex, 1);
+    else favorites.push({ name: materialName, url: materialUrl });
     localStorage.setItem('favorites', JSON.stringify(favorites));
     updateFavoriteButtons();
 }
@@ -289,10 +245,8 @@ function updateFavoriteButtons() {
 function displayFavorites() {
     const container = document.getElementById('favoritesList');
     if (!container) return;
-    
     const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     const isAr = currentLang === 'ar';
-    
     if (favorites.length === 0) {
         container.innerHTML = `
             <div class="empty-favorites">
@@ -302,7 +256,6 @@ function displayFavorites() {
         `;
         return;
     }
-    
     container.innerHTML = favorites.map(fav => `
         <div class="favorite-item">
             <a href="${fav.url}" target="_blank" class="fav-link">
@@ -321,43 +274,21 @@ function removeFavorite(materialName) {
     displayFavorites();
 }
 
-// ============================================
-// ===== ترجمة المواد - الطريقة الصحيحة =====
-// ============================================
-
+// ===== ترجمة المواد =====
 function translateMaterials() {
     const materialLinks = document.querySelectorAll('.year-content ul li a, .semester li a');
-    
     materialLinks.forEach(link => {
-        // احصل على النص العربي من data-ar-text
         const arabicText = link.getAttribute('data-ar-text');
-        
-        // تخطى إذا لم يكن موجوداً
         if (!arabicText) return;
-        
-        // حدد النص المطلوب
-        let targetText;
-        if (currentLang === 'en') {
-            targetText = materialTranslations[arabicText] || arabicText;
-        } else {
-            targetText = arabicText;
-        }
-        
-        // احذف جميع العناصر داخل الرابط
-        while (link.firstChild) {
-            link.removeChild(link.firstChild);
-        }
-        
-        // أضف النص الجديد فقط
+        const targetText = currentLang === 'en' ? (materialTranslations[arabicText] || arabicText) : arabicText;
+        while (link.firstChild) link.removeChild(link.firstChild);
         link.appendChild(document.createTextNode(targetText));
     });
 }
 
-// ============================================
-// ===== قاموس ترجمة أسماء المواد =====
-// ============================================
+// ===== قاموس ترجمة المواد =====
 const materialTranslations = {
-        'لغة البرمجة C++': 'C++ Programming Language',
+    'لغة البرمجة C++': 'C++ Programming Language',
     'المختبر الكهرباء والإلكترونيات': 'Electrical & Electronics Lab',
     'لغة C++': 'C++ Language',
     'مدخل الهندسة': 'Introduction to Engineering',
@@ -519,8 +450,8 @@ const translations = {
         'reminders-type-project': '🔬 مشروع', 'reminders-type-meeting': '👥 اجتماع', 'reminders-type-other': '📌 أخرى',
         'reminders-add-btn': '➕ إضافة التذكير', 'reminders-list-title': '📋 تذكيراتي',
         'reminders-filter-all': 'الكل', 'reminders-filter-upcoming': 'القادمة', 'reminders-filter-past': 'المنتهية',
+        'enable-notifications': '🔔 تفعيل الإشعارات',
         'reminders-clear-all': '🗑️ حذف الكل',
-                'enable-notifications': '🔔 تفعيل الإشعارات',
         'dict-title': '📖 القاموس الهندسي', 'dict-desc': 'مصطلحات + رموز هندسية',
         'dict-tab-terms': '📖 المصطلحات', 'dict-tab-symbols': '🔣 الرموز',
         'dict-search-term': '🔍 ابحث عن مصطلح...', 'dict-search-symbol': '🔍 ابحث عن رمز...',
@@ -627,8 +558,8 @@ const translations = {
         'reminders-type-project': '🔬 Project', 'reminders-type-meeting': '👥 Meeting', 'reminders-type-other': '📌 Other',
         'reminders-add-btn': '➕ Add Reminder', 'reminders-list-title': '📋 My Reminders',
         'reminders-filter-all': 'All', 'reminders-filter-upcoming': 'Upcoming', 'reminders-filter-past': 'Past',
+        'enable-notifications': '🔔 Enable Notifications',
         'reminders-clear-all': '🗑️ Clear All',
-                'enable-notifications': '🔔 Enable Notifications',
         'dict-title': '📖 Engineering Dictionary', 'dict-desc': 'Terms + symbols',
         'dict-tab-terms': '📖 Terms', 'dict-tab-symbols': '🔣 Symbols',
         'dict-search-term': '🔍 Search for a term...', 'dict-search-symbol': '🔍 Search for a symbol...',
@@ -672,7 +603,6 @@ function toggleLanguage() {
 
 function applyLanguage() {
     const html = document.documentElement;
-    
     if (currentLang === 'en') {
         html.setAttribute('dir', 'ltr');
         html.setAttribute('lang', 'en');
@@ -680,48 +610,30 @@ function applyLanguage() {
         html.setAttribute('dir', 'rtl');
         html.setAttribute('lang', 'ar');
     }
-    
     const langBtn = document.getElementById('langToggle');
-    if (langBtn) {
-        langBtn.textContent = currentLang === 'ar' ? '🌐 EN' : '🌐 AR';
-    }
-    
-    // ترجمة العناصر بـ data-lang
+    if (langBtn) langBtn.textContent = currentLang === 'ar' ? '🌐 EN' : '🌐 AR';
     document.querySelectorAll('[data-lang]').forEach(el => {
         const key = el.dataset.lang;
         if (translations[currentLang] && translations[currentLang][key]) {
             el.textContent = translations[currentLang][key];
         }
     });
-    
-    // ترجمة placeholders
     document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
         const key = el.dataset.langPlaceholder;
         if (translations[currentLang] && translations[currentLang][key]) {
             el.placeholder = translations[currentLang][key];
         }
     });
-    
-    // ترجمة المواد
     translateMaterials();
-    
-    // ترجمة أزرار المشاركة
     document.querySelectorAll('.share-material-btn').forEach(btn => {
         btn.innerHTML = currentLang === 'ar' ? '📤 مشاركة' : '📤 Share';
     });
-    
-    // إعادة رسم التذكيرات
-    if (document.getElementById('remindersList')) {
-        renderReminders();
-    }
-    
-    // إعادة رسم المفضلة
-    if (document.getElementById('favoritesList')) {
-        displayFavorites();
-    }
+    if (document.getElementById('remindersList')) renderReminders();
+    if (document.getElementById('favoritesList')) displayFavorites();
+    if (document.getElementById('enableNotifBtn')) updateNotifButton();
 }
 
-// ===== الحاسبة الهندسية =====
+// ===== الحاسبة =====
 function switchCalc(event, calcId) {
     document.querySelectorAll('.calc-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.calc-tab-btn').forEach(b => b.classList.remove('active'));
@@ -814,11 +726,16 @@ function saveReminders(reminders) {
 }
 
 function addReminder() {
-    const title = document.getElementById('reminderTitle').value.trim();
-    const date = document.getElementById('reminderDate').value;
-    const time = document.getElementById('reminderTime').value;
+    const titleInput = document.getElementById('reminderTitle').value.trim();
+    const dateInput = document.getElementById('reminderDate').value;
+    const timeInput = document.getElementById('reminderTime').value;
     const priority = document.getElementById('reminderPriority').value;
     const type = document.getElementById('reminderType').value;
+
+    // تحويل الأرقام العربية إلى إنجليزية
+    const title = convertToEnglishNumbers(titleInput);
+    const date = convertToEnglishNumbers(dateInput);
+    const time = convertToEnglishNumbers(timeInput);
 
     if (!title || !date) {
         alert(currentLang === 'ar' ? '⚠️ الرجاء إدخال العنوان والتاريخ' : '⚠️ Please enter title and date');
@@ -828,9 +745,11 @@ function addReminder() {
     const reminders = getReminders();
     reminders.push({
         id: Date.now(),
-        title, date,
+        title: title,
+        date: date,
         time: time || '00:00',
-        priority, type,
+        priority: priority,
+        type: type,
         completed: false,
         createdAt: new Date().toISOString()
     });
@@ -991,18 +910,84 @@ function showNotification(message) {
     }, 2500);
 }
 
+// ===== فحص التذكيرات القادمة =====
 function checkUpcomingReminders() {
     const reminders = getReminders();
     const now = new Date();
+    
     reminders.forEach(r => {
         if (r.completed) return;
-        const diffHours = (new Date(r.date + 'T' + r.time) - now) / (1000 * 60 * 60);
-        if (diffHours > 0 && diffHours <= 24) {
+        
+        const reminderTime = new Date(r.date + 'T' + r.time);
+        const diffMinutes = (reminderTime - now) / (1000 * 60);
+        
+        // إذا كان التذكير قادماً خلال 24 ساعة (1440 دقيقة)
+        if (diffMinutes > -1 && diffMinutes <= 1440) {
             if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification('⏰ Direction Team', { body: `${r.title} - ${r.time}`, icon: 'logo.png' });
+                try {
+                    new Notification('⏰ Direction Team', { 
+                        body: `${r.title} - ${r.time}`, 
+                        icon: 'logo.png',
+                        tag: 'reminder-' + r.id
+                    });
+                } catch (e) {}
             }
         }
     });
+}
+
+// ===== تفعيل الإشعارات =====
+function requestNotificationPermission() {
+    const btn = document.getElementById('enableNotifBtn');
+    if (!('Notification' in window)) {
+        showNotification(currentLang === 'ar' ? '⚠️ متصفحك لا يدعم الإشعارات' : '⚠️ Not supported');
+        return;
+    }
+    if (Notification.permission === 'granted') {
+        showNotification(currentLang === 'ar' ? '✅ الإشعارات مفعّلة مسبقاً' : '✅ Already enabled');
+        updateNotifButton();
+        return;
+    }
+    if (Notification.permission === 'denied') {
+        showNotification(currentLang === 'ar' ? '❌ الإشعارات مرفوضة' : '❌ Notifications denied');
+        updateNotifButton();
+        return;
+    }
+    Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+            showNotification(currentLang === 'ar' ? '🎉 تم التفعيل بنجاح!' : '🎉 Enabled!');
+            try {
+                new Notification('⏰ Direction Team', {
+                    body: currentLang === 'ar' ? 'ستصلك إشعارات التذكيرات هنا' : 'You will receive notifications here',
+                    icon: 'logo.png'
+                });
+            } catch (e) {}
+        } else {
+            showNotification(currentLang === 'ar' ? '❌ لم يتم التفعيل' : '❌ Not enabled');
+        }
+        updateNotifButton();
+    });
+}
+
+function updateNotifButton() {
+    const btn = document.getElementById('enableNotifBtn');
+    if (!btn) return;
+    if (!('Notification' in window)) {
+        btn.classList.add('denied');
+        btn.innerHTML = '❌ <span>' + (currentLang === 'ar' ? 'غير مدعوم' : 'Not supported') + '</span>';
+        btn.disabled = true;
+        return;
+    }
+    if (Notification.permission === 'granted') {
+        btn.classList.add('enabled');
+        btn.innerHTML = '✅ <span>' + (currentLang === 'ar' ? 'الإشعارات مفعّلة' : 'Notifications enabled') + '</span>';
+        btn.disabled = true;
+    } else if (Notification.permission === 'denied') {
+        btn.classList.add('denied');
+        btn.innerHTML = '❌ <span>' + (currentLang === 'ar' ? 'الإشعارات مرفوضة' : 'Notifications denied') + '</span>';
+    } else {
+        btn.innerHTML = '🔔 <span>' + (currentLang === 'ar' ? 'تفعيل الإشعارات' : 'Enable Notifications') + '</span>';
+    }
 }
 
 // ===== القاموس والرموز =====
@@ -1014,58 +999,28 @@ function switchMainTab(event, tabId) {
 }
 
 const engineeringSymbols = [
-    { symbol: "V", name: "فولت", fullName: "Voltage", cat: "electric", desc: "وحدة قياس الجهد الكهربائي" },
-    { symbol: "A", name: "أمبير", fullName: "Ampere", cat: "electric", desc: "وحدة قياس التيار الكهربائي" },
-    { symbol: "Ω", name: "أوم", fullName: "Ohm", cat: "electric", desc: "وحدة قياس المقاومة الكهربائية" },
-    { symbol: "W", name: "واط", fullName: "Watt", cat: "electric", desc: "وحدة قياس القدرة الكهربائية" },
-    { symbol: "F", name: "فاراد", fullName: "Farad", cat: "electric", desc: "وحدة قياس السعة الكهربائية" },
-    { symbol: "H", name: "هنري", fullName: "Henry", cat: "electric", desc: "وحدة قياس الحث الكهربائي" },
+    { symbol: "V", name: "فولت", fullName: "Voltage", cat: "electric", desc: "وحدة قياس الجهد" },
+    { symbol: "A", name: "أمبير", fullName: "Ampere", cat: "electric", desc: "وحدة قياس التيار" },
+    { symbol: "Ω", name: "أوم", fullName: "Ohm", cat: "electric", desc: "وحدة قياس المقاومة" },
+    { symbol: "W", name: "واط", fullName: "Watt", cat: "electric", desc: "وحدة قياس القدرة" },
+    { symbol: "F", name: "فاراد", fullName: "Farad", cat: "electric", desc: "وحدة قياس السعة" },
+    { symbol: "H", name: "هنري", fullName: "Henry", cat: "electric", desc: "وحدة قياس الحث" },
     { symbol: "Hz", name: "هرتز", fullName: "Hertz", cat: "electric", desc: "وحدة قياس التردد" },
-    { symbol: "~", name: "تيار متردد", fullName: "AC", cat: "electric", desc: "رمز التيار المتردد" },
-    { symbol: "⎓", name: "تيار مستمر", fullName: "DC", cat: "electric", desc: "رمز التيار المستمر" },
-    { symbol: "⏚", name: "أرضي", fullName: "Ground", cat: "electric", desc: "رمز التأريض" },
     { symbol: "N", name: "نيوتن", fullName: "Newton", cat: "mechanical", desc: "وحدة قياس القوة" },
     { symbol: "J", name: "جول", fullName: "Joule", cat: "mechanical", desc: "وحدة قياس الطاقة" },
     { symbol: "Pa", name: "باسكال", fullName: "Pascal", cat: "mechanical", desc: "وحدة قياس الضغط" },
     { symbol: "kg", name: "كيلوغرام", fullName: "Kilogram", cat: "mechanical", desc: "وحدة قياس الكتلة" },
-    { symbol: "m/s", name: "متر/ثانية", fullName: "m/s", cat: "mechanical", desc: "وحدة قياس السرعة" },
-    { symbol: "m/s²", name: "متر/ث²", fullName: "m/s²", cat: "mechanical", desc: "وحدة قياس التسارع" },
-    { symbol: "N·m", name: "نيوتن.متر", fullName: "Newton-meter", cat: "mechanical", desc: "وحدة قياس العزم" },
-    { symbol: "τ", name: "تاو", fullName: "Tau", cat: "mechanical", desc: "رمز الإجهاد القصي" },
-    { symbol: "σ", name: "سيغما", fullName: "Sigma", cat: "mechanical", desc: "رمز الإجهاد العمودي" },
-    { symbol: "ε", name: "إبسيلون", fullName: "Epsilon", cat: "mechanical", desc: "رمز الانفعال" },
-    { symbol: "🏗️", name: "مبنى", fullName: "Building", cat: "civil", desc: "رمز المبنى" },
-    { symbol: "🚪", name: "باب", fullName: "Door", cat: "civil", desc: "رمز الباب" },
-    { symbol: "🪟", name: "نافذة", fullName: "Window", cat: "civil", desc: "رمز النافذة" },
-    { symbol: "🚿", name: "حمام", fullName: "Bathroom", cat: "civil", desc: "رمز الحمام" },
-    { symbol: "🛗", name: "مصعد", fullName: "Elevator", cat: "civil", desc: "رمز المصعد" },
-    { symbol: "🪜", name: "سلم", fullName: "Stairs", cat: "civil", desc: "رمز السلم" },
-    { symbol: "🛣️", name: "طريق", fullName: "Road", cat: "civil", desc: "رمز الطريق" },
-    { symbol: "🌉", name: "جسر", fullName: "Bridge", cat: "civil", desc: "رمز الجسر" },
-    { symbol: "🏛️", name: "عمود", fullName: "Column", cat: "civil", desc: "رمز العمود" },
-    { symbol: "⚖️", name: "توازن", fullName: "Balance", cat: "civil", desc: "رمز التوازن" },
+    { symbol: "τ", name: "تاو", fullName: "Tau", cat: "mechanical", desc: "الإجهاد القصي" },
+    { symbol: "σ", name: "سيغما", fullName: "Sigma", cat: "mechanical", desc: "الإجهاد العمودي" },
+    { symbol: "ε", name: "إبسيلون", fullName: "Epsilon", cat: "mechanical", desc: "الانفعال" },
     { symbol: "{ }", name: "أقواس معقوفة", fullName: "Curly Braces", cat: "programming", desc: "الكتل البرمجية" },
     { symbol: "( )", name: "أقواس", fullName: "Parentheses", cat: "programming", desc: "الدوال والتجميع" },
-    { symbol: "[ ]", name: "أقواس مربعة", fullName: "Square Brackets", cat: "programming", desc: "المصفوفات" },
-    { symbol: "=", name: "إسناد", fullName: "Assignment", cat: "programming", desc: "إسناد قيمة" },
     { symbol: "==", name: "مساواة", fullName: "Equality", cat: "programming", desc: "مقارنة قيمتين" },
-    { symbol: "!=", name: "لا يساوي", fullName: "Not Equal", cat: "programming", desc: "عدم التساوي" },
     { symbol: "&&", name: "و المنطقية", fullName: "Logical AND", cat: "programming", desc: "الشرطان صحيحان" },
     { symbol: "||", name: "أو المنطقية", fullName: "Logical OR", cat: "programming", desc: "أحد الشرطين صحيح" },
-    { symbol: "//", name: "تعليق", fullName: "Comment", cat: "programming", desc: "تعليق سطر" },
-    { symbol: "/* */", name: "تعليق متعدد", fullName: "Multi-line Comment", cat: "programming", desc: "تعليق متعدد" },
-    { symbol: "→", name: "سهم", fullName: "Arrow", cat: "programming", desc: "الدوال السهمية" },
-    { symbol: "++", name: "زيادة", fullName: "Increment", cat: "programming", desc: "زيادة بمقدار 1" },
     { symbol: "∑", name: "سيغما كبيرة", fullName: "Summation", cat: "math", desc: "رمز المجموع" },
-    { symbol: "∏", name: "باي كبيرة", fullName: "Product", cat: "math", desc: "رمز الجداء" },
     { symbol: "∫", name: "تكامل", fullName: "Integral", cat: "math", desc: "رمز التكامل" },
-    { symbol: "∂", name: "مشتقة جزئية", fullName: "Partial Derivative", cat: "math", desc: "الاشتقاق الجزئي" },
-    { symbol: "∇", name: "نابلا", fullName: "Nabla", cat: "math", desc: "عامل التدرج" },
     { symbol: "∞", name: "ما لا نهاية", fullName: "Infinity", cat: "math", desc: "رمز اللانهاية" },
-    { symbol: "≈", name: "تقريباً", fullName: "Approximately", cat: "math", desc: "يساوي تقريباً" },
-    { symbol: "≠", name: "لا يساوي", fullName: "Not Equal", cat: "math", desc: "لا يساوي" },
-    { symbol: "≤", name: "أصغر أو يساوي", fullName: "Less or Equal", cat: "math", desc: "أصغر من أو يساوي" },
-    { symbol: "≥", name: "أكبر أو يساوي", fullName: "Greater or Equal", cat: "math", desc: "أكبر من أو يساوي" },
     { symbol: "√", name: "جذر", fullName: "Square Root", cat: "math", desc: "الجذر التربيعي" },
     { symbol: "θ", name: "ثيتا", fullName: "Theta", cat: "math", desc: "رمز الزاوية" },
     { symbol: "π", name: "باي", fullName: "Pi", cat: "math", desc: "= 3.14159" },
@@ -1079,7 +1034,6 @@ function renderSymbols(symbols) {
     const noResults = document.getElementById('noSymbolResults');
     const countEl = document.getElementById('symbolCount');
     if (!container) return;
-
     if (countEl) countEl.textContent = symbols.length;
     if (symbols.length === 0) {
         container.innerHTML = '';
@@ -1087,7 +1041,6 @@ function renderSymbols(symbols) {
         return;
     }
     if (noResults) noResults.style.display = 'none';
-
     container.innerHTML = symbols.map(s => `
         <div class="symbol-item">
             <div class="symbol-display">${s.symbol}</div>
@@ -1145,39 +1098,41 @@ function confirmSubmit() {
     return confirm(currentLang === 'ar' ? '📤 إرسال الرسالة؟' : '📤 Send message?');
 }
 
+// ===== قائمة الجوال =====
+function toggleMenu() {
+    const navLinks = document.getElementById('navLinks');
+    const overlay = document.getElementById('navOverlay');
+    if (navLinks) navLinks.classList.toggle('open');
+    if (overlay) overlay.classList.toggle('show');
+}
+
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.nav-links a') || e.target.id === 'navOverlay') {
+        const navLinks = document.getElementById('navLinks');
+        const overlay = document.getElementById('navOverlay');
+        if (navLinks) navLinks.classList.remove('open');
+        if (overlay) overlay.classList.remove('show');
+    }
+});
+
 // ============================================
 // تشغيل عند التحميل
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
-    // اللغة
     if (localStorage.getItem('siteLanguage') === 'en') {
         applyLanguage();
     }
-    
-    // السنة الأولى
     const firstYear = document.querySelector('.tab-content.active .year-card') || document.querySelector('.year-card');
     if (firstYear) firstYear.classList.add('active');
-    
-    // الوضع الليلي
     applySavedTheme();
-    
-    // تاريخ آخر تحديث
     showRealLastUpdate();
-    
-    // المفضلة
-    if (document.getElementById('favoritesList')) {
-        displayFavorites();
-    }
-    
-    // صفحة المواد
+    if (document.getElementById('favoritesList')) displayFavorites();
     if (document.getElementById('renewable') || document.getElementById('mechanical')) {
         setTimeout(() => {
             addShareButtons();
             addFavoriteButtons();
         }, 100);
     }
-    
-    // التذكيرات
     if (document.getElementById('remindersList')) {
         renderReminders();
         const dateInput = document.getElementById('reminderDate');
@@ -1185,11 +1140,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const today = new Date().toISOString().split('T')[0];
             dateInput.value = today;
         }
+        if (document.getElementById('enableNotifBtn')) updateNotifButton();
         checkUpcomingReminders();
-        setInterval(checkUpcomingReminders, 60 * 60 * 1000);
+        // فحص كل 30 ثانية
+        setInterval(checkUpcomingReminders, 30 * 1000);
     }
-    
-    // الرموز
     if (document.getElementById('symbolList')) {
         renderSymbols(engineeringSymbols);
     }
@@ -1205,102 +1160,4 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
             if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     });
-});
-// ===== قائمة الجوال =====
-function toggleMenu() {
-    const navLinks = document.getElementById('navLinks');
-    const overlay = document.getElementById('navOverlay');
-    
-    if (navLinks) navLinks.classList.toggle('open');
-    if (overlay) overlay.classList.toggle('show');
-}
-
-// إغلاق القائمة عند الضغط على رابط
-document.addEventListener('click', function(e) {
-    if (e.target.closest('.nav-links a') || e.target.id === 'navOverlay') {
-        const navLinks = document.getElementById('navLinks');
-        const overlay = document.getElementById('navOverlay');
-        
-        if (navLinks) navLinks.classList.remove('open');
-        if (overlay) overlay.classList.remove('show');
-    }
-});
-// ===== تفعيل الإشعارات =====
-function requestNotificationPermission() {
-    const btn = document.getElementById('enableNotifBtn');
-    
-    if (!('Notification' in window)) {
-        showNotification(currentLang === 'ar' ? 
-            '⚠️ متصفحك لا يدعم الإشعارات' : 
-            '⚠️ Your browser does not support notifications');
-        return;
-    }
-    
-    if (Notification.permission === 'granted') {
-        showNotification(currentLang === 'ar' ? 
-            '✅ الإشعارات مفعّلة مسبقاً' : 
-            '✅ Notifications already enabled');
-        updateNotifButton();
-        return;
-    }
-    
-    if (Notification.permission === 'denied') {
-        showNotification(currentLang === 'ar' ? 
-            '❌ الإشعارات مرفوضة. يرجى تفعيلها من إعدادات المتصفح' : 
-            '❌ Notifications denied. Enable from browser settings');
-        updateNotifButton();
-        return;
-    }
-    
-    // طلب الإذن
-    Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-            showNotification(currentLang === 'ar' ? 
-                '🎉 تم تفعيل الإشعارات بنجاح!' : 
-                '🎉 Notifications enabled successfully!');
-            
-            // إشعار تجريبي
-            new Notification('⏰ Direction Team', {
-                body: currentLang === 'ar' ? 
-                    'ستصلك إشعارات التذكيرات هنا' : 
-                    'You will receive reminder notifications here',
-                icon: 'logo.png'
-            });
-        } else {
-            showNotification(currentLang === 'ar' ? 
-                '❌ لم يتم تفعيل الإشعارات' : 
-                '❌ Notifications not enabled');
-        }
-        updateNotifButton();
-    });
-}
-
-function updateNotifButton() {
-    const btn = document.getElementById('enableNotifBtn');
-    if (!btn) return;
-    
-    if (!('Notification' in window)) {
-        btn.classList.add('denied');
-        btn.innerHTML = '❌ <span>' + (currentLang === 'ar' ? 'غير مدعوم' : 'Not supported') + '</span>';
-        btn.disabled = true;
-        return;
-    }
-    
-    if (Notification.permission === 'granted') {
-        btn.classList.add('enabled');
-        btn.innerHTML = '✅ <span>' + (currentLang === 'ar' ? 'الإشعارات مفعّلة' : 'Notifications enabled') + '</span>';
-        btn.disabled = true;
-    } else if (Notification.permission === 'denied') {
-        btn.classList.add('denied');
-        btn.innerHTML = '❌ <span>' + (currentLang === 'ar' ? 'الإشعارات مرفوضة' : 'Notifications denied') + '</span>';
-    } else {
-        btn.innerHTML = '🔔 <span>' + (currentLang === 'ar' ? 'تفعيل الإشعارات' : 'Enable Notifications') + '</span>';
-    }
-}
-
-// تحديث حالة الزر عند التحميل
-document.addEventListener('DOMContentLoaded', function() {
-    if (document.getElementById('enableNotifBtn')) {
-        updateNotifButton();
-    }
 });
