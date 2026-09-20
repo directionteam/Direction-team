@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>امتحان الكفاءة - Direction Team</title>
-    <link rel="stylesheet" href="style.css?v=8">
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 
-<nav class="navbar">
-    <div class="nav-container">
-        <button class="nav-toggle" id="navToggle" onclick="toggleMenu()" title="القائمة">☰</button>
-        <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
-        <ul class="nav-links" id="navLinks">
+    <nav class="navbar">
+        <div class="nav-container">
+            <button class="nav-toggle" onclick="toggleMenu()" title="القائمة">☰</button>
+            <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
+            <ul class="nav-links" id="navLinks">
                 <li><a href="index.html" data-lang="nav-home">الرئيسية</a></li>
                 <li><a href="materials.html" data-lang="nav-materials">المواد</a></li>
                 <li><a href="plans.html" data-lang="nav-plans">الخطط الدراسية</a></li>
@@ -31,6 +31,8 @@
         </div>
     </nav>
 
+    <div class="nav-overlay" id="navOverlay"></div>
+
     <section class="page-header">
         <h1 data-lang="exam-title">📝 نماذج امتحان الكفاءة الجامعية</h1>
         <p data-lang="exam-desc">كل ما تحتاجه للاستعداد لامتحان الكفاءة</p>
@@ -41,50 +43,42 @@
         <div class="exam-group">
             <h2 class="exam-group-title" data-lang="exam-general">📌 معلومات عامة</h2>
             <div class="exam-buttons">
-
                 <a href="https://drive.google.com/file/d/1mDX4ecNlVgzFATAwn0AFcS-1ED4rFhRG/view?usp=sharing" target="_blank" class="exam-btn">
                     <span class="exam-icon">📋</span>
                     <span class="exam-text" data-lang="exam-instructions">تعليمات امتحان الكفاءة</span>
                     <span class="exam-arrow">←</span>
                 </a>
-
                 <a href="https://drive.google.com/file/d/1-0YuNqgE9wx1S7MwPhU4kfFS-LkmJp-4/view?usp=sharing" target="_blank" class="exam-btn">
                     <span class="exam-icon">📄</span>
                     <span class="exam-text" data-lang="exam-sample">نموذج مستوى عام</span>
                     <span class="exam-arrow">←</span>
                 </a>
-
             </div>
         </div>
 
         <div class="exam-group">
             <h2 class="exam-group-title" data-lang="exam-mechanical">⚙️ نماذج الهندسة الميكانيكية</h2>
             <div class="exam-buttons">
-
                 <a href="https://drive.google.com/file/d/1Iaq0i4k-10TT3plUuv-BdfqQvJxb3Grk/view?usp=sharing" target="_blank" class="exam-btn">
                     <span class="exam-icon">1️⃣</span>
                     <span class="exam-text" data-lang="exam-part-1">الجزء الأول</span>
                     <span class="exam-arrow">←</span>
                 </a>
-
                 <a href="https://drive.google.com/file/d/1nwsIvA333YBYwCNUN0IHcu84ubA6-6g9/view?usp=sharing" target="_blank" class="exam-btn">
                     <span class="exam-icon">2️⃣</span>
                     <span class="exam-text" data-lang="exam-part-2">الجزء الثاني</span>
                     <span class="exam-arrow">←</span>
                 </a>
-
                 <a href="https://drive.google.com/file/d/1J5braAhzDIogCHLMCMJfIcy9R8HFFutl/view?usp=sharing" target="_blank" class="exam-btn">
                     <span class="exam-icon">3️⃣</span>
                     <span class="exam-text" data-lang="exam-part-3">الجزء الثالث</span>
                     <span class="exam-arrow">←</span>
                 </a>
-
                 <a href="https://drive.google.com/file/d/11qWEHR7tbRigvuPY4Ek58MaT5IPRFOwB/view?usp=sharing" target="_blank" class="exam-btn">
                     <span class="exam-icon">4️⃣</span>
                     <span class="exam-text" data-lang="exam-part-4">الجزء الرابع</span>
                     <span class="exam-arrow">←</span>
                 </a>
-
             </div>
         </div>
 
@@ -101,8 +95,7 @@
         <span>📤</span>
         <span data-lang="btn-share">شارك الموقع</span>
     </button>
-
-    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()" title="الرجوع للأعلى">⬆️</button>
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">⬆️</button>
 
     <script src="script.js"></script>
 </body>
