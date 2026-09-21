@@ -333,9 +333,4 @@ function filterCategory(event, category) {
     searchTerms();
 }
 
-// ===== عرض المصطلحات عند التحميل =====
-document.addEventListener('DOMContentLoaded', function() {
-    if (document.getElementById('dictList')) {
-        renderTerms(engineeringTerms);
-    }
-});
+
