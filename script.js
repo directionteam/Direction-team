@@ -27,30 +27,39 @@ function toggleYear(button) {
 
 // ===== البحث في المواد =====
 function searchMaterials() {
-    const input = document.getElementById('searchInput').value.toLowerCase().trim();
-    document.querySelectorAll('.year-card').forEach(c => { c.style.display = ''; c.classList.remove('active'); });
-    document.querySelectorAll('.semester').forEach(s => s.style.display = '');
-    document.querySelectorAll('.semester li').forEach(li => li.style.display = '');
+    const inputEl = document.getElementById('searchInput');
+    if (!inputEl) return;
+    const input = inputEl.value.toLowerCase().trim();
+    const activeTab = document.querySelector('.tab-content.active');
+    if (!activeTab) return;
+
+    activeTab.querySelectorAll('.year-card').forEach(c => {
+        c.style.display = '';
+        c.classList.remove('active');
+    });
+    activeTab.querySelectorAll('.year-content').forEach(s => s.style.display = '');
+    activeTab.querySelectorAll('.year-content li').forEach(li => li.style.display = '');
 
     if (input === '') {
-        const firstYear = document.querySelector('.tab-content.active .year-card');
+        const firstYear = activeTab.querySelector('.year-card');
         if (firstYear) firstYear.classList.add('active');
         return;
     }
 
-    document.querySelectorAll('.tab-content.active .year-card').forEach(c => c.classList.add('active'));
-    const activeTab = document.querySelector('.tab-content.active');
-    if (!activeTab) return;
+    activeTab.querySelectorAll('.year-card').forEach(c => c.classList.add('active'));
 
-    activeTab.querySelectorAll('.semester li').forEach(li => {
-        li.style.display = li.textContent.toLowerCase().includes(input) ? '' : 'none';
+    activeTab.querySelectorAll('.year-content li').forEach(li => {
+        const link = li.querySelector('a');
+        const arText = (link?.getAttribute('data-ar-text') || '').toLowerCase();
+        const enText = (materialTranslations[link?.getAttribute('data-ar-text')] || '').toLowerCase();
+        const visibleText = li.textContent.toLowerCase().trim();
+        const match = arText.includes(input) || enText.includes(input) || visibleText.includes(input);
+        li.style.display = match ? '' : 'none';
     });
-    activeTab.querySelectorAll('.semester').forEach(sem => {
-        const hasVisible = Array.from(sem.querySelectorAll('li')).some(li => li.style.display !== 'none');
-        sem.style.display = hasVisible ? '' : 'none';
-    });
+
     activeTab.querySelectorAll('.year-card').forEach(card => {
-        const hasVisible = Array.from(card.querySelectorAll('li')).some(li => li.style.display !== 'none');
+        const hasVisible = Array.from(card.querySelectorAll('.year-content li'))
+                                .some(li => li.style.display !== 'none');
         card.style.display = hasVisible ? '' : 'none';
     });
 }
@@ -60,8 +69,8 @@ function resetSearch() {
         c.style.display = '';
         c.classList.remove('active');
     });
-    document.querySelectorAll('.semester').forEach(s => s.style.display = '');
-    document.querySelectorAll('.semester li').forEach(li => li.style.display = '');
+    document.querySelectorAll('.year-content').forEach(s => s.style.display = '');
+    document.querySelectorAll('.year-content li').forEach(li => li.style.display = '');
     const firstYear = document.querySelector('.tab-content.active .year-card');
     if (firstYear) firstYear.classList.add('active');
 }
