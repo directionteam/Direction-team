@@ -1563,7 +1563,6 @@ function renderTerms(terms) {
         </div>
     `).join('');
 }
-
 function getTermCategoryName(cat) {
     const isAr = currentLang === 'ar';
     const names = isAr ? {
@@ -1573,7 +1572,14 @@ function getTermCategoryName(cat) {
         materials: '🔬 مواد',
         electric: '⚡ كهرباء',
         energy: '🌱 طاقة',
-        math: '📐 رياضيات'
+        math: '📐 رياضيات',
+        manufacturing: '🏭 إنتاج',
+        control: '🎛️ تحكم',
+        vibrations: '〰️ اهتزازات',
+        design: '✏️ تصميم',
+        safety: '🦺 سلامة',
+        automotive: '🚗 سيارات',
+        hvac: '❄️ تكييف'
     } : {
         mechanics: '⚙️ Mechanics',
         thermo: '🔥 Thermo',
@@ -1581,11 +1587,17 @@ function getTermCategoryName(cat) {
         materials: '🔬 Materials',
         electric: '⚡ Electric',
         energy: '🌱 Energy',
-        math: '📐 Math'
+        math: '📐 Math',
+        manufacturing: '🏭 Manufacturing',
+        control: '🎛️ Control',
+        vibrations: '〰️ Vibrations',
+        design: '✏️ Design',
+        safety: '🦺 Safety',
+        automotive: '🚗 Automotive',
+        hvac: '❄️ HVAC'
     };
     return names[cat] || cat;
 }
-
 // ===== البحث في المصطلحات =====
 function searchTerms() {
     const query = document.getElementById('dictSearch').value.toLowerCase().trim();
