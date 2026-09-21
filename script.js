@@ -154,16 +154,10 @@ async function showRealLastUpdate() {
     } catch (error) {}
 }
 
-// ===== شاشة التحميل - إخفاء تلقائي =====
-document.addEventListener('DOMContentLoaded', function() {
-    const loader = document.getElementById('loaderScreen');
-    if (loader) {
-        setTimeout(function() {
-            loader.classList.add('hidden');
-            setTimeout(() => loader.remove(), 700);
-        }, 1000);
-    }
-});
+/* ===== إخفاء شاشة التحميل ===== */
+.loader-screen {
+    display: none !important;
+}
 
 // ===== قائمة الجوال واللابتوب =====
 function toggleMenu() {
