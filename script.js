@@ -25,47 +25,65 @@ function toggleYear(button) {
     button.parentElement.classList.toggle('active');
 }
 
-// ===== البحث في المواد =====
 function searchMaterials() {
-    const input = document.getElementById('searchInput').value.toLowerCase().trim();
-    document.querySelectorAll('.year-card').forEach(c => { c.style.display = ''; c.classList.remove('active'); });
-    document.querySelectorAll('.semester').forEach(s => s.style.display = '');
-    document.querySelectorAll('.semester li').forEach(li => li.style.display = '');
-
-    if (input === '') {
-        const firstYear = document.querySelector('.tab-content.active .year-card');
+    const input = document.getElementById('searchInput');
+    if (!input) return;
+    
+    const query = input.value.toLowerCase().trim();
+    const activeTab = document.querySelector('.tab-content.active');
+    if (!activeTab) return;
+    
+    // إذا البحث فارغ - أعد الكل
+    if (query === '') {
+        activeTab.querySelectorAll('.year-card').forEach(card => {
+            card.style.display = '';
+            card.classList.remove('active');
+        });
+        activeTab.querySelectorAll('.semester').forEach(sem => {
+            sem.style.display = '';
+        });
+        activeTab.querySelectorAll('.semester li').forEach(li => {
+            li.style.display = '';
+        });
+        const firstYear = activeTab.querySelector('.year-card');
         if (firstYear) firstYear.classList.add('active');
         return;
     }
-
-    document.querySelectorAll('.tab-content.active .year-card').forEach(c => c.classList.add('active'));
-    const activeTab = document.querySelector('.tab-content.active');
-    if (!activeTab) return;
-
-    activeTab.querySelectorAll('.semester li').forEach(li => {
-        li.style.display = li.textContent.toLowerCase().includes(input) ? '' : 'none';
+    
+    // افتح كل السنوات
+    activeTab.querySelectorAll('.year-card').forEach(card => {
+        card.classList.add('active');
     });
+    
+    // ابحث في كل المواد
+    activeTab.querySelectorAll('.semester li').forEach(li => {
+        // احصل على النص العربي والإنجليزي من data-ar-text
+        const arText = (li.querySelector('a')?.getAttribute('data-ar-text') || '').toLowerCase();
+        const fullText = li.textContent.toLowerCase();
+        
+        if (arText.includes(query) || fullText.includes(query)) {
+            li.style.display = '';
+        } else {
+            li.style.display = 'none';
+        }
+    });
+    
+    // إخفاء الفصول الفارغة
     activeTab.querySelectorAll('.semester').forEach(sem => {
-        const hasVisible = Array.from(sem.querySelectorAll('li')).some(li => li.style.display !== 'none');
+        const hasVisible = Array.from(sem.querySelectorAll('li')).some(
+            li => li.style.display !== 'none'
+        );
         sem.style.display = hasVisible ? '' : 'none';
     });
+    
+    // إخفاء السنوات الفارغة
     activeTab.querySelectorAll('.year-card').forEach(card => {
-        const hasVisible = Array.from(card.querySelectorAll('li')).some(li => li.style.display !== 'none');
+        const hasVisible = Array.from(card.querySelectorAll('li')).some(
+            li => li.style.display !== 'none'
+        );
         card.style.display = hasVisible ? '' : 'none';
     });
 }
-
-function resetSearch() {
-    document.querySelectorAll('.year-card').forEach(c => {
-        c.style.display = '';
-        c.classList.remove('active');
-    });
-    document.querySelectorAll('.semester').forEach(s => s.style.display = '');
-    document.querySelectorAll('.semester li').forEach(li => li.style.display = '');
-    const firstYear = document.querySelector('.tab-content.active .year-card');
-    if (firstYear) firstYear.classList.add('active');
-}
-
 // ===== الوضع الليلي =====
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
