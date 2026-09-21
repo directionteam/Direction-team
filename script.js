@@ -656,6 +656,9 @@ function applyLanguage() {
     if (document.getElementById('remindersList')) renderReminders();
     if (document.getElementById('favoritesList')) displayFavorites();
     if (document.getElementById('enableNotifBtn')) updateNotifButton();
+     // إعادة رسم القاموس والرموز عند تبديل اللغة
+    if (document.getElementById('dictList')) searchTerms();
+    if (document.getElementById('symbolList')) renderSymbols(engineeringSymbols);
 }
 
 // ===== الحاسبة الهندسية =====
@@ -1262,6 +1265,264 @@ const engineeringTerms = [
     { ar: "وسيط تبريد", en: "Refrigerant", cat: "hvac", desc: "سائل يعمل في دورة التبريد" }
 
 ];
+// ===== إضافة الشرح الإنجليزي لكل مصطلح =====
+const termDescEn = {
+    // ميكانيكا
+    "ميكانيكا": "Branch of physics that studies motion of bodies and forces",
+    "قوة": "External influence that changes motion. Unit: Newton (N)",
+    "كتلة": "Amount of matter. Unit: Kilogram (kg)",
+    "وزن": "Earth's gravitational force = mass × gravity (W = mg)",
+    "سرعة": "Rate of displacement. Unit: m/s",
+    "تسارع": "Rate of change of velocity. Unit: m/s²",
+    "عزم": "Ability of force to cause rotation = Force × Arm",
+    "زخم": "Product of mass and velocity = mass × velocity",
+    "احتكاك": "Force opposing motion between two touching surfaces",
+    "اتزان": "State where sum of forces on a body = zero",
+    "إزاحة": "Distance with direction. Unit: meter (m)",
+    "إجهاد القص": "Force parallel to surface divided by cross-section area",
+    "قوة الطرد المركزي": "Apparent force pushing body away from center",
+    "قوة الجذب المركزي": "Force making body move in circular path",
+    "قانون نيوتن الأول": "A body stays at rest or motion unless acted by force",
+    "قانون نيوتن الثاني": "F = ma (Force = Mass × Acceleration)",
+    "قانون نيوتن الثالث": "For every action there is equal and opposite reaction",
+    "طاقة حركية": "Energy of motion = ½mv²",
+    "طاقة كامنة": "Stored energy = mgh",
+    "شغل": "Force × distance. Unit: Joule (J)",
+    "قدرة ميكانيكية": "Rate of doing work. Unit: Watt (W)",
+    "دفع": "Force × time = change in momentum",
+    "تردد طبيعي": "Frequency at which body vibrates freely",
+    "رنين": "Maximum amplitude vibration when frequencies match",
+
+    // حراريات
+    "حرارة": "Form of energy transferred from hot to cold",
+    "درجة حرارة": "Measure of average kinetic energy of molecules",
+    "إنتروبيا": "Measure of disorder in a system",
+    "إنثالبي": "Internal energy + pressure × volume",
+    "قانون بويل": "Pressure × volume = constant at constant temperature",
+    "قانون تشارلز": "Gas volume proportional to temperature at constant pressure",
+    "قانون جاي-لوساك": "Pressure proportional to temperature at constant volume",
+    "دورة كارنو": "Maximum theoretical efficiency between two temperatures",
+    "دورة رانكين": "Basic cycle of steam power plants",
+    "دورة برايتون": "Basic cycle of gas turbines",
+    "دورة أوتو": "Ideal cycle of gasoline engines",
+    "دورة ديزل": "Ideal cycle of diesel engines",
+    "انتقال الحرارة": "Heat transfer: conduction, convection, radiation",
+    "توصيل حراري": "Heat transfer through solid without material motion",
+    "حمل حراري": "Heat transfer through fluid motion",
+    "إشعاع حراري": "Heat transfer through electromagnetic waves",
+    "قانون ستيفان-بولتزمان": "Radiated energy proportional to T⁴",
+    "الطاقة الداخلية": "Sum of kinetic and potential energies of molecules",
+    "قانون الديناميكا الأول": "Energy conservation, ΔU = Q - W",
+    "قانون الديناميكا الثاني": "Entropy of isolated system never decreases",
+    "الغاز المثالي": "Gas following PV = nRT",
+    "ثابت الغازات": "R = 8.314 J/mol·K",
+    "انتقال الحرارة بالإشعاع": "Heat transfer without medium",
+
+    // موائع
+    "لزوجة": "Fluid resistance to flow. Unit: Pa·s",
+    "ضغط": "Force per unit area. Unit: Pascal (Pa)",
+    "كثافة": "Mass per unit volume. Unit: kg/m³",
+    "تدفق": "Fluid motion in a system. Unit: m³/s",
+    "مبدأ برنولي": "Increasing fluid speed decreases pressure",
+    "معادلة الاستمرارية": "A₁V₁ = A₂V₂ (flow rate constant)",
+    "رقم رينولدز": "Measure of flow type: laminar or turbulent",
+    "قانون باسكال": "Pressure on confined fluid transmits equally",
+    "ديناميكا الموائع": "Study of fluid motion and forces",
+    "إستاتيكا الموائع": "Study of fluids at rest",
+    "تدفق صفحي": "Smooth flow in parallel layers",
+    "تدفق مضطرب": "Irregular flow with eddies and vibrations",
+    "معامل الاحتكاك": "Calculates energy loss in pipes",
+    "فقدان الرأس": "Pressure loss due to pipe friction",
+    "مضخة": "Device that increases fluid pressure to move it",
+    "توربين": "Converts fluid energy to rotating mechanical energy",
+    "مقياس ضغط": "Device to measure pressure difference",
+    "طفو": "Buoyant force of fluid on submerged bodies",
+    "قانون أرخميدس": "Buoyant force = weight of displaced fluid",
+
+    // مواد
+    "إجهاد": "Internal force per unit area. Unit: Pa",
+    "انفعال": "Relative change in length = ΔL / L",
+    "معامل يونغ": "Ratio of stress to strain. Measure of stiffness",
+    "معامل القص": "Ratio of shear stress to shear strain",
+    "نسبة بواسون": "Ratio of lateral to axial strain",
+    "صلابة": "Resistance to scratching or deformation",
+    "مطيلية": "Ability to deform without fracture",
+    "هشاشة": "Property of breaking suddenly without deformation",
+    "مقاومة الشد": "Maximum stress before fracture",
+    "مقاومة الخضوع": "Stress at which permanent deformation begins",
+    "قص": "Stress causing layers to slide",
+    "انحناء": "Deformation due to perpendicular forces",
+    "التواء": "Twisting around axis due to torque",
+    "زحف": "Slow deformation under constant stress over time",
+    "كسر": "Separation of material into parts",
+    "تعب": "Weakness due to repeated loads",
+    "سبيكة": "Metallic material from mixing two or more metals",
+    "فولاذ": "Alloy of iron and carbon",
+    "حديد زهر": "Iron alloy with high carbon content",
+    "ألومنيوم": "Lightweight corrosion-resistant metal",
+    "بوليمر": "Material of large repeating molecules",
+    "خزف": "Hard brittle heat-resistant material",
+    "مركب": "Material of two or more different materials",
+
+    // كهرباء
+    "جهد": "Electric potential difference. Unit: Volt (V)",
+    "تيار": "Rate of charge flow. Unit: Ampere (A)",
+    "مقاومة": "Opposition to current. Unit: Ohm (Ω)",
+    "قدرة": "Rate of energy consumption. Unit: Watt (W)",
+    "قانون أوم": "V = I × R",
+    "قانون كيرشوف للتيار": "Sum of currents in = out",
+    "قانون كيرشوف للجهد": "Sum of voltages in closed loop = zero",
+    "دائرة كهربائية": "Closed path for electric current",
+    "دائرة توازي": "Circuit with components in parallel",
+    "دائرة توالي": "Circuit with components in series",
+    "مكثف": "Component storing charge. Unit: Farad (F)",
+    "محث": "Component storing magnetic energy. Unit: Henry (H)",
+    "مقاومة كهربائية": "Component opposing current flow",
+    "ديود": "Component allowing current in one direction",
+    "ترانزستور": "Component for amplification or switching",
+    "تيار متردد": "Current that reverses direction periodically",
+    "تيار مستمر": "Current in one direction",
+    "تردد": "Cycles per second. Unit: Hertz (Hz)",
+    "محول كهربائي": "Device changing AC voltage",
+    "محرك كهربائي": "Converts electrical energy to motion",
+    "مولد كهربائي": "Converts kinetic energy to electricity",
+
+    // طاقة
+    "طاقة متجددة": "Energy from inexhaustible sources: sun, wind, water",
+    "طاقة شمسية": "Energy from sun rays",
+    "خلايا كهروضوئية": "Convert solar energy to electricity directly",
+    "الخلايا الشمسية": "Panels converting sunlight to electricity",
+    "الطاقة الشمسية المركزة": "Concentrating sun rays to generate heat",
+    "طاقة الرياح": "Energy from wind motion via turbines",
+    "توربين رياح": "Device converting wind energy to electricity",
+    "طاقة حرارية أرضية": "Energy from Earth's internal heat",
+    "كتلة حيوية": "Energy from organic materials (plants, wood, waste)",
+    "طاقة حيوية": "Energy extracted from biomass",
+    "خلايا الوقود": "Convert chemical energy to electricity",
+    "الهيدروجين الأخضر": "Hydrogen produced from renewable sources",
+    "كفاءة الطاقة": "Ratio of useful to produced energy",
+    "تخزين الطاقة": "Technologies for storing energy for later use",
+    "بطارية": "Device storing chemical energy and converting to electricity",
+    "شبكة ذكية": "Electric grid using digital technologies",
+    "محطة طاقة": "Facility for electricity generation",
+    "محطة بخارية": "Power plant operating with steam",
+    "محطة غازية": "Power plant operating with natural gas",
+    "الطاقة الكهرومائية": "Generating electricity from water motion",
+    "الطاقة النووية": "Energy from nuclear fission or fusion",
+    "تحويل الطاقة": "Converting energy from one form to another",
+    "قانون حفظ الطاقة": "Energy cannot be created or destroyed",
+
+    // رياضيات
+    "اشتقاق": "Rate of change of a function. dy/dx",
+    "تكامل": "Inverse of derivative. Area under curve",
+    "نهاية": "Value function approaches at a point",
+    "استمرارية": "Property of function without jumps",
+    "مصفوفة": "Rectangular arrangement of numbers in rows/columns",
+    "محدد": "Scalar value computed from square matrix elements",
+    "متجه": "Quantity with magnitude and direction",
+    "ضرب نقطي": "Product of two vectors yielding a scalar",
+    "ضرب اتجاهي": "Product of two vectors yielding perpendicular vector",
+    "مشتقة جزئية": "Derivative of multivariable function",
+    "معادلة تفاضلية": "Equation containing function derivatives",
+    "تحويل لابلاس": "Transform for solving differential equations",
+    "تحويل فورييه": "Transform decomposing functions into sine waves",
+    "سلسلة تايلور": "Approximating function by infinite series",
+    "سلسلة ماكلورين": "Special case of Taylor series around zero",
+    "متسلسلة فورييه": "Representing periodic functions as sum of trig functions",
+    "إحصاء": "Science of collecting and analyzing data",
+    "احتمال": "Measure of likelihood of an event",
+    "توزيع طبيعي": "Bell-shaped probability distribution",
+    "انحدار خطي": "Method for finding best line through data",
+
+    // إنتاج
+    "عمليات الإنتاج": "Processes for converting raw materials to products",
+    "خراطة": "Production process using lathe for shaping metals",
+    "تفريز": "Cutting process using rotating multi-tooth tool",
+    "ثقب": "Process of creating holes in solid materials",
+    "تجليخ": "High-precision surface finishing process",
+    "لحام": "Joining metals by heat or pressure",
+    "سباكة": "Pouring molten metal into mold for shaping",
+    "طرق": "Shaping metal by hammering or pressing",
+    "بثق": "Pushing metal through die for shaping",
+    "درفلة": "Passing metal between rollers to reduce thickness",
+    "سحب": "Pulling metal through die to reduce diameter",
+    "قياس دقيق": "Measurement with precise tools like micrometer",
+    "تحكم رقمي": "Computer numerical control of manufacturing machines",
+    "طباعة ثلاثية الأبعاد": "Manufacturing objects layer by layer",
+    "مراقبة الجودة": "Processes to ensure product quality",
+
+    // تحكم
+    "أنظمة التحكم": "Systems controlling behavior of dynamic systems",
+    "حلقة مفتوحة": "Control system without feedback",
+    "حلقة مغلقة": "Control system with feedback",
+    "تغذية راجعة": "Returning part of output to input for improvement",
+    "متحكم PID": "Controller using proportional, integral, derivative",
+    "استقرار النظام": "Ability of system to return to equilibrium",
+    "دالة التحويل": "Ratio of output to input in Laplace domain",
+    "استجابة النظام": "System behavior over time when input changes",
+    "زمن الاستقرار": "Time for system to reach steady state",
+    "زيادة التجاوز": "System exceeding target value before settling",
+
+    // اهتزازات
+    "اهتزاز حر": "Body vibration without continuous external force",
+    "اهتزاز قسري": "Body vibration due to external force",
+    "تخميد": "Reducing vibration amplitude over time",
+    "درجة حرية": "Number of independent coordinates describing motion",
+    "وضع الاهتزاز": "Body shape when vibrating at a specific frequency",
+    "فقدان الطاقة": "Converting vibration energy to other forms",
+
+    // تصميم
+    "تصميم ميكانيكي": "Process of designing mechanical parts and systems",
+    "تحمل": "Component reducing friction between moving parts",
+    "تروس": "Toothed wheels transmitting motion and power",
+    "سيور": "Belts transmitting motion between pulleys",
+    "سلاسل": "Metal chains transmitting motion",
+    "عمود": "Rotating part transmitting torque",
+    "مسمار": "Threaded fastener for assembling parts",
+    "لحام دائم": "Joint that cannot be disassembled without damage",
+    "وصل مؤقت": "Joint that can be disassembled and reassembled",
+    "تصميم بمساعدة الحاسوب": "Using computer in engineering design",
+    "تصنيع بمساعدة الحاسوب": "Using computer in manufacturing processes",
+    "هندسة عكسية": "Analyzing existing product to understand its design",
+
+    // سلامة
+    "سلامة مهنية": "Procedures protecting workers from hazards",
+    "صيانة وقائية": "Periodic maintenance to prevent failures",
+    "صيانة علاجية": "Maintenance after failure occurs",
+    "تحليل المخاطر": "Identifying and assessing potential risks",
+    "معدات الوقاية": "Personal protective equipment for workers",
+    "محركات الاحتراق": "Engines operating by burning fuel",
+
+    // سيارات
+    "هندسة السيارات": "Field concerned with vehicle design and manufacturing",
+    "ناقل حركة": "System transmitting power from engine to wheels",
+    "نظام تعليق": "System connecting vehicle to wheels and absorbing shocks",
+    "نظام فرامل": "System for stopping vehicle or reducing speed",
+    "نظام توجيه": "System for controlling vehicle direction",
+    "احتراق داخلي": "Fuel combustion inside engine",
+    "احتراق خارجي": "Fuel combustion outside engine",
+    "كفاءة الوقود": "Distance traveled per unit of fuel",
+
+    // تكييف
+    "تبريد": "Process of transferring heat from one place to another",
+    "تكييف": "Controlling air temperature and humidity",
+    "دورة التبريد": "Cycle transferring heat from cold to hot place",
+    "ضاغط": "Device increasing refrigerant gas pressure",
+    "مكثف تبريد": "Heat exchanger rejecting heat outside",
+    "مبخر": "Heat exchanger absorbing heat from space",
+    "صمام تمدد": "Valve reducing refrigerant pressure",
+    "معامل الأداء": "Cooling cycle efficiency = Cooling / Work",
+    "وسيط تبريد": "Fluid operating in refrigeration cycle"
+};
+
+// دمج الشرح الإنجليزي مع المصفوفة
+engineeringTerms.forEach(term => {
+    if (termDescEn[term.ar]) {
+        term.descEn = termDescEn[term.ar];
+    } else {
+        term.descEn = term.en;
+    }
+});
 let currentCategory = 'all';
 
 // ===== عرض المصطلحات =====
@@ -1288,7 +1549,7 @@ function renderTerms(terms) {
                 <h3 class="dict-ar">${t.ar}</h3>
                 <span class="dict-en">${t.en}</span>
             </div>
-            <p class="dict-desc">${t.desc}</p>
+                       <p class="dict-desc">${currentLang === 'ar' ? t.desc : (t.descEn || t.desc)}</p>
             <span class="dict-category">${getTermCategoryName(t.cat)}</span>
         </div>
     `).join('');
@@ -1325,11 +1586,12 @@ function searchTerms() {
         filtered = filtered.filter(t => t.cat === currentCategory);
     }
 
-    if (query) {
+     if (query) {
         filtered = filtered.filter(t =>
             t.ar.toLowerCase().includes(query) ||
             t.en.toLowerCase().includes(query) ||
-            t.desc.toLowerCase().includes(query)
+            t.desc.toLowerCase().includes(query) ||
+            (t.descEn && t.descEn.toLowerCase().includes(query))
         );
     }
 
