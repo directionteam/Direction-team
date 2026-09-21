@@ -2427,3 +2427,11 @@ body.dark-mode .empty-favorites a { color: #bb86fc; }
     body.dark-mode .nav-links.expanded a:hover,
     body.dark-mode .nav-links.expanded a.active { background: #2a1b4d !important; color: #bb86fc !important; border-right-color: #bb86fc !important; }
 }
+/* ===== تصنيفات القاموس الجديدة ===== */
+.dict-item[data-cat="manufacturing"] .dict-category { background: #fff3e0; color: #e67e22; }
+.dict-item[data-cat="control"] .dict-category { background: #e8f5e9; color: #27ae60; }
+.dict-item[data-cat="vibrations"] .dict-category { background: #f3e5f5; color: #8e24aa; }
+.dict-item[data-cat="design"] .dict-category { background: #e3f2fd; color: #1976d2; }
+.dict-item[data-cat="safety"] .dict-category { background: #ffebee; color: #c0392b; }
+.dict-item[data-cat="automotive"] .dict-category { background: #e0f7fa; color: #00838f; }
+.dict-item[data-cat="hvac"] .dict-category { background: #e1f5fe; color: #0277bd; }
