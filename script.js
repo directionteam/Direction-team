@@ -27,30 +27,39 @@ function toggleYear(button) {
 
 // ===== البحث في المواد =====
 function searchMaterials() {
-    const input = document.getElementById('searchInput').value.toLowerCase().trim();
-    document.querySelectorAll('.year-card').forEach(c => { c.style.display = ''; c.classList.remove('active'); });
-    document.querySelectorAll('.semester').forEach(s => s.style.display = '');
-    document.querySelectorAll('.semester li').forEach(li => li.style.display = '');
+    const inputEl = document.getElementById('searchInput');
+    if (!inputEl) return;
+    const input = inputEl.value.toLowerCase().trim();
+    const activeTab = document.querySelector('.tab-content.active');
+    if (!activeTab) return;
+
+    activeTab.querySelectorAll('.year-card').forEach(c => {
+        c.style.display = '';
+        c.classList.remove('active');
+    });
+    activeTab.querySelectorAll('.year-content').forEach(s => s.style.display = '');
+    activeTab.querySelectorAll('.year-content li').forEach(li => li.style.display = '');
 
     if (input === '') {
-        const firstYear = document.querySelector('.tab-content.active .year-card');
+        const firstYear = activeTab.querySelector('.year-card');
         if (firstYear) firstYear.classList.add('active');
         return;
     }
 
-    document.querySelectorAll('.tab-content.active .year-card').forEach(c => c.classList.add('active'));
-    const activeTab = document.querySelector('.tab-content.active');
-    if (!activeTab) return;
+    activeTab.querySelectorAll('.year-card').forEach(c => c.classList.add('active'));
 
-    activeTab.querySelectorAll('.semester li').forEach(li => {
-        li.style.display = li.textContent.toLowerCase().includes(input) ? '' : 'none';
+    activeTab.querySelectorAll('.year-content li').forEach(li => {
+        const link = li.querySelector('a');
+        const arText = (link?.getAttribute('data-ar-text') || '').toLowerCase();
+        const enText = (materialTranslations[link?.getAttribute('data-ar-text')] || '').toLowerCase();
+        const visibleText = li.textContent.toLowerCase().trim();
+        const match = arText.includes(input) || enText.includes(input) || visibleText.includes(input);
+        li.style.display = match ? '' : 'none';
     });
-    activeTab.querySelectorAll('.semester').forEach(sem => {
-        const hasVisible = Array.from(sem.querySelectorAll('li')).some(li => li.style.display !== 'none');
-        sem.style.display = hasVisible ? '' : 'none';
-    });
+
     activeTab.querySelectorAll('.year-card').forEach(card => {
-        const hasVisible = Array.from(card.querySelectorAll('li')).some(li => li.style.display !== 'none');
+        const hasVisible = Array.from(card.querySelectorAll('.year-content li'))
+                                .some(li => li.style.display !== 'none');
         card.style.display = hasVisible ? '' : 'none';
     });
 }
@@ -60,8 +69,8 @@ function resetSearch() {
         c.style.display = '';
         c.classList.remove('active');
     });
-    document.querySelectorAll('.semester').forEach(s => s.style.display = '');
-    document.querySelectorAll('.semester li').forEach(li => li.style.display = '');
+    document.querySelectorAll('.year-content').forEach(s => s.style.display = '');
+    document.querySelectorAll('.year-content li').forEach(li => li.style.display = '');
     const firstYear = document.querySelector('.tab-content.active .year-card');
     if (firstYear) firstYear.classList.add('active');
 }
@@ -91,7 +100,7 @@ function shareSite() {
     const text = isAr 
         ? '🔗 موقع Direction Team الرسمي\n\n📚 مواد هندسة الميكانيك والطاقة المتجددة\n📋 الخطط الدراسية\n📝 امتحان الكفاءة\n💻 برامج هندسية\n\n' + url + '\n\n💜 انشروه لكل الطلاب!'
         : '🔗 Direction Team Official Website\n\n📚 Mechanical & Renewable Energy Materials\n📋 Study Plans\n📝 Competency Exam\n💻 Engineering Programs\n\n' + url + '\n\n💜 Share it with all students!';
-    
+
     if (navigator.share) {
         navigator.share({ title: 'Direction Team', text: text, url: url }).catch(() => openWhatsApp(text));
     } else {
@@ -154,21 +163,15 @@ window.addEventListener('load', function() {
 function toggleMenu() {
     const navLinks = document.getElementById('navLinks');
     const overlay = document.getElementById('navOverlay');
-    
     if (!navLinks) return;
-    
     if (window.innerWidth > 768) {
-        // اللابتوب
         navLinks.classList.toggle('expanded');
     } else {
-        // الجوال
         navLinks.classList.toggle('open');
     }
-    
     if (overlay) overlay.classList.toggle('show');
 }
 
-// إغلاق القائمة عند الضغط على رابط أو overlay
 document.addEventListener('click', function(e) {
     if (e.target.closest('.nav-links a') || e.target.id === 'navOverlay') {
         const navLinks = document.getElementById('navLinks');
@@ -186,7 +189,7 @@ let currentLang = localStorage.getItem('siteLanguage') || 'ar';
 
 // ===== أزرار المشاركة والمفضلة =====
 function addShareButtons() {
-    const materialLinks = document.querySelectorAll('.year-content ul li a, .semester li a');
+    const materialLinks = document.querySelectorAll('.year-content ul li a');
     materialLinks.forEach(link => {
         const li = link.parentElement;
         if (!li || li.querySelector('.share-material-btn')) return;
@@ -205,7 +208,7 @@ function addShareButtons() {
 }
 
 function addFavoriteButtons() {
-    const materialLinks = document.querySelectorAll('.year-content ul li a, .semester li a');
+    const materialLinks = document.querySelectorAll('.year-content ul li a');
     materialLinks.forEach(link => {
         const li = link.parentElement;
         if (!li || li.querySelector('.fav-material-btn')) return;
@@ -305,7 +308,7 @@ function removeFavorite(materialName) {
 
 // ===== ترجمة المواد =====
 function translateMaterials() {
-    const materialLinks = document.querySelectorAll('.year-content ul li a, .semester li a');
+    const materialLinks = document.querySelectorAll('.year-content ul li a');
     materialLinks.forEach(link => {
         const arabicText = link.getAttribute('data-ar-text');
         if (!arabicText) return;
@@ -400,6 +403,351 @@ const materialTranslations = {
     'محطات القدرة الحرارية': 'Thermal Power Plants',
     'موضوعات خاصة في الهندسة الميكانيكية': 'Special Topics in Mechanical Engineering'
 };
+
+// ===== بيانات قاموس المصطلحات =====
+const engineeringTerms = [
+    // ===== ميكانيكا =====
+    { ar: "ميكانيكا", en: "Mechanics", cat: "mechanics", desc: "فرع من الفيزياء يدرس حركة الأجسام والقوى المؤثرة عليها", descEn: "Branch of physics that studies motion of bodies and forces" },
+    { ar: "قوة", en: "Force", cat: "mechanics", desc: "مؤثر خارجي يغير حالة الجسم. وحدتها: نيوتن (N)", descEn: "External influence that changes motion. Unit: Newton (N)" },
+    { ar: "كتلة", en: "Mass", cat: "mechanics", desc: "مقدار المادة في الجسم. وحدتها: كيلوغرام (kg)", descEn: "Amount of matter. Unit: Kilogram (kg)" },
+    { ar: "وزن", en: "Weight", cat: "mechanics", desc: "قوة جذب الأرض للجسم = الكتلة × الجاذبية", descEn: "Earth's gravitational force = mass × gravity" },
+    { ar: "سرعة", en: "Velocity", cat: "mechanics", desc: "معدل تغير الإزاحة. وحدتها: م/ث", descEn: "Rate of displacement. Unit: m/s" },
+    { ar: "تسارع", en: "Acceleration", cat: "mechanics", desc: "معدل تغير السرعة. وحدتها: م/ث²", descEn: "Rate of change of velocity. Unit: m/s²" },
+    { ar: "عزم", en: "Torque", cat: "mechanics", desc: "قدرة القوة على إحداث دوران", descEn: "Ability of force to cause rotation" },
+    { ar: "زخم", en: "Momentum", cat: "mechanics", desc: "حاصل ضرب الكتلة في السرعة", descEn: "Product of mass and velocity" },
+    { ar: "احتكاك", en: "Friction", cat: "mechanics", desc: "قوة تعارض الحركة بين سطحين", descEn: "Force opposing motion between surfaces" },
+    { ar: "اتزان", en: "Equilibrium", cat: "mechanics", desc: "مجموع القوى على جسم = صفر", descEn: "Sum of forces on a body = zero" },
+    { ar: "إزاحة", en: "Displacement", cat: "mechanics", desc: "المسافة مع الاتجاه. وحدتها: متر", descEn: "Distance with direction. Unit: meter" },
+    { ar: "إجهاد القص", en: "Shear Stress", cat: "mechanics", desc: "قوة موازية للسطح مقسومة على المساحة", descEn: "Force parallel to surface divided by area" },
+    { ar: "قوة الطرد المركزي", en: "Centrifugal Force", cat: "mechanics", desc: "قوة ظاهرية تدفع الجسم بعيداً عن المركز", descEn: "Apparent force pushing body away from center" },
+    { ar: "قوة الجذب المركزي", en: "Centripetal Force", cat: "mechanics", desc: "قوة تجعل الجسم يتحرك في مسار دائري", descEn: "Force making body move in circular path" },
+    { ar: "قانون نيوتن الأول", en: "Newton's First Law", cat: "mechanics", desc: "الجسم يبقى على حالته ما لم تؤثر عليه قوة", descEn: "Body remains in its state unless acted upon by force" },
+    { ar: "قانون نيوتن الثاني", en: "Newton's Second Law", cat: "mechanics", desc: "F = ma", descEn: "F = ma" },
+    { ar: "قانون نيوتن الثالث", en: "Newton's Third Law", cat: "mechanics", desc: "لكل فعل رد فعل مساوٍ له", descEn: "For every action there is an equal reaction" },
+    { ar: "طاقة حركية", en: "Kinetic Energy", cat: "mechanics", desc: "طاقة الحركة = ½mv²", descEn: "Energy of motion = ½mv²" },
+    { ar: "طاقة كامنة", en: "Potential Energy", cat: "mechanics", desc: "طاقة الوضع = mgh", descEn: "Energy of position = mgh" },
+    { ar: "شغل", en: "Work", cat: "mechanics", desc: "القوة × المسافة. وحدتها: جول", descEn: "Force × distance. Unit: Joule" },
+    { ar: "قدرة ميكانيكية", en: "Mechanical Power", cat: "mechanics", desc: "معدل بذل الشغل. وحدتها: واط", descEn: "Rate of doing work. Unit: Watt" },
+    { ar: "دفع", en: "Impulse", cat: "mechanics", desc: "القوة × الزمن = تغير الزخم", descEn: "Force × time = change in momentum" },
+    { ar: "تردد طبيعي", en: "Natural Frequency", cat: "mechanics", desc: "تردد اهتزاز الجسم بحرية", descEn: "Frequency of free vibration" },
+    { ar: "رنين", en: "Resonance", cat: "mechanics", desc: "اهتزاز بأقصى سعة عند تساوي الترددات", descEn: "Maximum amplitude vibration when frequencies match" },
+
+    // ===== حراريات =====
+    { ar: "حرارة", en: "Heat", cat: "thermo", desc: "طاقة تنتقل من الساخن للبارد", descEn: "Energy transferred from hot to cold" },
+    { ar: "درجة حرارة", en: "Temperature", cat: "thermo", desc: "مقياس لمتوسط الطاقة الحركية للجزيئات", descEn: "Measure of average kinetic energy of molecules" },
+    { ar: "إنتروبيا", en: "Entropy", cat: "thermo", desc: "مقياس لدرجة الفوضى", descEn: "Measure of disorder" },
+    { ar: "إنثالبي", en: "Enthalpy", cat: "thermo", desc: "الطاقة الداخلية + حاصل ضرب الضغط في الحجم", descEn: "Internal energy + pressure × volume" },
+    { ar: "قانون بويل", en: "Boyle's Law", cat: "thermo", desc: "الضغط × الحجم = ثابت عند ثبوت الحرارة", descEn: "Pressure × volume = constant at constant temperature" },
+    { ar: "قانون تشارلز", en: "Charles's Law", cat: "thermo", desc: "الحجم يتناسب طردياً مع درجة الحرارة", descEn: "Volume proportional to temperature at constant pressure" },
+    { ar: "قانون جاي-لوساك", en: "Gay-Lussac's Law", cat: "thermo", desc: "الضغط يتناسب طردياً مع درجة الحرارة", descEn: "Pressure proportional to temperature at constant volume" },
+    { ar: "دورة كارنو", en: "Carnot Cycle", cat: "thermo", desc: "أعلى كفاءة نظرية لمحرك حراري", descEn: "Maximum theoretical efficiency of heat engine" },
+    { ar: "دورة رانكين", en: "Rankine Cycle", cat: "thermo", desc: "الدورة الأساسية لمحطات البخار", descEn: "Basic cycle of steam power plants" },
+    { ar: "دورة برايتون", en: "Brayton Cycle", cat: "thermo", desc: "الدورة الأساسية لتوربينات الغاز", descEn: "Basic cycle of gas turbines" },
+    { ar: "دورة أوتو", en: "Otto Cycle", cat: "thermo", desc: "الدورة المثالية لمحركات البنزين", descEn: "Ideal cycle of gasoline engines" },
+    { ar: "دورة ديزل", en: "Diesel Cycle", cat: "thermo", desc: "الدورة المثالية لمحركات الديزل", descEn: "Ideal cycle of diesel engines" },
+    { ar: "انتقال الحرارة", en: "Heat Transfer", cat: "thermo", desc: "توصيل، حمل، إشعاع", descEn: "Conduction, convection, radiation" },
+    { ar: "توصيل حراري", en: "Conduction", cat: "thermo", desc: "انتقال الحرارة عبر مادة صلبة", descEn: "Heat transfer through solid" },
+    { ar: "حمل حراري", en: "Convection", cat: "thermo", desc: "انتقال الحرارة عبر حركة المائع", descEn: "Heat transfer through fluid motion" },
+    { ar: "إشعاع حراري", en: "Radiation", cat: "thermo", desc: "انتقال الحرارة عبر الموجات", descEn: "Heat transfer through waves" },
+    { ar: "قانون ستيفان-بولتزمان", en: "Stefan-Boltzmann Law", cat: "thermo", desc: "الطاقة المشعة تتناسب مع القوة الرابعة للحرارة", descEn: "Radiated energy proportional to T⁴" },
+    { ar: "الطاقة الداخلية", en: "Internal Energy", cat: "thermo", desc: "مجموع الطاقات الحركية والكامنة للجزيئات", descEn: "Sum of kinetic and potential energies of molecules" },
+    { ar: "قانون الديناميكا الأول", en: "First Law of Thermodynamics", cat: "thermo", desc: "الطاقة لا تفنى، ΔU = Q - W", descEn: "Energy conservation, ΔU = Q - W" },
+    { ar: "قانون الديناميكا الثاني", en: "Second Law of Thermodynamics", cat: "thermo", desc: "الإنتروبيا لا تقل في نظام معزول", descEn: "Entropy never decreases in isolated system" },
+    { ar: "الغاز المثالي", en: "Ideal Gas", cat: "thermo", desc: "غاز يتبع PV = nRT", descEn: "Gas following PV = nRT" },
+    { ar: "ثابت الغازات", en: "Gas Constant", cat: "thermo", desc: "R = 8.314 J/mol·K", descEn: "R = 8.314 J/mol·K" },
+
+    // ===== موائع =====
+    { ar: "لزوجة", en: "Viscosity", cat: "fluids", desc: "مقاومة المائع للتدفق. وحدتها: Pa·s", descEn: "Fluid resistance to flow. Unit: Pa·s" },
+    { ar: "ضغط", en: "Pressure", cat: "fluids", desc: "القوة على وحدة المساحة", descEn: "Force per unit area" },
+    { ar: "كثافة", en: "Density", cat: "fluids", desc: "الكتلة في وحدة الحجم", descEn: "Mass per unit volume" },
+    { ar: "تدفق", en: "Flow", cat: "fluids", desc: "حركة المائع في نظام", descEn: "Fluid motion in a system" },
+    { ar: "مبدأ برنولي", en: "Bernoulli's Principle", cat: "fluids", desc: "زيادة السرعة تقلل الضغط", descEn: "Increasing speed decreases pressure" },
+    { ar: "معادلة الاستمرارية", en: "Continuity Equation", cat: "fluids", desc: "A₁V₁ = A₂V₂", descEn: "A₁V₁ = A₂V₂" },
+    { ar: "رقم رينولدز", en: "Reynolds Number", cat: "fluids", desc: "مقياس لطبيعة التدفق", descEn: "Measure of flow type" },
+    { ar: "قانون باسكال", en: "Pascal's Law", cat: "fluids", desc: "الضغط ينتقل بالتساوي في سائل محصور", descEn: "Pressure transmitted equally in confined fluid" },
+    { ar: "ديناميكا الموائع", en: "Fluid Dynamics", cat: "fluids", desc: "دراسة حركة الموائع", descEn: "Study of fluid motion" },
+    { ar: "إستاتيكا الموائع", en: "Fluid Statics", cat: "fluids", desc: "دراسة الموائع الساكنة", descEn: "Study of fluids at rest" },
+    { ar: "تدفق صفحي", en: "Laminar Flow", cat: "fluids", desc: "تدفق منتظم في طبقات", descEn: "Smooth flow in layers" },
+    { ar: "تدفق مضطرب", en: "Turbulent Flow", cat: "fluids", desc: "تدفق غير منتظم مع دوامات", descEn: "Irregular flow with eddies" },
+    { ar: "معامل الاحتكاك", en: "Friction Factor", cat: "fluids", desc: "يحسب فقدان الطاقة في الأنابيب", descEn: "Calculates energy loss in pipes" },
+    { ar: "فقدان الرأس", en: "Head Loss", cat: "fluids", desc: "فقدان الضغط بسبب الاحتكاك", descEn: "Pressure loss due to friction" },
+    { ar: "مضخة", en: "Pump", cat: "fluids", desc: "جهاز يزيد ضغط المائع", descEn: "Device that increases fluid pressure" },
+    { ar: "توربين", en: "Turbine", cat: "fluids", desc: "يحول طاقة المائع لطاقة دوارة", descEn: "Converts fluid energy to rotational energy" },
+    { ar: "مقياس ضغط", en: "Manometer", cat: "fluids", desc: "جهاز لقياس فرق الضغط", descEn: "Device to measure pressure difference" },
+    { ar: "طفو", en: "Buoyancy", cat: "fluids", desc: "قوة دفع المائع للأجسام", descEn: "Fluid upward force on bodies" },
+    { ar: "قانون أرخميدس", en: "Archimedes' Principle", cat: "fluids", desc: "قوة الطفو = وزن المائع المُزاح", descEn: "Buoyant force = weight of displaced fluid" },
+
+    // ===== مواد =====
+    { ar: "إجهاد", en: "Stress", cat: "materials", desc: "القوة الداخلية على وحدة المساحة", descEn: "Internal force per unit area" },
+    { ar: "انفعال", en: "Strain", cat: "materials", desc: "التغير النسبي في الطول", descEn: "Relative change in length" },
+    { ar: "معامل يونغ", en: "Young's Modulus", cat: "materials", desc: "نسبة الإجهاد للانفعال", descEn: "Ratio of stress to strain" },
+    { ar: "معامل القص", en: "Shear Modulus", cat: "materials", desc: "نسبة إجهاد القص لانفعاله", descEn: "Ratio of shear stress to shear strain" },
+    { ar: "نسبة بواسون", en: "Poisson's Ratio", cat: "materials", desc: "نسبة الانفعال الجانبي للطولي", descEn: "Ratio of lateral to axial strain" },
+    { ar: "صلابة", en: "Hardness", cat: "materials", desc: "مقاومة المادة للخدش", descEn: "Resistance to scratching" },
+    { ar: "مطيلية", en: "Ductility", cat: "materials", desc: "قدرة المادة على التشكيل", descEn: "Ability to deform" },
+    { ar: "هشاشة", en: "Brittleness", cat: "materials", desc: "خاصية المادة التي تتكسر بسرعة", descEn: "Property of breaking suddenly" },
+    { ar: "مقاومة الشد", en: "Tensile Strength", cat: "materials", desc: "أقصى إجهاد قبل الكسر", descEn: "Maximum stress before fracture" },
+    { ar: "مقاومة الخضوع", en: "Yield Strength", cat: "materials", desc: "الإجهاد الذي يبدأ عنده التشكل الدائم", descEn: "Stress at which permanent deformation begins" },
+    { ar: "قص", en: "Shear", cat: "materials", desc: "إجهاد يسبب انزلاق الطبقات", descEn: "Stress causing layers to slide" },
+    { ar: "انحناء", en: "Bending", cat: "materials", desc: "تشوه بسبب قوى عمودية", descEn: "Deformation due to perpendicular forces" },
+    { ar: "التواء", en: "Torsion", cat: "materials", desc: "التفاف حول المحور", descEn: "Twisting around axis" },
+    { ar: "زحف", en: "Creep", cat: "materials", desc: "تشوه بطيء تحت إجهاد ثابت", descEn: "Slow deformation under constant stress" },
+    { ar: "كسر", en: "Fracture", cat: "materials", desc: "انفصال المادة لجزئين", descEn: "Separation of material into parts" },
+    { ar: "تعب", en: "Fatigue", cat: "materials", desc: "ضعف بسبب أحمال متكررة", descEn: "Weakness due to repeated loads" },
+    { ar: "سبيكة", en: "Alloy", cat: "materials", desc: "خلط معدنين أو أكثر", descEn: "Mixture of two or more metals" },
+    { ar: "فولاذ", en: "Steel", cat: "materials", desc: "سبيكة من الحديد والكربون", descEn: "Alloy of iron and carbon" },
+    { ar: "حديد زهر", en: "Cast Iron", cat: "materials", desc: "سبيكة حديدية بكربون عالي", descEn: "Iron alloy with high carbon" },
+    { ar: "ألومنيوم", en: "Aluminum", cat: "materials", desc: "معدن خفيف مقاوم للتآكل", descEn: "Light corrosion-resistant metal" },
+    { ar: "بوليمر", en: "Polymer", cat: "materials", desc: "مادة من جزيئات كبيرة", descEn: "Material of large molecules" },
+    { ar: "خزف", en: "Ceramic", cat: "materials", desc: "مادة صلبة هشة مقاومة للحرارة", descEn: "Hard brittle heat-resistant material" },
+    { ar: "مركب", en: "Composite", cat: "materials", desc: "مادة من مادتين مختلفتين", descEn: "Material of two different materials" },
+
+    // ===== كهرباء =====
+    { ar: "جهد", en: "Voltage", cat: "electric", desc: "فرق الجهد. وحدته: فولت", descEn: "Potential difference. Unit: Volt" },
+    { ar: "تيار", en: "Current", cat: "electric", desc: "معدل تدفق الشحنة. وحدته: أمبير", descEn: "Rate of charge flow. Unit: Ampere" },
+    { ar: "مقاومة", en: "Resistance", cat: "electric", desc: "معارضة مرور التيار. وحدتها: أوم", descEn: "Opposition to current. Unit: Ohm" },
+    { ar: "قدرة", en: "Power", cat: "electric", desc: "معدل استهلاك الطاقة. وحدتها: واط", descEn: "Rate of energy use. Unit: Watt" },
+    { ar: "قانون أوم", en: "Ohm's Law", cat: "electric", desc: "V = I × R", descEn: "V = I × R" },
+    { ar: "قانون كيرشوف للتيار", en: "Kirchhoff's Current Law", cat: "electric", desc: "مجموع التيارات الداخلة = الخارجة", descEn: "Sum of currents in = out" },
+    { ar: "قانون كيرشوف للجهد", en: "Kirchhoff's Voltage Law", cat: "electric", desc: "مجموع الجهود في حلقة = صفر", descEn: "Sum of voltages in loop = zero" },
+    { ar: "دائرة كهربائية", en: "Electric Circuit", cat: "electric", desc: "مسار مغلق للتيار", descEn: "Closed path for current" },
+    { ar: "دائرة توازي", en: "Parallel Circuit", cat: "electric", desc: "مكونات على التوازي", descEn: "Components in parallel" },
+    { ar: "دائرة توالي", en: "Series Circuit", cat: "electric", desc: "مكونات على التوالي", descEn: "Components in series" },
+    { ar: "مكثف", en: "Capacitor", cat: "electric", desc: "يخزن الشحنة. وحدته: فاراد", descEn: "Stores charge. Unit: Farad" },
+    { ar: "محث", en: "Inductor", cat: "electric", desc: "يخزن طاقة مغناطيسية. وحدته: هنري", descEn: "Stores magnetic energy. Unit: Henry" },
+    { ar: "مقاومة كهربائية", en: "Resistor", cat: "electric", desc: "مكون يعارض التيار", descEn: "Component opposing current" },
+    { ar: "ديود", en: "Diode", cat: "electric", desc: "يسمح بالتيار في اتجاه واحد", descEn: "Allows current in one direction" },
+    { ar: "ترانزستور", en: "Transistor", cat: "electric", desc: "للتضخيم أو كمفتاح", descEn: "For amplification or switching" },
+    { ar: "تيار متردد", en: "AC", cat: "electric", desc: "تيار يغير اتجاهه دورياً", descEn: "Current that reverses direction" },
+    { ar: "تيار مستمر", en: "DC", cat: "electric", desc: "تيار في اتجاه واحد", descEn: "Current in one direction" },
+    { ar: "تردد", en: "Frequency", cat: "electric", desc: "عدد الدورات في الثانية. وحدته: هرتز", descEn: "Cycles per second. Unit: Hertz" },
+    { ar: "محول كهربائي", en: "Transformer", cat: "electric", desc: "يغير جهد التيار المتردد", descEn: "Changes AC voltage" },
+    { ar: "محرك كهربائي", en: "Electric Motor", cat: "electric", desc: "يحول الكهرباء لحركة", descEn: "Converts electricity to motion" },
+    { ar: "مولد كهربائي", en: "Generator", cat: "electric", desc: "يحول الحركة لكهرباء", descEn: "Converts motion to electricity" },
+
+    // ===== طاقة =====
+    { ar: "طاقة متجددة", en: "Renewable Energy", cat: "energy", desc: "طاقة من مصادر لا تنضب", descEn: "Energy from inexhaustible sources" },
+    { ar: "طاقة شمسية", en: "Solar Energy", cat: "energy", desc: "الطاقة من أشعة الشمس", descEn: "Energy from sun rays" },
+    { ar: "خلايا كهروضوئية", en: "PV Cells", cat: "energy", desc: "تحول الشمس لكهرباء", descEn: "Convert sunlight to electricity" },
+    { ar: "الخلايا الشمسية", en: "Solar Cells", cat: "energy", desc: "ألواح تحول الضوء لكهرباء", descEn: "Panels converting light to electricity" },
+    { ar: "الطاقة الشمسية المركزة", en: "Concentrated Solar Power", cat: "energy", desc: "تركيز الشمس لتوليد الحرارة", descEn: "Concentrating sun for heat" },
+    { ar: "طاقة الرياح", en: "Wind Energy", cat: "energy", desc: "الطاقة من حركة الرياح", descEn: "Energy from wind" },
+    { ar: "توربين رياح", en: "Wind Turbine", cat: "energy", desc: "يحول الرياح لكهرباء", descEn: "Converts wind to electricity" },
+    { ar: "طاقة حرارية أرضية", en: "Geothermal Energy", cat: "energy", desc: "الطاقة من باطن الأرض", descEn: "Energy from earth's heat" },
+    { ar: "كتلة حيوية", en: "Biomass", cat: "energy", desc: "طاقة من مواد عضوية", descEn: "Energy from organic matter" },
+    { ar: "خلايا الوقود", en: "Fuel Cells", cat: "energy", desc: "تحول الكيميائي لكهرباء", descEn: "Convert chemical to electricity" },
+    { ar: "الهيدروجين الأخضر", en: "Green Hydrogen", cat: "energy", desc: "هيدروجين من مصادر متجددة", descEn: "Hydrogen from renewable sources" },
+    { ar: "كفاءة الطاقة", en: "Energy Efficiency", cat: "energy", desc: "نسبة الطاقة المفيدة للمنتجة", descEn: "Useful to total energy ratio" },
+    { ar: "تخزين الطاقة", en: "Energy Storage", cat: "energy", desc: "تقنيات تخزين الطاقة", descEn: "Energy storage technologies" },
+    { ar: "بطارية", en: "Battery", cat: "energy", desc: "تخزن الطاقة الكيميائية", descEn: "Stores chemical energy" },
+    { ar: "شبكة ذكية", en: "Smart Grid", cat: "energy", desc: "شبكة كهربائية رقمية", descEn: "Digital electric grid" },
+    { ar: "محطة طاقة", en: "Power Plant", cat: "energy", desc: "منشأة لتوليد الكهرباء", descEn: "Electricity generation facility" },
+    { ar: "محطة بخارية", en: "Steam Power Plant", cat: "energy", desc: "تعمل بالبخار", descEn: "Operates with steam" },
+    { ar: "محطة غازية", en: "Gas Power Plant", cat: "energy", desc: "تعمل بالغاز الطبيعي", descEn: "Operates with natural gas" },
+    { ar: "الطاقة الكهرومائية", en: "Hydropower", cat: "energy", desc: "توليد من حركة الماء", descEn: "Generation from water motion" },
+    { ar: "الطاقة النووية", en: "Nuclear Energy", cat: "energy", desc: "من الانشطار أو الاندماج", descEn: "From fission or fusion" },
+    { ar: "تحويل الطاقة", en: "Energy Conversion", cat: "energy", desc: "تحويل الطاقة من شكل لآخر", descEn: "Converting energy between forms" },
+    { ar: "قانون حفظ الطاقة", en: "Conservation of Energy", cat: "energy", desc: "الطاقة لا تفنى ولا تستحدث", descEn: "Energy cannot be created or destroyed" },
+
+    // ===== رياضيات =====
+    { ar: "اشتقاق", en: "Derivative", cat: "math", desc: "معدل تغير دالة. dy/dx", descEn: "Rate of change. dy/dx" },
+    { ar: "تكامل", en: "Integral", cat: "math", desc: "عكس الاشتقاق", descEn: "Inverse of derivative" },
+    { ar: "نهاية", en: "Limit", cat: "math", desc: "القيمة التي تقترب منها الدالة", descEn: "Value function approaches" },
+    { ar: "استمرارية", en: "Continuity", cat: "math", desc: "دالة بلا قفزات", descEn: "Function without jumps" },
+    { ar: "مصفوفة", en: "Matrix", cat: "math", desc: "ترتيب مستطيل للأرقام", descEn: "Rectangular arrangement of numbers" },
+    { ar: "محدد", en: "Determinant", cat: "math", desc: "قيمة عددية من مصفوفة مربعة", descEn: "Scalar value from square matrix" },
+    { ar: "متجه", en: "Vector", cat: "math", desc: "كمية لها مقدار واتجاه", descEn: "Quantity with magnitude and direction" },
+    { ar: "ضرب نقطي", en: "Dot Product", cat: "math", desc: "ينتج عدداً قياسياً", descEn: "Produces a scalar" },
+    { ar: "ضرب اتجاهي", en: "Cross Product", cat: "math", desc: "ينتج متجهاً عمودياً", descEn: "Produces perpendicular vector" },
+    { ar: "مشتقة جزئية", en: "Partial Derivative", cat: "math", desc: "اشتقاق دالة متعددة المتغيرات", descEn: "Derivative of multivariable function" },
+    { ar: "معادلة تفاضلية", en: "Differential Equation", cat: "math", desc: "معادلة فيها مشتقات", descEn: "Equation with derivatives" },
+    { ar: "تحويل لابلاس", en: "Laplace Transform", cat: "math", desc: "لحل المعادلات التفاضلية", descEn: "For solving differential equations" },
+    { ar: "تحويل فورييه", en: "Fourier Transform", cat: "math", desc: "يفكك الدوال لموجات", descEn: "Decomposes functions into waves" },
+    { ar: "سلسلة تايلور", en: "Taylor Series", cat: "math", desc: "تقريب دالة بمتسلسلة", descEn: "Approximating function by series" },
+    { ar: "متسلسلة فورييه", en: "Fourier Series", cat: "math", desc: "تمثيل الدوال الدورية", descEn: "Representing periodic functions" },
+    { ar: "إحصاء", en: "Statistics", cat: "math", desc: "جمع وتحليل البيانات", descEn: "Collecting and analyzing data" },
+    { ar: "احتمال", en: "Probability", cat: "math", desc: "إمكانية وقوع حدث", descEn: "Likelihood of an event" },
+    { ar: "توزيع طبيعي", en: "Normal Distribution", cat: "math", desc: "توزيع على شكل جرس", descEn: "Bell-shaped distribution" },
+    { ar: "انحدار خطي", en: "Linear Regression", cat: "math", desc: "أفضل خط عبر البيانات", descEn: "Best line through data" },
+
+    // ===== إنتاج =====
+    { ar: "عمليات الإنتاج", en: "Manufacturing Processes", cat: "manufacturing", desc: "تحويل المواد الخام لمنتجات", descEn: "Converting raw materials to products" },
+    { ar: "خراطة", en: "Turning", cat: "manufacturing", desc: "تشكيل بالمخرطة", descEn: "Shaping with lathe" },
+    { ar: "تفريز", en: "Milling", cat: "manufacturing", desc: "قطع بأداة دوارة", descEn: "Cutting with rotating tool" },
+    { ar: "ثقب", en: "Drilling", cat: "manufacturing", desc: "إنشاء ثقوب", descEn: "Creating holes" },
+    { ar: "تجليخ", en: "Grinding", cat: "manufacturing", desc: "تشطيب سطحي دقيق", descEn: "Precision surface finishing" },
+    { ar: "لحام", en: "Welding", cat: "manufacturing", desc: "ربط المعادن بالحرارة", descEn: "Joining metals by heat" },
+    { ar: "سباكة", en: "Casting", cat: "manufacturing", desc: "صب المعدن في قالب", descEn: "Pouring metal into mold" },
+    { ar: "طرق", en: "Forging", cat: "manufacturing", desc: "تشكيل بالطرق", descEn: "Shaping by hammering" },
+    { ar: "بثق", en: "Extrusion", cat: "manufacturing", desc: "دفع المعدن عبر قالب", descEn: "Pushing metal through die" },
+    { ar: "درفلة", en: "Rolling", cat: "manufacturing", desc: "تمرير بين بكرات", descEn: "Passing between rollers" },
+    { ar: "سحب", en: "Drawing", cat: "manufacturing", desc: "سحب عبر قالب", descEn: "Pulling through die" },
+    { ar: "قياس دقيق", en: "Precision Measurement", cat: "manufacturing", desc: "قياس بأدوات دقيقة", descEn: "Measurement with precise tools" },
+    { ar: "تحكم رقمي", en: "CNC", cat: "manufacturing", desc: "تحكم الحاسوب بالآلات", descEn: "Computer control of machines" },
+    { ar: "طباعة ثلاثية الأبعاد", en: "3D Printing", cat: "manufacturing", desc: "تصنيع طبقة فوق طبقة", descEn: "Layer by layer manufacturing" },
+    { ar: "مراقبة الجودة", en: "Quality Control", cat: "manufacturing", desc: "ضمان جودة المنتجات", descEn: "Ensuring product quality" },
+
+    // ===== تحكم =====
+    { ar: "أنظمة التحكم", en: "Control Systems", cat: "control", desc: "تتحكم في سلوك الأنظمة", descEn: "Control behavior of systems" },
+    { ar: "حلقة مفتوحة", en: "Open Loop", cat: "control", desc: "بدون تغذية راجعة", descEn: "Without feedback" },
+    { ar: "حلقة مغلقة", en: "Closed Loop", cat: "control", desc: "مع تغذية راجعة", descEn: "With feedback" },
+    { ar: "تغذية راجعة", en: "Feedback", cat: "control", desc: "إعادة جزء من الإخراج", descEn: "Returning part of output" },
+    { ar: "متحكم PID", en: "PID Controller", cat: "control", desc: "تناسب + تكامل + اشتقاق", descEn: "Proportional + Integral + Derivative" },
+    { ar: "استقرار النظام", en: "System Stability", cat: "control", desc: "العودة للتوازن", descEn: "Return to equilibrium" },
+    { ar: "دالة التحويل", en: "Transfer Function", cat: "control", desc: "نسبة الخرج للدخل", descEn: "Output to input ratio" },
+    { ar: "استجابة النظام", en: "System Response", cat: "control", desc: "سلوك النظام مع الزمن", descEn: "System behavior over time" },
+    { ar: "زمن الاستقرار", en: "Settling Time", cat: "control", desc: "زمن الوصول للاستقرار", descEn: "Time to reach stability" },
+    { ar: "زيادة التجاوز", en: "Overshoot", cat: "control", desc: "تجاوز القيمة المطلوبة", descEn: "Exceeding target value" },
+
+    // ===== اهتزازات =====
+    { ar: "اهتزاز حر", en: "Free Vibration", cat: "vibrations", desc: "بدون قوة خارجية مستمرة", descEn: "Without continuous external force" },
+    { ar: "اهتزاز قسري", en: "Forced Vibration", cat: "vibrations", desc: "بسبب قوة خارجية", descEn: "Due to external force" },
+    { ar: "تخميد", en: "Damping", cat: "vibrations", desc: "تقليل السعة مع الزمن", descEn: "Reducing amplitude over time" },
+    { ar: "تردد طبيعي", en: "Natural Frequency", cat: "vibrations", desc: "تردد الاهتزاز الحر", descEn: "Free vibration frequency" },
+    { ar: "رنين", en: "Resonance", cat: "vibrations", desc: "أقصى سعة اهتزاز", descEn: "Maximum vibration amplitude" },
+    { ar: "درجة حرية", en: "Degree of Freedom", cat: "vibrations", desc: "إحداثيات مستقلة لوصف الحركة", descEn: "Independent coordinates describing motion" },
+    { ar: "وضع الاهتزاز", en: "Mode Shape", cat: "vibrations", desc: "شكل الجسم عند تردد معين", descEn: "Body shape at specific frequency" },
+    { ar: "فقدان الطاقة", en: "Energy Dissipation", cat: "vibrations", desc: "تحول طاقة الاهتزاز", descEn: "Vibration energy conversion" },
+
+    // ===== تصميم =====
+    { ar: "تصميم ميكانيكي", en: "Mechanical Design", cat: "design", desc: "تصميم الأجزاء الميكانيكية", descEn: "Designing mechanical parts" },
+    { ar: "تحمل", en: "Bearing", cat: "design", desc: "يقلل الاحتكاك", descEn: "Reduces friction" },
+    { ar: "تروس", en: "Gears", cat: "design", desc: "عجلات مسننة تنقل الحركة", descEn: "Toothed wheels transmitting motion" },
+    { ar: "سيور", en: "Belts", cat: "design", desc: "أحزمة نقل الحركة", descEn: "Motion transfer belts" },
+    { ar: "سلاسل", en: "Chains", cat: "design", desc: "سلاسل معدنية ناقلة", descEn: "Metal transmission chains" },
+    { ar: "عمود", en: "Shaft", cat: "design", desc: "جزء دوّار ينقل العزم", descEn: "Rotating torque-transmitting part" },
+    { ar: "مسمار", en: "Bolt", cat: "design", desc: "مثبت لولبي", descEn: "Threaded fastener" },
+    { ar: "لحام دائم", en: "Permanent Joint", cat: "design", desc: "وصل لا يُفك", descEn: "Non-removable joint" },
+    { ar: "وصل مؤقت", en: "Temporary Joint", cat: "design", desc: "وصل قابل للفك", descEn: "Removable joint" },
+    { ar: "تصميم بمساعدة الحاسوب", en: "CAD", cat: "design", desc: "الحاسوب في التصميم", descEn: "Computer in design" },
+    { ar: "تصنيع بمساعدة الحاسوب", en: "CAM", cat: "design", desc: "الحاسوب في التصنيع", descEn: "Computer in manufacturing" },
+    { ar: "هندسة عكسية", en: "Reverse Engineering", cat: "design", desc: "تحليل منتج موجود", descEn: "Analyzing existing product" },
+
+    // ===== سلامة =====
+    { ar: "سلامة مهنية", en: "Occupational Safety", cat: "safety", desc: "حماية العاملين", descEn: "Protecting workers" },
+    { ar: "صيانة وقائية", en: "Preventive Maintenance", cat: "safety", desc: "صيانة دورية", descEn: "Periodic maintenance" },
+    { ar: "صيانة علاجية", en: "Corrective Maintenance", cat: "safety", desc: "صيانة بعد العطل", descEn: "Maintenance after failure" },
+    { ar: "تحليل المخاطر", en: "Risk Analysis", cat: "safety", desc: "تحديد وتقييم المخاطر", descEn: "Identifying and assessing risks" },
+    { ar: "معدات الوقاية", en: "PPE", cat: "safety", desc: "معدات الحماية الشخصية", descEn: "Personal protective equipment" },
+
+    // ===== سيارات =====
+    { ar: "هندسة السيارات", en: "Automotive Engineering", cat: "automotive", desc: "تصميم وتصنيع السيارات", descEn: "Design and manufacturing of vehicles" },
+    { ar: "ناقل حركة", en: "Transmission", cat: "automotive", desc: "ينقل القدرة للعجلات", descEn: "Transmits power to wheels" },
+    { ar: "نظام تعليق", en: "Suspension System", cat: "automotive", desc: "يربط السيارة بالعجلات", descEn: "Connects vehicle to wheels" },
+    { ar: "نظام فرامل", en: "Braking System", cat: "automotive", desc: "لإيقاف السيارة", descEn: "For stopping the vehicle" },
+    { ar: "نظام توجيه", en: "Steering System", cat: "automotive", desc: "للتحكم في الاتجاه", descEn: "For direction control" },
+    { ar: "احتراق داخلي", en: "Internal Combustion", cat: "automotive", desc: "احتراق داخل المحرك", descEn: "Combustion inside engine" },
+    { ar: "كفاءة الوقود", en: "Fuel Efficiency", cat: "automotive", desc: "مسافة لكل وحدة وقود", descEn: "Distance per fuel unit" },
+
+    // ===== تكييف =====
+    { ar: "تبريد", en: "Refrigeration", cat: "hvac", desc: "نقل الحرارة", descEn: "Heat transfer" },
+    { ar: "تكييف", en: "Air Conditioning", cat: "hvac", desc: "التحكم بالحرارة والرطوبة", descEn: "Temperature and humidity control" },
+    { ar: "دورة التبريد", en: "Refrigeration Cycle", cat: "hvac", desc: "نقل الحرارة من بارد لساخن", descEn: "Moving heat from cold to hot" },
+    { ar: "ضاغط", en: "Compressor", cat: "hvac", desc: "يزيد ضغط الغاز", descEn: "Increases gas pressure" },
+    { ar: "مكثف تبريد", en: "Condenser", cat: "hvac", desc: "يطرد الحرارة", descEn: "Rejects heat" },
+    { ar: "مبخر", en: "Evaporator", cat: "hvac", desc: "يمتص الحرارة", descEn: "Absorbs heat" },
+    { ar: "صمام تمدد", en: "Expansion Valve", cat: "hvac", desc: "يخفض الضغط", descEn: "Reduces pressure" },
+    { ar: "معامل الأداء", en: "COP", cat: "hvac", desc: "كفاءة التبريد", descEn: "Cooling efficiency" },
+    { ar: "وسيط تبريد", en: "Refrigerant", cat: "hvac", desc: "سائل دورة التبريد", descEn: "Refrigeration cycle fluid" }
+];
+
+let currentCategory = 'all';
+
+// ===== عرض المصطلحات =====
+function renderTerms(terms) {
+    const container = document.getElementById('dictList');
+    const noResults = document.getElementById('noResults');
+    const countEl = document.getElementById('dictCount');
+
+    if (!container) return;
+    if (countEl) countEl.textContent = terms.length;
+
+    if (terms.length === 0) {
+        container.innerHTML = '';
+        if (noResults) noResults.style.display = 'block';
+        return;
+    }
+    if (noResults) noResults.style.display = 'none';
+
+    const isAr = currentLang === 'ar';
+
+    container.innerHTML = terms.map(t => `
+        <div class="dict-item">
+            <div class="dict-item-header">
+                <h3 class="dict-ar">${isAr ? t.ar : t.en}</h3>
+                <span class="dict-en">${isAr ? t.en : t.ar}</span>
+            </div>
+            <p class="dict-desc">${isAr ? t.desc : (t.descEn || t.desc)}</p>
+            <span class="dict-category">${getTermCategoryName(t.cat)}</span>
+        </div>
+    `).join('');
+}
+
+function getTermCategoryName(cat) {
+    const isAr = currentLang === 'ar';
+    const names = isAr ? {
+        mechanics: '⚙️ ميكانيكا',
+        thermo: '🔥 حراريات',
+        fluids: '💧 موائع',
+        materials: '🔬 مواد',
+        electric: '⚡ كهرباء',
+        energy: '🌱 طاقة',
+        math: '📐 رياضيات',
+        manufacturing: '🏭 إنتاج',
+        control: '🎛️ تحكم',
+        vibrations: '〰️ اهتزازات',
+        design: '✏️ تصميم',
+        safety: '🦺 سلامة',
+        automotive: '🚗 سيارات',
+        hvac: '❄️ تكييف'
+    } : {
+        mechanics: '⚙️ Mechanics',
+        thermo: '🔥 Thermo',
+        fluids: '💧 Fluids',
+        materials: '🔬 Materials',
+        electric: '⚡ Electric',
+        energy: '🌱 Energy',
+        math: '📐 Math',
+        manufacturing: '🏭 Manufacturing',
+        control: '🎛️ Control',
+        vibrations: '〰️ Vibrations',
+        design: '✏️ Design',
+        safety: '🦺 Safety',
+        automotive: '🚗 Automotive',
+        hvac: '❄️ HVAC'
+    };
+    return names[cat] || cat;
+}
+
+// ===== البحث في المصطلحات =====
+function searchTerms() {
+    const searchEl = document.getElementById('dictSearch');
+    if (!searchEl) return;
+    const query = searchEl.value.toLowerCase().trim();
+    let filtered = engineeringTerms;
+
+    if (currentCategory !== 'all') {
+        filtered = filtered.filter(t => t.cat === currentCategory);
+    }
+
+    if (query) {
+        filtered = filtered.filter(t =>
+            t.ar.toLowerCase().includes(query) ||
+            t.en.toLowerCase().includes(query) ||
+            t.desc.toLowerCase().includes(query) ||
+            (t.descEn && t.descEn.toLowerCase().includes(query))
+        );
+    }
+
+    renderTerms(filtered);
+}
+
+// ===== فلترة التصنيفات =====
+function filterCategory(event, category) {
+    currentCategory = category;
+    document.querySelectorAll('.dict-cat-btn').forEach(btn => btn.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    searchTerms();
 
 // ===== ترجمات الواجهة =====
 const translations = {
@@ -637,6 +985,7 @@ function applyLanguage() {
     }
     const langBtn = document.getElementById('langToggle');
     if (langBtn) langBtn.textContent = currentLang === 'ar' ? '🌐 EN' : '🌐 AR';
+
     document.querySelectorAll('[data-lang]').forEach(el => {
         const key = el.dataset.lang;
         if (translations[currentLang] && translations[currentLang][key]) {
@@ -649,13 +998,24 @@ function applyLanguage() {
             el.placeholder = translations[currentLang][key];
         }
     });
+
     translateMaterials();
+
     document.querySelectorAll('.share-material-btn').forEach(btn => {
         btn.innerHTML = currentLang === 'ar' ? '📤 مشاركة' : '📤 Share';
     });
+
     if (document.getElementById('remindersList')) renderReminders();
     if (document.getElementById('favoritesList')) displayFavorites();
     if (document.getElementById('enableNotifBtn')) updateNotifButton();
+
+    // إعادة رسم القاموس عند تبديل اللغة
+    if (document.getElementById('dictList')) {
+        searchTerms();
+    }
+    if (document.getElementById('symbolList')) {
+        renderSymbols(engineeringSymbols);
+    }
 }
 
 // ===== الحاسبة الهندسية =====
@@ -957,7 +1317,6 @@ function checkUpcomingReminders() {
 
 // ===== تفعيل الإشعارات =====
 function requestNotificationPermission() {
-    const btn = document.getElementById('enableNotifBtn');
     if (!('Notification' in window)) {
         showNotification(currentLang === 'ar' ? '⚠️ متصفحك لا يدعم الإشعارات' : '⚠️ Not supported');
         return;
@@ -1009,7 +1368,7 @@ function updateNotifButton() {
     }
 }
 
-// ===== القاموس والرموز =====
+// ===== الرموز الهندسية =====
 function switchMainTab(event, tabId) {
     document.querySelectorAll('.dict-main-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.dict-main-tab').forEach(b => b.classList.remove('active'));
@@ -1086,7 +1445,9 @@ function getSymbolCategoryName(cat) {
 }
 
 function searchSymbols() {
-    const query = document.getElementById('symbolSearch').value.toLowerCase().trim();
+    const searchEl = document.getElementById('symbolSearch');
+    if (!searchEl) return;
+    const query = searchEl.value.toLowerCase().trim();
     let filtered = engineeringSymbols;
     if (currentSymbolCategory !== 'all') filtered = filtered.filter(s => s.cat === currentSymbolCategory);
     if (query) {
@@ -1146,6 +1507,9 @@ document.addEventListener('DOMContentLoaded', function() {
         checkUpcomingReminders();
         setInterval(checkUpcomingReminders, 30 * 1000);
     }
+    if (document.getElementById('dictList')) {
+        renderTerms(engineeringTerms);
+    }
     if (document.getElementById('symbolList')) {
         renderSymbols(engineeringSymbols);
     }
@@ -1161,4 +1525,4 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
             if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     });
-});
+});}
