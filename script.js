@@ -136,19 +136,16 @@ async function showRealLastUpdate() {
     } catch (error) {}
 }
 
-// ===== شاشة التحميل =====
-window.addEventListener('load', function() {
+// ===== شاشة التحميل - إخفاء فوري =====
+document.addEventListener('DOMContentLoaded', function() {
     const loader = document.getElementById('loaderScreen');
-    if (!loader) return;
-    const hasVisited = localStorage.getItem('hasVisited');
-    if (hasVisited) { loader.remove(); return; }
-    localStorage.setItem('hasVisited', 'true');
-    setTimeout(function() {
-        loader.classList.add('hidden');
-        setTimeout(() => loader.remove(), 700);
-    }, 1500);
+    if (loader) {
+        setTimeout(function() {
+            loader.classList.add('hidden');
+            setTimeout(() => loader.remove(), 700);
+        }, 1000);
+    }
 });
-
 // ===== قائمة الجوال واللابتوب =====
 function toggleMenu() {
     const navLinks = document.getElementById('navLinks');
