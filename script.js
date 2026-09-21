@@ -9,7 +9,7 @@ function convertToEnglishNumbers(str) {
     return String(str).replace(/[٠-٩]/g, d => arabicNumbers.indexOf(d));
 }
 
-// ===== التبديل بين التخصصات =====
+// ===== التبديل بين التخصصات ====
 function switchTab(event, tabId) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
