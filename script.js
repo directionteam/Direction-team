@@ -1775,7 +1775,28 @@ document.addEventListener('DOMContentLoaded', function() {
         renderSymbols(engineeringSymbols);
     }
 });
+// ===== عداد الزوار =====
+async function loadVisitorCount() {
+    const counterEl = document.getElementById('visitorCounter');
+    if (!counterEl) return;
 
+    const isAr = currentLang === 'ar';
+
+    try {
+        // زيارة جديدة + جلب العدد
+        const response = await fetch('https://api.counterapi.dev/v1/direction-team/visits/up');
+        const data = await response.json();
+        const count = data.count || 0;
+        const formatted = count.toLocaleString(isAr ? 'ar-EG' : 'en-US');
+        counterEl.textContent = (isAr ? '👥 ' : '👥 ') + formatted + (isAr ? ' زيارة' : ' visits');
+    } catch (error) {
+        // إذا ما اشتغل، نعرض عداد مخفي
+        counterEl.style.display = 'none';
+    }
+}
+
+// تشغيل العداد عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', loadVisitorCount);
 // ===== تمرير سلس =====
 document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', function(e) {
