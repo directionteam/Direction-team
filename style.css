@@ -2435,3 +2435,14 @@ body.dark-mode .empty-favorites a { color: #bb86fc; }
 .dict-item[data-cat="safety"] .dict-category { background: #ffebee; color: #c0392b; }
 .dict-item[data-cat="automotive"] .dict-category { background: #e0f7fa; color: #00838f; }
 .dict-item[data-cat="hvac"] .dict-category { background: #e1f5fe; color: #0277bd; }
+
+.visitor-counter {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+    font-weight: 600;
+}
