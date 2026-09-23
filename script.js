@@ -1784,18 +1784,18 @@ async function loadVisitorCount() {
     const isAr = currentLang === 'ar';
 
     try {
-        const response = await fetch('https://api.countapi.xyz/hit/directionteam.github.io/visits');
+        const response = await fetch('https://tallywire.cronpulse.workers.dev/hit/directionteam.github.io/visits');
         const data = await response.json();
         const count = data.value || 0;
         const formatted = count.toLocaleString(isAr ? 'ar-EG' : 'en-US');
         counterEl.textContent = '👥 ' + formatted + (isAr ? ' زيارة' : ' visits');
     } catch (error) {
         console.error('Counter error:', error);
-        counterEl.textContent = '👥 —';
+        counterEl.style.display = 'none';
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadVisitorCount);
+document.addEventListener('DOMContentLoaded', loadVisitorCount);ذ        
 
 // ===== تمرير سلس =====
 document.querySelectorAll('a[href^="#"]').forEach(link => {
