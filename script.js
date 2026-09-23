@@ -1776,17 +1776,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ===== عداد الزوار =====
+// ===== عداد الزوار (حقيقي - مرة واحدة لكل زائر) =====
 async function loadVisitorCount() {
     const counterEl = document.getElementById('visitorCounter');
     if (!counterEl) return;
 
     const isAr = currentLang === 'ar';
+    const counted = localStorage.getItem('directionteam_visited');
 
     try {
-        const response = await fetch('https://tallywire.cronpulse.workers.dev/hit/directionteam.github.io/visits');
+        let url = 'https://tallywire.cronpulse.workers.dev/';
+        if (counted) {
+            // زائر قديم → نعرض الرقم فقط (بدون زيادة)
+            url += 'get/directionteam.github.io/visits';
+        } else {
+            // زائر جديد → نزيد الرقم
+            url += 'hit/directionteam.github.io/visits';
+        }
+
+        const response = await fetch(url);
         const data = await response.json();
         const count = data.value || 0;
+
+        // نحفظ إن الزائر شاف الموقع
+        if (!counted) {
+            localStorage.setItem('directionteam_visited', 'true');
+        }
+
         const formatted = count.toLocaleString(isAr ? 'ar-EG' : 'en-US');
         counterEl.textContent = '👥 ' + formatted + (isAr ? ' زيارة' : ' visits');
     } catch (error) {
@@ -1795,7 +1811,7 @@ async function loadVisitorCount() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadVisitorCount);ذ        
+document.addEventListener('DOMContentLoaded', loadVisitorCount);
 
 // ===== تمرير سلس =====
 document.querySelectorAll('a[href^="#"]').forEach(link => {
