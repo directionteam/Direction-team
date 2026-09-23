@@ -1776,6 +1776,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 // ===== عداد الزوار =====
+
 async function loadVisitorCount() {
     const counterEl = document.getElementById('visitorCounter');
     if (!counterEl) return;
@@ -1783,19 +1784,17 @@ async function loadVisitorCount() {
     const isAr = currentLang === 'ar';
 
     try {
-        // زيارة جديدة + جلب العدد
-        const response = await fetch('https://api.counterapi.dev/v1/direction-team/visits/up');
+        const response = await fetch('https://api.counterapi.dev/v2/direction-team/visits/up');
         const data = await response.json();
-        const count = data.count || 0;
+        const count = data.data?.up_count || data.count || 0;
         const formatted = count.toLocaleString(isAr ? 'ar-EG' : 'en-US');
-        counterEl.textContent = (isAr ? '👥 ' : '👥 ') + formatted + (isAr ? ' زيارة' : ' visits');
+        counterEl.textContent = '👥 ' + formatted + (isAr ? ' زيارة' : ' visits');
     } catch (error) {
-        // إذا ما اشتغل، نعرض عداد مخفي
-        counterEl.style.display = 'none';
+        console.error('Counter error:', error);
+        counterEl.textContent = '👥 —';
     }
 }
 
-// تشغيل العداد عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', loadVisitorCount);
 // ===== تمرير سلس =====
 document.querySelectorAll('a[href^="#"]').forEach(link => {
