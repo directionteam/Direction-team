@@ -1775,8 +1775,8 @@ document.addEventListener('DOMContentLoaded', function() {
         renderSymbols(engineeringSymbols);
     }
 });
-// ===== عداد الزوار =====
 
+// ===== عداد الزوار =====
 async function loadVisitorCount() {
     const counterEl = document.getElementById('visitorCounter');
     if (!counterEl) return;
@@ -1784,9 +1784,9 @@ async function loadVisitorCount() {
     const isAr = currentLang === 'ar';
 
     try {
-        const response = await fetch('https://api.counterapi.dev/v2/direction-team/visits/up');
+        const response = await fetch('https://api.countapi.xyz/hit/directionteam.github.io/visits');
         const data = await response.json();
-        const count = data.data?.up_count || data.count || 0;
+        const count = data.value || 0;
         const formatted = count.toLocaleString(isAr ? 'ar-EG' : 'en-US');
         counterEl.textContent = '👥 ' + formatted + (isAr ? ' زيارة' : ' visits');
     } catch (error) {
@@ -1796,6 +1796,7 @@ async function loadVisitorCount() {
 }
 
 document.addEventListener('DOMContentLoaded', loadVisitorCount);
+
 // ===== تمرير سلس =====
 document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', function(e) {
