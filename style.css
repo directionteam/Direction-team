@@ -2710,3 +2710,27 @@ body.dark-mode .tips-list li {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+/* ===== زر رابط في خطوة ===== */
+.step-link {
+    display: inline-block;
+    margin-top: 0.8rem;
+    padding: 0.6rem 1.2rem;
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+}
+
+.step-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.5);
+}
+
+body.dark-mode .step-link {
+    background: linear-gradient(135deg, #bb86fc, #9c27b0);
+    color: #1a1a2e;
+}
