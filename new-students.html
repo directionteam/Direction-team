@@ -1,1 +1,201 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لطلاب جدد - Direction Team</title>
+    <meta name="description" content="دليل الطالب الجديد - خطوات التسجيل والقبول في جامعة الحسين بن طلال">
+    <link rel="stylesheet" href="style.css?v=9">
+</head>
+<body>
 
+  <nav class="navbar">
+    <div class="nav-container">
+        <button class="nav-toggle" onclick="toggleMenu()" title="القائمة">☰</button>
+        <a href="index.html"><img src="logo.png" alt="Direction Team Logo" class="nav-logo"></a>
+        <ul class="nav-links" id="navLinks">
+                <li><a href="index.html" data-lang="nav-home">الرئيسية</a></li>
+                <li><a href="materials.html" data-lang="nav-materials">المواد</a></li>
+                <li><a href="plans.html" data-lang="nav-plans">الخطط الدراسية</a></li>
+                <li><a href="exam.html" data-lang="nav-exam">امتحان الكفاءة</a></li>
+                <li><a href="programs.html" data-lang="nav-programs">برامج هندسية</a></li>
+                <li><a href="calculator.html" data-lang="nav-calculator">الحاسبة</a></li>
+                <li><a href="map.html" data-lang="nav-map">خريطة الجامعة</a></li>
+                <li><a href="reminders.html" data-lang="nav-reminders">التذكيرات</a></li>
+                <li><a href="dictionary.html" data-lang="nav-dictionary">القاموس</a></li>
+                <li><a href="new-students.html" class="active" data-lang="nav-new-students">🎓 لطلاب جدد</a></li>
+                <li><a href="suggestions.html" data-lang="nav-suggestions">شاركنا اقتراحك</a></li>
+                <li><a href="links.html" data-lang="nav-links">روابط تهمك</a></li>
+                <li><a href="contact.html" data-lang="nav-contact">تواصل معنا</a></li>
+            </ul>
+            <button class="lang-toggle" id="langToggle" onclick="toggleLanguage()" title="Change Language">🌐 EN</button>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="الوضع الليلي">🌙</button>
+        </div>
+    </nav>
+    <div class="nav-overlay" id="navOverlay"></div>
+
+    <section class="page-header">
+        <h1 data-lang="new-students-title">🎓 لطلاب جدد</h1>
+        <p data-lang="new-students-desc">دليلك الكامل للتسجيل والقبول في الجامعة</p>
+    </section>
+
+    <section class="suggestions-section">
+
+        <!-- التهنئة -->
+        <div class="suggestion-info-card">
+            <div class="info-icon">🎉</div>
+            <h2 data-lang="new-students-congrats">مبروك القبول!</h2>
+            <p data-lang="new-students-congrats-desc">أهلاً بك في كلية الهندسة - جامعة الحسين بن طلال. نتمنى لك رحلة أكاديمية موفقة 💜</p>
+        </div>
+
+        <!-- خطوات التسجيل -->
+        <div class="suggestion-form-card">
+            <h2 data-lang="new-students-steps-title">📝 خطوات التسجيل</h2>
+            
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3 data-lang="step-1-title">الدخول على الموقع الرسمي</h3>
+                    <p data-lang="step-1-desc">الدخول على موقع الجامعة عبر الرابط، وإدخال رقم الجلوس والرقم الوطني.</p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3 data-lang="step-2-title">تعبئة البيانات</h3>
+                    <p data-lang="step-2-desc">تعبئة بياناتك الشخصية بدقة (الاسم، تاريخ الميلاد، العنوان، رقم الهاتف).</p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3 data-lang="step-3-title">استلام الرقم الجامعي</h3>
+                    <p data-lang="step-3-desc">بعد إتمام التعبئة، ستحصل على رقم جامعي، بريد إلكتروني، وكلمة مرور.</p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3 data-lang="step-4-title">دفع الرسوم</h3>
+                    <p data-lang="step-4-desc">دفع الرسوم الجامعية إلكترونياً أو من خلال فروع بنك القاهرة عمان.</p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h3 data-lang="step-5-title">إتمام التسجيل</h3>
+                    <p data-lang="step-5-desc">الدخول على نظام التسجيل الإلكتروني وإتمام عملية التسجيل للفصل الأول.</p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-number">6</div>
+                <div class="step-content">
+                    <h3 data-lang="step-6-title">تجهيز الوثائق</h3>
+                    <p data-lang="step-6-desc">تجهيز الوثائق المطلوبة (شهادة التوجيهي، صورة هوية، صورة شخصية) وتسليمها لاحقاً.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- الوثائق المطلوبة -->
+        <div class="suggestion-form-card">
+            <h2 data-lang="documents-title">📄 الوثائق المطلوبة</h2>
+            <ul class="documents-list">
+                <li data-lang="doc-1">كشف علامات الثانوية العامة النسخة الأصلية</li>
+                <li data-lang="doc-2">صورة مصدقة عن شهادة الميلاد</li>
+                <li data-lang="doc-3">صورة مصدقة عن دفتر العائلة</li>
+                <li data-lang="doc-4">صورة شخصية عدد 6</li>
+                <li data-lang="doc-5">صورة مصدقة عن الهوية الشخصية الجديدة</li>
+                <li data-lang="doc-6">دفتر خدمة العلم أو شهادة إخراج أو شهادة إعفاء أو تصريح الاحتلال لأبناء الضفة الغربية</li>
+            </ul>
+        </div>
+
+        <!-- ملاحظات مهمة -->
+        <div class="suggestion-form-card">
+            <h2 data-lang="notes-title">⚠️ ملاحظات مهمة</h2>
+            <ul class="notes-list">
+                <li data-lang="note-1">الوثائق المقدمة للجامعة لا تُرد.</li>
+                <li data-lang="note-2">لا يقبل أي طلب غير مكتمل الوثائق.</li>
+                <li data-lang="note-3">على الطالبات الراغبات بالتسجيل في السكنات الداخلية ضرورة إحضار ولي أمرها.</li>
+                <li data-lang="note-4">يُعفى الطالب الحاصل على شهادة TOEFL أو IELTS في اللغة الإنجليزية من التقدم لامتحان مستوى اللغة الإنجليزية، وتُحسب له عدد من الساعات المعتمدة.</li>
+                <li data-lang="note-5">يُعفى الطالب الحاصل على شهادة ECDL أو ICDL في الحاسوب أو برنامج كمبرج الدولي لمهارات الحاسوب من التقدم لامتحان المستوى في الحاسوب، وتُحسب له عدد من الساعات المعتمدة.</li>
+            </ul>
+        </div>
+
+        <!-- روابط مهمة -->
+        <div class="suggestion-form-card">
+            <h2 data-lang="new-students-links-title">🔗 روابط مهمة</h2>
+            
+            <div class="suggestion-links-grid">
+                <a href="https://www.ahu.edu.jo/" target="_blank" class="suggestion-link-card">
+                    <span class="link-icon">🌐</span>
+                    <span class="link-name" data-lang="link-university">موقع الجامعة</span>
+                </a>
+
+                <a href="https://portal.ahu.edu.jo/" target="_blank" class="suggestion-link-card">
+                    <span class="link-icon">👤</span>
+                    <span class="link-name" data-lang="link-portal">بوابة الطالب</span>
+                </a>
+
+                <a href="https://elearning.ahu.edu.jo/" target="_blank" class="suggestion-link-card">
+                    <span class="link-icon">💻</span>
+                    <span class="link-name" data-lang="link-elearning">التعليم الإلكتروني</span>
+                </a>
+
+                <a href="materials.html" class="suggestion-link-card">
+                    <span class="link-icon">📚</span>
+                    <span class="link-name" data-lang="link-materials">مواد التخصص</span>
+                </a>
+
+                <a href="plans.html" class="suggestion-link-card">
+                    <span class="link-icon">📋</span>
+                    <span class="link-name" data-lang="link-plans">الخطط الدراسية</span>
+                </a>
+
+                <a href="map.html" class="suggestion-link-card">
+                    <span class="link-icon">🗺️</span>
+                    <span class="link-name" data-lang="link-map">خريطة الجامعة</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- نصائح مهمة -->
+        <div class="suggestion-form-card">
+            <h2 data-lang="new-students-tips-title">💡 نصائح مهمة</h2>
+            <ul class="tips-list">
+                <li data-lang="tip-1">تأكد من بياناتك قبل الحفظ النهائي.</li>
+                <li data-lang="tip-2">احفظ الرقم الجامعي والبريد الإلكتروني وكلمة المرور في مكان آمن.</li>
+                <li data-lang="tip-3">لا تؤجل دفع الرسوم الجامعية.</li>
+                <li data-lang="tip-4">تابع صفحة Direction Team لمعرفة كل جديد عن كلية الهندسة.</li>
+                <li data-lang="tip-5">لا تتردد في التواصل معنا لأي استفسار.</li>
+            </ul>
+        </div>
+
+    </section>
+
+    <footer id="contact">
+        <img src="logo.png" alt="Direction Team" class="footer-logo">
+        <p class="last-update" id="lastUpdate">🕐 آخر تحديث: ...</p>
+        <p class="visitor-counter" id="visitorCounter">👥 ...</p>
+        <h3 data-lang="footer-contact">تواصل معنا</h3>
+        <div class="social-icons-footer">
+            <a href="https://www.instagram.com/direction_team_ahu/" target="_blank">📷 Instagram</a>
+            <a href="https://web.facebook.com/direction.ahu.3" target="_blank">📘 Facebook</a>
+        </div>
+        <p class="footer-copy" data-lang="footer-copy">&copy; 2026 Direction Team - جامعة الحسين بن طلال</p>
+        <p data-lang="footer-love">صُنع بحب لطلبة الهندسة 💜</p>
+    </footer>
+
+    <button class="share-button" onclick="shareSite()" title="شارك الموقع">
+        <span>📤</span>
+        <span data-lang="btn-share">شارك الموقع</span>
+    </button>
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">⬆️</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
