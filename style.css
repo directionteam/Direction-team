@@ -2446,3 +2446,266 @@ body.dark-mode .empty-favorites a { color: #bb86fc; }
     color: #ffffff;
     font-weight: 600;
 }
+/* ===== صفحة لطلاب جدد ===== */
+.step-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    background: #faf5fc;
+    border-radius: 12px;
+    border-right: 4px solid #9c27b0;
+    transition: all 0.3s;
+}
+
+html[dir="ltr"] .step-item {
+    border-right: none;
+    border-left: 4px solid #9c27b0;
+}
+
+.step-item:hover {
+    background: #f3e5f5;
+    transform: translateX(-5px);
+}
+
+html[dir="ltr"] .step-item:hover {
+    transform: translateX(5px);
+}
+
+.step-number {
+    min-width: 45px;
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(156, 39, 176, 0.3);
+}
+
+.step-content h3 {
+    color: #6a1b9a;
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+}
+
+.step-content p {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.documents-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+    counter-reset: doc-counter;
+}
+
+.documents-list li {
+    padding: 0.9rem 1rem 0.9rem 3.5rem;
+    margin-bottom: 0.6rem;
+    background: #faf5fc;
+    border-radius: 10px;
+    position: relative;
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    border-right: 3px solid #9c27b0;
+    counter-increment: doc-counter;
+}
+
+html[dir="ltr"] .documents-list li {
+    padding: 0.9rem 3.5rem 0.9rem 1rem;
+    border-right: none;
+    border-left: 3px solid #9c27b0;
+}
+
+.documents-list li::before {
+    content: counter(doc-counter);
+    position: absolute;
+    left: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+html[dir="ltr"] .documents-list li::before {
+    left: auto;
+    right: 0.8rem;
+}
+
+.notes-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.notes-list li {
+    padding: 0.9rem 1rem 0.9rem 3rem;
+    margin-bottom: 0.6rem;
+    background: #fff3e0;
+    border-radius: 10px;
+    position: relative;
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    border-right: 3px solid #f39c12;
+}
+
+html[dir="ltr"] .notes-list li {
+    padding: 0.9rem 3rem 0.9rem 1rem;
+    border-right: none;
+    border-left: 3px solid #f39c12;
+}
+
+.notes-list li::before {
+    content: '⚠️';
+    position: absolute;
+    left: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
+}
+
+html[dir="ltr"] .notes-list li::before {
+    left: auto;
+    right: 0.8rem;
+}
+
+.suggestion-links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.suggestion-link-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1.5rem 1rem;
+    background: #faf5fc;
+    border-radius: 12px;
+    border: 2px solid #f0e4f5;
+    text-decoration: none;
+    color: #4a148c;
+    transition: all 0.3s;
+}
+
+.suggestion-link-card:hover {
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    border-color: #9c27b0;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(106, 27, 154, 0.3);
+}
+
+.suggestion-link-card .link-icon {
+    font-size: 2rem;
+}
+
+.suggestion-link-card .link-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.tips-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.tips-list li {
+    padding: 0.8rem 1rem 0.8rem 3rem;
+    margin-bottom: 0.5rem;
+    background: #faf5fc;
+    border-radius: 10px;
+    position: relative;
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+html[dir="ltr"] .tips-list li {
+    padding: 0.8rem 3rem 0.8rem 1rem;
+}
+
+.tips-list li::before {
+    content: '💡';
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+}
+
+html[dir="ltr"] .tips-list li::before {
+    left: auto;
+    right: 1rem;
+}
+
+/* Dark mode */
+body.dark-mode .step-item {
+    background: #0f3460;
+}
+
+body.dark-mode .step-item:hover {
+    background: #1a4d7a;
+}
+
+body.dark-mode .step-content h3 {
+    color: #bb86fc;
+}
+
+body.dark-mode .step-content p {
+    color: #b0b0b0;
+}
+
+body.dark-mode .documents-list li {
+    background: #0f3460;
+    color: #b0b0b0;
+}
+
+body.dark-mode .notes-list li {
+    background: #2a1b4d;
+    color: #b0b0b0;
+}
+
+body.dark-mode .suggestion-link-card {
+    background: #0f3460;
+    border-color: #2a1b4d;
+    color: #bb86fc;
+}
+
+body.dark-mode .tips-list li {
+    background: #0f3460;
+    color: #b0b0b0;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .step-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .suggestion-links-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
