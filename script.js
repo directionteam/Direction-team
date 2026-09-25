@@ -1,7 +1,6 @@
 // ============================================
 // Direction Team - Main JavaScript File
 // ============================================
-
 // ===== تحويل الأرقام العربية إلى إنجليزية =====
 function convertToEnglishNumbers(str) {
     if (!str) return str;
