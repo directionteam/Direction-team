@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://directionteam.github.io/Direction-team/sitemap.xml
