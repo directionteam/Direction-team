@@ -2734,3 +2734,129 @@ body.dark-mode .step-link {
     background: linear-gradient(135deg, #bb86fc, #9c27b0);
     color: #1a1a2e;
 }
+/* ===== بانر مجموعة الواتساب ===== */
+.whatsapp-banner-section {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.whatsapp-banner {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    border-radius: 20px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.whatsapp-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse-bg 3s ease-in-out infinite;
+}
+
+@keyframes pulse-bg {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.whatsapp-banner:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(37, 211, 102, 0.5);
+}
+
+.whatsapp-banner-icon {
+    font-size: 3rem;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    animation: bounce-icon 2s ease-in-out infinite;
+}
+
+@keyframes bounce-icon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.whatsapp-banner-content {
+    flex-grow: 1;
+    position: relative;
+    z-index: 1;
+    color: #ffffff;
+}
+
+.whatsapp-banner-content h2 {
+    font-size: 1.3rem;
+    margin: 0 0 0.4rem;
+    font-weight: bold;
+}
+
+.whatsapp-banner-content p {
+    font-size: 0.95rem;
+    margin: 0;
+    opacity: 0.95;
+    line-height: 1.5;
+}
+
+.whatsapp-banner-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.9rem 1.5rem;
+    background: #ffffff;
+    color: #128C7E;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.whatsapp-banner-btn:hover {
+    background: #f0f0f0;
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+}
+
+/* الجوال */
+@media (max-width: 768px) {
+    .whatsapp-banner {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem 1.2rem;
+        gap: 1rem;
+    }
+
+    .whatsapp-banner-icon {
+        font-size: 2.5rem;
+    }
+
+    .whatsapp-banner-content h2 {
+        font-size: 1.15rem;
+    }
+
+    .whatsapp-banner-content p {
+        font-size: 0.9rem;
+    }
+
+    .whatsapp-banner-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 1rem;
+    }
+}
