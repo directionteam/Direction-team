@@ -2996,3 +2996,21 @@ body.dark-mode .resource-btn:hover {
         font-size: 0.8rem;
     }
 }
+/* ===== زر امتحانات المستوى ===== */
+.hero-btn-level {
+    background: linear-gradient(135deg, #27ae60, #1e8449) !important;
+    border-color: #27ae60 !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+}
+
+.hero-btn-level:hover {
+    background: linear-gradient(135deg, #1e8449, #27ae60) !important;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(39, 174, 96, 0.6);
+}
+
+body.dark-mode .hero-btn-level {
+    background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+    color: #ffffff !important;
+}
