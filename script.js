@@ -562,7 +562,7 @@ const translations = {
         'tip-3': 'لا تؤجل دفع الرسوم الجامعية.',
         'tip-4': 'تابع صفحة Direction Team  لمعرفة كل جديد عن هندسة الطاقة المتجددة والميكانيك.',
         'tip-5': 'لا تتردد في التواصل معنا لأي استفسار.',
-        'notfound-suggestions-title': '💡 قد تجد ما تبحث عنه هنا:'
+        'notfound-suggestions-title': '💡 قد تجد ما تبحث عنه هنا:',
                 'level-exams-title': '📝 امتحانات المستوى',
         'level-exams-desc': 'نماذج وأسئلة محلولة لامتحانات المستوى (حاسوب، إنجليزي، عربي)',
         'level-computer': 'مستوى الحاسوب',
@@ -726,7 +726,7 @@ const translations = {
         'tip-3': 'Do not delay paying tuition fees.',
         'tip-4': 'Follow Direction Team page for the latest news.',
         'tip-5': 'Do not hesitate to contact us for any inquiry.',
-        'notfound-suggestions-title': '💡 You may find what you are looking for here:'
+        'notfound-suggestions-title': '💡 You may find what you are looking for here:',
         'level-exams-title': '📝 Level Exams',
         'level-exams-desc': 'Samples and solved questions for level exams (Computer, English, Arabic)',
         'level-computer': 'Computer Level',
