@@ -563,6 +563,17 @@ const translations = {
         'tip-4': 'تابع صفحة Direction Team  لمعرفة كل جديد عن هندسة الطاقة المتجددة والميكانيك.',
         'tip-5': 'لا تتردد في التواصل معنا لأي استفسار.',
         'notfound-suggestions-title': '💡 قد تجد ما تبحث عنه هنا:'
+                'level-exams-title': '📝 امتحانات المستوى',
+        'level-exams-desc': 'نماذج وأسئلة محلولة لامتحانات المستوى (حاسوب، إنجليزي، عربي)',
+        'level-computer': 'مستوى الحاسوب',
+        'level-english': 'مستوى اللغة الإنجليزية',
+        'level-arabic': 'مستوى اللغة العربية',
+        'level-resources': 'مصادر إضافية',
+        'resource-box': 'أسئلة مستوى حاسوب وإنجليزي',
+        'resource-english-solved': 'أسئلة الإنجليزي محلولة',
+        'resource-computer-solved': 'أسئلة الحاسوب محلولة',
+        'resource-additional': 'أسئلة إضافية',
+        'resource-awa2el': 'نماذج امتحانات المستوى في الجامعات',
     },
     en: {
         'nav-home': 'Home', 'nav-materials': 'Materials', 'nav-plans': 'Study Plans',
@@ -716,6 +727,17 @@ const translations = {
         'tip-4': 'Follow Direction Team page for the latest news.',
         'tip-5': 'Do not hesitate to contact us for any inquiry.',
         'notfound-suggestions-title': '💡 You may find what you are looking for here:'
+        'level-exams-title': '📝 Level Exams',
+        'level-exams-desc': 'Samples and solved questions for level exams (Computer, English, Arabic)',
+        'level-computer': 'Computer Level',
+        'level-english': 'English Level',
+        'level-arabic': 'Arabic Level',
+        'level-resources': 'Additional Resources',
+        'resource-box': 'Computer & English Level Questions',
+        'resource-english-solved': 'English Solved Questions',
+        'resource-computer-solved': 'Computer Solved Questions',
+        'resource-additional': 'Additional Questions',
+        'resource-awa2el': 'University Level Exam Samples',
     }
 };
 
