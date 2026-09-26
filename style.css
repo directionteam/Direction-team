@@ -2859,3 +2859,140 @@ body.dark-mode .step-link {
         padding: 1rem;
     }
 }
+/* ===== امتحانات المستوى ===== */
+.level-exams-desc {
+    text-align: center;
+    color: #777;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+}
+
+.level-exam-group {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #faf5fc;
+    border-radius: 15px;
+    border-right: 4px solid #9c27b0;
+}
+
+html[dir="ltr"] .level-exam-group {
+    border-right: none;
+    border-left: 4px solid #9c27b0;
+}
+
+.level-exam-subtitle {
+    color: #6a1b9a;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px dashed #e0c8e8;
+}
+
+.quiz-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.8rem;
+}
+
+.quiz-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1rem;
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.25);
+}
+
+.quiz-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.5);
+}
+
+.resources-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.resource-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.9rem 1.2rem;
+    background: #ffffff;
+    border: 2px solid #e0c8e8;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #4a148c;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+}
+
+.resource-btn:hover {
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    border-color: #9c27b0;
+    transform: translateX(-5px);
+    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.3);
+}
+
+html[dir="ltr"] .resource-btn:hover {
+    transform: translateX(5px);
+}
+
+.resource-btn span:first-child {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+/* Dark mode */
+body.dark-mode .level-exam-group {
+    background: #0f3460;
+}
+
+body.dark-mode .level-exam-subtitle {
+    color: #bb86fc;
+    border-bottom-color: #2a1b4d;
+}
+
+body.dark-mode .level-exams-desc {
+    color: #b0b0b0;
+}
+
+body.dark-mode .resource-btn {
+    background: #16213e;
+    border-color: #2a1b4d;
+    color: #bb86fc;
+}
+
+body.dark-mode .resource-btn:hover {
+    background: linear-gradient(135deg, #bb86fc, #9c27b0);
+    color: #1a1a2e;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .quiz-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .level-exam-group {
+        padding: 1rem;
+    }
+
+    .level-exam-subtitle {
+        font-size: 1rem;
+    }
+
+    .quiz-btn {
+        padding: 0.7rem 0.5rem;
+        font-size: 0.8rem;
+    }
+}
