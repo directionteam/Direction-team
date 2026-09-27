@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لا يوجد اتصال - Direction Team</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 1rem;
+        }
+        .offline-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .offline-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        h1 { font-size: 1.8rem; margin-bottom: 1rem; }
+        p { font-size: 1rem; opacity: 0.9; line-height: 1.7; margin-bottom: 1.5rem; }
+        .btn {
+            display: inline-block;
+            padding: 0.9rem 2rem;
+            background: #fff;
+            color: #6a1b9a;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-card">
+        <div class="offline-icon">📡</div>
+        <h1>لا يوجد اتصال</h1>
+        <p>يبدو أنك غير متصل بالإنترنت حالياً.<br>تفقد اتصالك وحاول مرة أخرى.</p>
+        <a href="./index.html" class="btn">🔄 إعادة المحاولة</a>
+    </div>
+</body>
+</html>
