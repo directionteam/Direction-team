@@ -3014,3 +3014,160 @@ body.dark-mode .hero-btn-level {
     background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
     color: #ffffff !important;
 }
+/* ===== بانر "أضف للتطبيقات" ===== */
+.install-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 1.2rem;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    transform: translateY(200%);
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 9999;
+    border: 2px solid #9c27b0;
+}
+
+.install-banner.show {
+    transform: translateY(0);
+}
+
+.install-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-grow: 1;
+}
+
+.install-banner-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+    animation: bounce-icon 2s ease-in-out infinite;
+}
+
+.install-banner-text h3 {
+    color: #6a1b9a;
+    font-size: 1rem;
+    margin: 0 0 0.2rem;
+    font-weight: bold;
+}
+
+.install-banner-text p {
+    color: #777;
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.install-banner-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.install-banner-btn-primary {
+    padding: 0.7rem 1.2rem;
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+}
+
+.install-banner-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(156, 39, 176, 0.5);
+}
+
+.install-banner-btn-close {
+    background: transparent;
+    border: none;
+    color: #999;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.3rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.install-banner-btn-close:hover {
+    background: #f3e5f5;
+    color: #6a1b9a;
+}
+
+/* Dark mode */
+body.dark-mode .install-banner {
+    background: #16213e;
+    border-color: #bb86fc;
+}
+
+body.dark-mode .install-banner-text h3 {
+    color: #bb86fc;
+}
+
+body.dark-mode .install-banner-text p {
+    color: #b0b0b0;
+}
+
+body.dark-mode .install-banner-btn-close:hover {
+    background: #2a1b4d;
+    color: #bb86fc;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .install-banner {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        padding: 1rem;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .install-banner-content {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .install-banner-icon {
+        font-size: 2rem;
+    }
+
+    .install-banner-text h3 {
+        font-size: 0.95rem;
+    }
+
+    .install-banner-text p {
+        font-size: 0.8rem;
+    }
+
+    .install-banner-actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .install-banner-btn-primary {
+        flex-grow: 1;
+    }
+}
