@@ -1,1 +1,49 @@
 
+{
+  "name": "Direction Team - دليل طالب الهندسة",
+  "short_name": "Direction Team",
+  "description": "فريق أكاديمي تطوعي - جامعة الحسين بن طلال. مواد، خطط، امتحانات، وقاموس هندسي.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#6a1b9a",
+  "theme_color": "#9c27b0",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "shortcuts": [
+    {
+      "name": "المواد",
+      "short_name": "المواد",
+      "url": "./materials.html",
+      "icons": [{ "src": "logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "لطلاب جدد",
+      "short_name": "طلاب جدد",
+      "url": "./new-students.html",
+      "icons": [{ "src": "logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "القاموس",
+      "short_name": "القاموس",
+      "url": "./dictionary.html",
+      "icons": [{ "src": "logo.png", "sizes": "192x192" }]
+    }
+  ]
+}
