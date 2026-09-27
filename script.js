@@ -1949,3 +1949,88 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
+// ===== بانر "أضف للتطبيقات" =====
+let deferredPrompt = null;
+
+// نمسك حدث "beforeinstallprompt" (Chrome)
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // نخلي البانر يظهر
+    setTimeout(showInstallBanner, 30000); // بعد 30 ثانية
+});
+
+// نعرض البانر
+function showInstallBanner() {
+    // ما نعرضه لو المستخدم رفضه قبل
+    if (localStorage.getItem('install_banner_dismissed') === 'true') return;
+    // ما نعرضه لو مثبت مسبقاً
+    if (localStorage.getItem('app_installed') === 'true') return;
+    // ما نعرضه لو موجود
+    if (document.getElementById('installBanner')) return;
+
+    const isAr = currentLang === 'ar';
+
+    const banner = document.createElement('div');
+    banner.id = 'installBanner';
+    banner.className = 'install-banner';
+    banner.innerHTML = `
+        <div class="install-banner-content">
+            <div class="install-banner-icon">📱</div>
+            <div class="install-banner-text">
+                <h3>${isAr ? 'أضف الموقع لتطبيقاتك' : 'Add to your apps'}</h3>
+                <p>${isAr ? 'افتح الموقع بسرعة من شاشة جوالك' : 'Quick access from your home screen'}</p>
+            </div>
+        </div>
+        <div class="install-banner-actions">
+            <button class="install-banner-btn-primary" onclick="installPWA()">
+                ${isAr ? '📲 تثبيت' : '📲 Install'}
+            </button>
+            <button class="install-banner-btn-close" onclick="dismissInstallBanner()">✕</button>
+        </div>
+    `;
+    document.body.appendChild(banner);
+
+    // أنيميشن الدخول
+    setTimeout(() => banner.classList.add('show'), 100);
+}
+
+// المستخدم ضغط "تثبيت"
+async function installPWA() {
+    if (!deferredPrompt) {
+        // ما فيه prompt (Safari مثلاً)
+        const isAr = currentLang === 'ar';
+        alert(isAr
+            ? '📱 لإضافة الموقع:\n\n1. اضغط على زر المشاركة ↗️\n2. اختر "إضافة إلى الشاشة الرئيسية"\n3. اضغط "إضافة"'
+            : '📱 To add:\n\n1. Tap Share ↗️\n2. Tap "Add to Home Screen"\n3. Tap "Add"'
+        );
+        return;
+    }
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+
+    if (outcome === 'accepted') {
+        localStorage.setItem('app_installed', 'true');
+        console.log('PWA installed');
+    }
+
+    deferredPrompt = null;
+    dismissInstallBanner();
+}
+
+// المستخدم رفض البانر
+function dismissInstallBanner() {
+    const banner = document.getElementById('installBanner');
+    if (banner) {
+        banner.classList.remove('show');
+        setTimeout(() => banner.remove(), 300);
+    }
+    // ما نعرضه مرة ثانية
+    localStorage.setItem('install_banner_dismissed', 'true');
+}
+
+// نتأكد إن التطبيق مثبت (يشتغل من standalone)
+if (window.matchMedia('(display-mode: standalone)').matches) {
+    localStorage.setItem('app_installed', 'true');
+}
