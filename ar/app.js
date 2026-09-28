@@ -10,16 +10,20 @@ let selectedPart = null;
 let dragging = false;
 let holdingPart = null;
 let holdingStartTime = 0;
-let completeGlow = 0;
+
+// ===== المحاكاة =====
+let simulationStart = 0;
+let batteryCharge = 0;
+let lightBrightness = 0;
+let simDone = false;
 
 const HOLD_DURATION = 500;
 const PART_SIZE = 100;
 
 const PART_ORDER = ['panel', 'controller', 'battery', 'inverter', 'load'];
 
-// مواقع القطع في الصورة الكاملة + مواقع الأهداف
 const PARTS_POSITIONS = {
-    'panel':      { x: 0.20, y: 0.35, num: 1 },
+    'panel':      { x: 0.20, y: 0.30, num: 1 },
     'controller': { x: 0.18, y: 0.55, num: 2 },
     'battery':    { x: 0.25, y: 0.78, num: 3 },
     'inverter':   { x: 0.52, y: 0.48, num: 4 },
@@ -49,6 +53,12 @@ function playWin() {
     playBeep(600, 100);
     setTimeout(() => playBeep(800, 100), 150);
     setTimeout(() => playBeep(1000, 200), 300);
+}
+function playComplete() {
+    playBeep(500, 100);
+    setTimeout(() => playBeep(700, 100), 100);
+    setTimeout(() => playBeep(900, 100), 200);
+    setTimeout(() => playBeep(1100, 300), 300);
 }
 
 // ===== بدء اللعبة =====
@@ -197,7 +207,7 @@ function handleGameLogic() {
     }
 }
 
-// ✅ دالة اقتصاص الصورة (تُستخدم في كل مكان)
+// اقتصاص كل قطعة من الصورة
 function getPartSource(name, IW, IH) {
     if (name === 'panel')      return { sx: 0.02*IW, sy: 0.02*IH, sw: 0.38*IW, sh: 0.38*IH };
     if (name === 'controller') return { sx: 0.05*IW, sy: 0.42*IH, sw: 0.30*IW, sh: 0.30*IH };
@@ -207,71 +217,213 @@ function getPartSource(name, IW, IH) {
     return { sx: 0, sy: 0, sw: IW, sh: IH };
 }
 
+// ===== رسم الشمس =====
+function drawSun(cx, cy, t) {
+    for (let i = 0; i < 3; i++) {
+        const r = 40 + i * 15 + Math.sin(t * 3 + i) * 5;
+        gctx.fillStyle = `rgba(255, 215, 0, ${0.15 - i * 0.04})`;
+        gctx.beginPath();
+        gctx.arc(cx, cy, r, 0, Math.PI * 2);
+        gctx.fill();
+    }
+    gctx.fillStyle = '#FFD700';
+    gctx.beginPath();
+    gctx.arc(cx, cy, 40, 0, Math.PI * 2);
+    gctx.fill();
+    gctx.strokeStyle = '#FFA500';
+    gctx.lineWidth = 3;
+    gctx.stroke();
+
+    for (let i = 0; i < 12; i++) {
+        const a = i * Math.PI / 6 + t * 1.5;
+        gctx.beginPath();
+        gctx.moveTo(cx + Math.cos(a) * 50, cy + Math.sin(a) * 50);
+        gctx.lineTo(cx + Math.cos(a) * 70, cy + Math.sin(a) * 70);
+        gctx.strokeStyle = '#FFD700';
+        gctx.lineWidth = 4;
+        gctx.stroke();
+    }
+}
+
+// ===== خط كهرباء متحرك =====
+function drawPowerLine(x1, y1, x2, y2, t) {
+    gctx.beginPath();
+    gctx.moveTo(x1, y1);
+    gctx.lineTo(x2, y2);
+    gctx.strokeStyle = 'rgba(255, 100, 0, 0.6)';
+    gctx.lineWidth = 5;
+    gctx.stroke();
+
+    for (let i = 0; i < 3; i++) {
+        const p = ((t * 0.8) + i * 0.33) % 1;
+        const px = x1 + (x2 - x1) * p;
+        const py = y1 + (y2 - y1) * p;
+        gctx.fillStyle = '#FFD700';
+        gctx.beginPath();
+        gctx.arc(px, py, 8, 0, Math.PI * 2);
+        gctx.fill();
+        gctx.strokeStyle = '#fff';
+        gctx.lineWidth = 2;
+        gctx.stroke();
+    }
+}
+
+// ===== بطارية تشحن =====
+function drawBatteryBar(x, y, charge) {
+    gctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+    gctx.fillRect(x, y, 150, 35);
+    gctx.strokeStyle = '#fff';
+    gctx.lineWidth = 3;
+    gctx.strokeRect(x, y, 150, 35);
+    gctx.fillStyle = '#666';
+    gctx.fillRect(x + 150, y + 10, 10, 15);
+
+    let color = '#ef4444';
+    if (charge > 70) color = '#10b981';
+    else if (charge > 30) color = '#f59e0b';
+
+    gctx.fillStyle = color;
+    gctx.fillRect(x + 4, y + 4, (142 * charge / 100), 27);
+
+    gctx.fillStyle = '#fff';
+    gctx.font = 'bold 16px Arial';
+    gctx.textAlign = 'center';
+    gctx.fillText(`${Math.round(charge)}%`, x + 75, y + 24);
+}
+
+// ===== اللمبة/البيت يضيء =====
+function drawHouseGlow(cx, cy, brightness) {
+    if (brightness <= 0) return;
+    for (let i = 0; i < 4; i++) {
+        const r = 100 + i * 50 + Math.sin(Date.now() / 300 + i) * 10;
+        gctx.fillStyle = `rgba(255, 215, 0, ${brightness * 0.15 * (1 - i/4)})`;
+        gctx.beginPath();
+        gctx.arc(cx, cy, r, 0, Math.PI * 2);
+        gctx.fill();
+    }
+}
+
 function drawGame(W, H) {
     if (!gctx) return;
     gctx.clearRect(0, 0, W, H);
 
-    // خلفية داكنة
+    // خلفية
     gctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     gctx.fillRect(0, 0, W, H);
 
-    // ===== 1. الصورة الأصلية في الخلفية (إذا اكتملت) =====
-    const allPlaced = PART_ORDER.every(n => parts[n].placed);
+    // ===== حالة المحاكاة =====
+    if (gameState === 'SIMULATION') {
+        const t = (Date.now() - simulationStart) / 1000;
 
-    if (allPlaced && systemImage && systemImage.complete) {
-        // ✅ الصورة الكاملة تظهر مع توهج
-        completeGlow = Math.min(completeGlow + 0.02, 1);
+        // خلفية متدرجة
+        const grad = gctx.createLinearGradient(0, 0, 0, H);
+        grad.addColorStop(0, '#1a1a2e');
+        grad.addColorStop(1, '#0f0f1e');
+        gctx.fillStyle = grad;
+        gctx.fillRect(0, 0, W, H);
 
-        // توهج
-        const glowSize = 20 + completeGlow * 30;
-        gctx.shadowColor = '#FFD700';
-        gctx.shadowBlur = glowSize;
+        // الشمس
+        drawSun(W / 2, 100, t);
 
-        // ارسم الصورة كاملة في الخلفية
-        const imgW = W * 0.9;
-        const imgH = H * 0.9;
-        const imgX = (W - imgW) / 2;
-        const imgY = (H - imgH) / 2;
-        gctx.drawImage(systemImage, imgX, imgY, imgW, imgH);
-
-        // إزالة التوهج
-        gctx.shadowBlur = 0;
-
-        // نص "SYSTEM COMPLETE!"
-        gctx.fillStyle = `rgba(0, 255, 0, ${completeGlow})`;
-        gctx.font = 'bold 60px Arial';
-        gctx.textAlign = 'center';
-        gctx.fillText('SYSTEM COMPLETE!', W/2, H/2 - 200);
-
-        // نجوم متحركة
-        for (let i = 0; i < 20; i++) {
-            const angle = (Date.now() / 1000 + i) * 0.5;
-            const radius = 200 + Math.sin(Date.now() / 500 + i) * 50;
-            const nx = W/2 + Math.cos(angle) * radius;
-            const ny = H/2 + Math.sin(angle) * radius;
-            gctx.fillStyle = `rgba(255, 215, 0, ${completeGlow * 0.8})`;
-            gctx.beginPath();
-            gctx.arc(nx, ny, 5, 0, Math.PI * 2);
-            gctx.fill();
+        // القطع في أماكنها
+        if (systemImage && systemImage.complete) {
+            const IW = systemImage.width, IH = systemImage.height;
+            PART_ORDER.forEach(name => {
+                const target = PARTS_POSITIONS[name];
+                const tx = target.x * W;
+                const ty = target.y * H;
+                const src = getPartSource(name, IW, IH);
+                try {
+                    gctx.drawImage(systemImage, src.sx, src.sy, src.sw, src.sh, tx, ty, PART_SIZE, PART_SIZE);
+                } catch(e) {}
+            });
         }
 
-        return; // ما نرسم باقي الأشياء
+        // خطوط الكهرباء
+        drawPowerLine(PARTS_POSITIONS.panel.x*W + 50, PARTS_POSITIONS.panel.y*H + 50,
+                     PARTS_POSITIONS.controller.x*W + 50, PARTS_POSITIONS.controller.y*H + 50, t);
+        drawPowerLine(PARTS_POSITIONS.controller.x*W + 50, PARTS_POSITIONS.controller.y*H + 50,
+                     PARTS_POSITIONS.battery.x*W + 50, PARTS_POSITIONS.battery.y*H + 50, t);
+        drawPowerLine(PARTS_POSITIONS.battery.x*W + 50, PARTS_POSITIONS.battery.y*H + 50,
+                     PARTS_POSITIONS.inverter.x*W + 50, PARTS_POSITIONS.inverter.y*H + 50, t);
+        drawPowerLine(PARTS_POSITIONS.inverter.x*W + 50, PARTS_POSITIONS.inverter.y*H + 50,
+                     PARTS_POSITIONS.load.x*W + 50, PARTS_POSITIONS.load.y*H + 50, t);
+
+        // شحن البطارية (5 ثواني)
+        batteryCharge = Math.min((t / 5) * 100, 100);
+
+        // توهج البيت
+        lightBrightness = batteryCharge > 50 ? Math.min((batteryCharge - 50) / 50, 1) : 0;
+        drawHouseGlow(PARTS_POSITIONS.load.x*W + 50, PARTS_POSITIONS.load.y*H + 50, lightBrightness);
+
+        // شريط البطارية
+        drawBatteryBar(30, H - 60, batteryCharge);
+
+        // نصوص
+        gctx.fillStyle = '#00d4ff';
+        gctx.font = 'bold 32px Arial';
+        gctx.textAlign = 'center';
+        gctx.fillText('🌞 SYSTEM ONLINE', W/2, 50);
+
+        gctx.font = 'bold 18px Arial';
+        gctx.fillStyle = '#fff';
+        gctx.fillText(`⚡ Power: ${Math.round(batteryCharge * 10)} W`, W/2, H - 100);
+        gctx.fillText(`🔋 Battery: ${Math.round(batteryCharge)}%`, W/2, H - 75);
+        gctx.fillText(`💡 Light: ${Math.round(lightBrightness * 100)}%`, W/2, H - 50);
+
+        // انتهاء المحاكاة
+        if (batteryCharge >= 100 && !simDone) {
+            simDone = true;
+            playComplete();
+            setTimeout(() => {
+                gameState = 'FINISHED';
+                const elapsed = (Date.now() - startTime) / 1000;
+                document.getElementById('endStats').innerHTML = `
+                    🎉 ${playerName}!<br>
+                    ⏱️ الوقت: ${elapsed.toFixed(1)}s<br>
+                    ❌ الأخطاء: ${mistakes}<br>
+                    <br>✅ النظام يعمل بنجاح!
+                `;
+                document.getElementById('endScreen').classList.remove('hidden');
+            }, 2000);
+        }
+        return;
     }
 
-    // ===== 2. المربعات المستهدفة (أرقام فقط) =====
+    // ===== حالة اللعب =====
     PART_ORDER.forEach(name => {
         const target = PARTS_POSITIONS[name];
         const tx = target.x * W;
         const ty = target.y * H;
         const placed = parts[name].placed;
 
-        if (!placed) {
+        if (placed) {
+            // ✅ القطعة مثبتة — ترسم داخل المربع
+            if (systemImage && systemImage.complete) {
+                const IW = systemImage.width, IH = systemImage.height;
+                const src = getPartSource(name, IW, IH);
+                try {
+                    gctx.drawImage(systemImage, src.sx, src.sy, src.sw, src.sh, tx, ty, PART_SIZE, PART_SIZE);
+                } catch(e) {}
+            }
+            // إطار أخضر
+            gctx.strokeStyle = '#00ff00';
+            gctx.lineWidth = 5;
+            gctx.strokeRect(tx, ty, PART_SIZE, PART_SIZE);
+            // ✅ علامة صح
+            gctx.fillStyle = '#00ff00';
+            gctx.font = 'bold 30px Arial';
+            gctx.textAlign = 'center';
+            gctx.fillText('✓', tx + PART_SIZE - 15, ty + 25);
+        } else {
+            // إطار متقطع
             gctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
             gctx.lineWidth = 4;
             gctx.setLineDash([10, 10]);
             gctx.strokeRect(tx, ty, PART_SIZE, PART_SIZE);
             gctx.setLineDash([]);
 
+            // الرقم
             gctx.fillStyle = '#ffffff';
             gctx.font = 'bold 36px Arial';
             gctx.textAlign = 'center';
@@ -280,20 +432,17 @@ function drawGame(W, H) {
         }
     });
 
-    // ===== 3. القطع =====
+    // القطع العائمة
     PART_ORDER.forEach(name => {
         const p = parts[name];
-        if (p.placed) return; // ✅ القطعة الموضوعة تختفي (مدمجة في الصورة)
+        if (p.placed) return;
 
         if (systemImage && systemImage.complete) {
             const IW = systemImage.width, IH = systemImage.height;
             const src = getPartSource(name, IW, IH);
             try {
                 gctx.drawImage(systemImage, src.sx, src.sy, src.sw, src.sh, p.x, p.y, PART_SIZE, PART_SIZE);
-            } catch(e) {
-                gctx.fillStyle = '#00ff00';
-                gctx.fillRect(p.x, p.y, PART_SIZE, PART_SIZE);
-            }
+            } catch(e) {}
         }
     });
 
@@ -339,17 +488,12 @@ function checkWin() {
     if (PART_ORDER.every(name => parts[name].placed)) {
         playWin();
         setTimeout(() => {
-            // إظهار شاشة الفوز بعد التوهج
-            gameState = 'FINISHED';
-            const elapsed = (Date.now() - startTime) / 1000;
-            document.getElementById('endStats').innerHTML = `
-                🎉 ${playerName}!<br>
-                ⏱️ الوقت: ${elapsed.toFixed(1)}s<br>
-                ❌ الأخطاء: ${mistakes}<br>
-                <br>✅ النظام مكتمل!
-            `;
-            document.getElementById('endScreen').classList.remove('hidden');
-        }, 3000);
+            gameState = 'SIMULATION';
+            simulationStart = Date.now();
+            batteryCharge = 0;
+            lightBrightness = 0;
+            simDone = false;
+        }, 800);
     }
 }
 
