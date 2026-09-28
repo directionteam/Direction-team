@@ -15,21 +15,15 @@ const HOLD_DURATION = 500;
 const PART_SIZE = 120;
 
 const PART_ORDER = ['panel', 'controller', 'battery', 'inverter', 'load'];
-const PART_EMOJI = {
-    'panel': '☀️',
-    'controller': '🎛️',
-    'battery': '🔋',
-    'inverter': '⚡',
-    'load': '🏠'
-};
-const PART_LABELS = {
-    'panel': 'Solar Panel',
-    'controller': 'Controller',
-    'battery': 'Battery',
-    'inverter': 'Inverter',
-    'load': 'House'
-};
 
+// مواقع الأهداف (نسب من 0 إلى 1) — أرقام فقط بدون أسماء
+const TARGETS = {
+    'panel':      { x: 0.15, y: 0.75, num: 1 },
+    'controller': { x: 0.35, y: 0.75, num: 2 },
+    'battery':    { x: 0.55, y: 0.75, num: 3 },
+    'inverter':   { x: 0.75, y: 0.75, num: 4 },
+    'load':       { x: 0.90, y: 0.75, num: 5 }
+};
 
 let parts = {};
 
@@ -69,7 +63,7 @@ async function startGame() {
     gctx = gameCanvas.getContext('2d');
     video = document.getElementById('video');
 
-    // تحميل الصورة (من الرابط المباشر)
+    // تحميل الصورة
     await new Promise((resolve) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
@@ -221,30 +215,31 @@ function drawGame(W, H) {
     gctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     gctx.fillRect(0, 0, W, H);
 
-    // المربعات المستهدفة
+    // المربعات المستهدفة — أرقام فقط، بدون أسماء
     PART_ORDER.forEach(name => {
         const target = TARGETS[name];
         const tx = target.x * W;
         const ty = target.y * H;
         const placed = parts[name].placed;
 
-        gctx.strokeStyle = placed ? '#00ff00' : 'rgba(255, 255, 255, 0.7)';
+        // إطار المربع
+        gctx.strokeStyle = placed ? '#00ff00' : 'rgba(255, 255, 255, 0.8)';
         gctx.lineWidth = 4;
         gctx.strokeRect(tx, ty, PART_SIZE, PART_SIZE);
 
+        // الرقم فقط (بدون اسم)
         gctx.fillStyle = placed ? '#00ff00' : '#ffffff';
-        gctx.font = 'bold 36px Arial';
+        gctx.font = 'bold 40px Arial';
         gctx.textAlign = 'center';
         gctx.textBaseline = 'alphabetic';
-        gctx.fillText(target.num, tx + PART_SIZE/2, ty + PART_SIZE + 45);
+        gctx.fillText(target.num, tx + PART_SIZE/2, ty + PART_SIZE + 50);
     });
 
-    // القطع - رسم الصورة الكاملة ثم الاقتصاص
+    // القطع — اقتصاص من الصورة الكاملة
     PART_ORDER.forEach(name => {
         const p = parts[name];
 
         if (systemImage && systemImage.complete) {
-            // اقتصاص الجزء المناسب من الصورة
             let sx = 0, sy = 0, sw = systemImage.width, sh = systemImage.height;
 
             if (name === 'panel') {
