@@ -1,16 +1,21 @@
-let scene, camera, renderer;
-let handDetector;
+// ===== المتغيرات =====
+let video, handCanvas, ctx, gameCanvas, gctx;
+let handDetector, camera;
 let fingertip = null;
 let playerName = '';
 let startTime = 0;
 let mistakes = 0;
 let gameState = 'IDLE';
-let parts3D = [];
+let images = {};
+let imagesLoaded = 0;
 let selectedPart = null;
-let holdingStartTime = 0;
+let dragging = false;
 let holdingPart = null;
+let holdingStartTime = 0;
+let particles = [];
 
-const HOLD_DURATION = 500;
+const HOLD_DURATION = 500; // نص ثانية
+const PART_SIZE = 90;
 
 const PART_ORDER = ['panel', 'controller', 'battery', 'inverter', 'load'];
 const PART_LABELS = {
@@ -22,93 +27,132 @@ const PART_LABELS = {
 };
 
 const TARGETS = {
-    'panel':      { x: 0.15, y: 0.75, num: 1, color: 0x1e3a8a, geom: 'box' },
-    'controller': { x: 0.35, y: 0.75, num: 2, color: 0x10b981, geom: 'box' },
-    'battery':    { x: 0.55, y: 0.75, num: 3, color: 0xef4444, geom: 'cyl' },
-    'inverter':   { x: 0.75, y: 0.75, num: 4, color: 0xf59e0b, geom: 'box' },
-    'load':       { x: 0.90, y: 0.75, num: 5, color: 0xfbbf24, geom: 'sphere' }
+    'panel':      { x: 0.12, y: 0.72, num: 1 },
+    'controller': { x: 0.32, y: 0.72, num: 2 },
+    'battery':    { x: 0.52, y: 0.72, num: 3 },
+    'inverter':   { x: 0.72, y: 0.72, num: 4 },
+    'load':       { x: 0.90, y: 0.72, num: 5 }
 };
 
+let parts = {};
+
+// ===== الأصوات =====
+function playBeep(freq, duration) {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration / 1000);
+        osc.stop(audioCtx.currentTime + duration / 1000);
+    } catch (e) {}
+}
+
+function playCorrect() { playBeep(800, 150); }
+function playWrong() { playBeep(300, 300); }
+function playWin() {
+    playBeep(600, 100);
+    setTimeout(() => playBeep(800, 100), 150);
+    setTimeout(() => playBeep(1000, 200), 300);
+}
+
+// ===== بدء اللعبة =====
 async function startGame() {
     playerName = document.getElementById('playerName').value.trim() || 'Player';
     document.getElementById('startScreen').classList.add('hidden');
     document.getElementById('gameScreen').classList.remove('hidden');
     document.getElementById('hudPlayer').textContent = playerName;
 
-    initThreeJS();
+    // إعداد Canvas
+    gameCanvas = document.getElementById('threeCanvas');
+    gameCanvas.width = window.innerWidth;
+    gameCanvas.height = window.innerHeight;
+    gctx = gameCanvas.getContext('2d');
+
+    handCanvas = document.getElementById('handCanvas');
+    handCanvas.width = window.innerWidth;
+    handCanvas.height = window.innerHeight;
+    ctx = handCanvas.getContext('2d');
+
+    video = document.getElementById('video');
+
+    // تحميل الصور
+    await loadImages();
+
+    // خلط القطع
+    randomizePositions();
+
+    // بدء MediaPipe
     await initMediaPipe();
+
+    // تشغيل الكاميرا
     await initCamera();
 
+    // العد التنازلي
     gameState = 'COUNTDOWN';
     startCountdown();
 }
 
-function initThreeJS() {
-    const canvas = document.getElementById('threeCanvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 5;
-
-    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
-    const dLight = new THREE.DirectionalLight(0xffffff, 1);
-    dLight.position.set(5, 5, 5);
-    scene.add(dLight);
-
-    createParts();
-    animate();
-}
-
-function createParts() {
-    const geometries = {
-        'panel': new THREE.BoxGeometry(0.8, 0.05, 0.6),
-        'controller': new THREE.BoxGeometry(0.4, 0.3, 0.3),
-        'battery': new THREE.CylinderGeometry(0.25, 0.25, 0.5, 32),
-        'inverter': new THREE.BoxGeometry(0.5, 0.4, 0.3),
-        'load': new THREE.SphereGeometry(0.3, 32, 32)
-    };
-
-    PART_ORDER.forEach((name, i) => {
-        const config = TARGETS[name];
-        const mat = new THREE.MeshPhongMaterial({
-            color: config.color,
-            shininess: 100,
-            emissive: config.color,
-            emissiveIntensity: 0.2
-        });
-
-        const mesh = new THREE.Mesh(geometries[name], mat);
-        mesh.position.x = (Math.random() - 0.5) * 8;
-        mesh.position.y = 1.8;
-        mesh.position.z = 0;
-        mesh.userData = { name, placed: false };
-        scene.add(mesh);
-        parts3D.push(mesh);
-    });
-}
-
-function animate() {
-    requestAnimationFrame(animate);
-
-    parts3D.forEach(mesh => {
-        if (!mesh.userData.placed) {
-            mesh.rotation.y += 0.02;
+// ===== تحميل الصور =====
+function loadImages() {
+    return new Promise((resolve) => {
+        const imageNames = ['panel', 'controller', 'battery', 'inverter', 'load'];
+        
+        if (imageNames.length === 0) {
+            resolve();
+            return;
         }
-    });
 
-    if (gameState === 'PLAYING') {
-        const elapsed = (Date.now() - startTime) / 1000;
-        document.getElementById('hudTimer').textContent = elapsed.toFixed(1) + 's';
+        imageNames.forEach(name => {
+            const img = new Image();
+            img.onload = () => {
+                imagesLoaded++;
+                if (imagesLoaded === imageNames.length) {
+                    resolve();
+                }
+            };
+            img.onerror = () => {
+                console.warn(`⚠️ لم أجد ${name}.png`);
+                imagesLoaded++;
+                if (imagesLoaded === imageNames.length) {
+                    resolve();
+                }
+            };
+            img.src = `../${name}.png`; // يقرأ الصور من المجلد الرئيسي
+        });
+    });
+}
+
+// ===== خلط القطع =====
+function randomizePositions() {
+    const positions = [];
+    const xStart = 0.08;
+    const spacing = 0.18;
+    const yPos = 0.15;
+
+    for (let i = 0; i < 5; i++) {
+        positions.push(xStart + i * spacing);
+    }
+    // خلط
+    for (let i = positions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [positions[i], positions[j]] = [positions[j], positions[i]];
     }
 
-    renderer.render(scene, camera);
+    PART_ORDER.forEach((name, i) => {
+        parts[name] = {
+            x: positions[i] * window.innerWidth,
+            y: yPos * window.innerHeight,
+            placed: false
+        };
+    });
 }
 
+// ===== MediaPipe =====
 async function initMediaPipe() {
     handDetector = new Hands({
         locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
@@ -116,96 +160,124 @@ async function initMediaPipe() {
     handDetector.setOptions({
         maxNumHands: 1,
         modelComplexity: 1,
-        minDetectionConfidence: 0.7,
-        minTrackingConfidence: 0.7
+        minDetectionConfidence: 0.6,
+        minTrackingConfidence: 0.6
     });
     handDetector.onResults(onHandResults);
 }
 
 function onHandResults(results) {
-    const canvas = document.getElementById('handCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, handCanvas.width, handCanvas.height);
 
     if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         const lm = results.multiHandLandmarks[0];
         const tip = lm[8];
-        const x = tip.x * canvas.width;
-        const y = tip.y * canvas.height;
+        // انعكاس x لأن الكاميرا معكوسة
+        const x = (1 - tip.x) * handCanvas.width;
+        const y = tip.y * handCanvas.height;
         fingertip = { x, y };
 
-        ctx.fillStyle = '#00ffff';
+        // رسم إصبع
+        ctx.fillStyle = 'rgba(0, 255, 255, 0.8)';
         ctx.beginPath();
         ctx.arc(x, y, 20, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = '#fff';
+        ctx.strokeStyle = 'white';
         ctx.lineWidth = 3;
         ctx.stroke();
 
+        // منطق اللعبة
         if (gameState === 'PLAYING') {
-            handleDrag();
+            handleGameLogic();
         }
     } else {
         fingertip = null;
-        if (selectedPart) {
-            if (!selectedPart.userData.placed) {
-                selectedPart.position.x = (Math.random() - 0.5) * 8;
-                selectedPart.position.y = 1.8;
+        // إذا اختفت اليد → أسقط القطعة
+        if (dragging && selectedPart) {
+            const p = parts[selectedPart];
+            const target = TARGETS[selectedPart];
+            const tx = target.x * window.innerWidth;
+            const ty = target.y * window.innerHeight;
+            const inTarget = Math.abs(p.x - tx) < 100 && Math.abs(p.y - ty) < 100;
+
+            if (!inTarget) {
+                // أسقط
+                const positions = [];
+                for (let i = 0; i < 5; i++) positions.push(0.08 + i * 0.18);
+                for (let i = positions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [positions[i], positions[j]] = [positions[j], positions[i]];
+                }
+                p.x = positions[Math.floor(Math.random() * 5)] * window.innerWidth;
+                p.y = 0.15 * window.innerHeight;
                 mistakes++;
                 document.getElementById('hudMistakes').textContent = mistakes;
+                playWrong();
             }
+            dragging = false;
             selectedPart = null;
             holdingPart = null;
         }
     }
-
-    drawTargets(ctx, canvas);
 }
 
-function handleDrag() {
+// ===== منطق السحب والإفلات =====
+function handleGameLogic() {
     if (!fingertip) return;
+    const fx = fingertip.x;
+    const fy = fingertip.y;
 
-    const x3d = (fingertip.x / window.innerWidth) * 2 - 1;
-    const y3d = -(fingertip.y / window.innerHeight) * 2 + 1;
-
-    if (!selectedPart) {
-        parts3D.forEach(mesh => {
-            if (mesh.userData.placed) return;
-            const screenPos = mesh.position.clone().project(camera);
-            const mx = (screenPos.x + 1) / 2 * window.innerWidth;
-            const my = (-screenPos.y + 1) / 2 * window.innerHeight;
-            const dist = Math.sqrt((mx - fingertip.x) ** 2 + (my - fingertip.y) ** 2);
-            if (dist < 80) {
-                selectedPart = mesh;
+    // 1. اختيار القطعة
+    if (!dragging) {
+        for (const name of PART_ORDER) {
+            if (parts[name].placed) continue;
+            const p = parts[name];
+            const dx = Math.abs(fx - (p.x + PART_SIZE / 2));
+            const dy = Math.abs(fy - (p.y + PART_SIZE / 2));
+            if (dx < 70 && dy < 70) {
+                selectedPart = name;
+                dragging = true;
+                break;
             }
-        });
+        }
     }
 
-    if (selectedPart) {
-        const vector = new THREE.Vector3(x3d, y3d, 0.5).unproject(camera);
-        const dir = vector.sub(camera.position).normalize();
-        const dist = -camera.position.z / dir.z;
-        const pos = camera.position.clone().add(dir.multiplyScalar(dist));
-        selectedPart.position.x = pos.x;
-        selectedPart.position.y = pos.y;
+    // 2. تحريك القطعة
+    if (dragging && selectedPart) {
+        parts[selectedPart].x = fx - PART_SIZE / 2;
+        parts[selectedPart].y = fy - PART_SIZE / 2;
 
-        const config = TARGETS[selectedPart.userData.name];
-        const tx = (config.x) * 2 - 1;
-        const ty = -(config.y) * 2 + 1;
+        // 3. التحقق من الهدف
+        const p = parts[selectedPart];
+        const target = TARGETS[selectedPart];
+        const tx = target.x * window.innerWidth;
+        const ty = target.y * window.innerHeight;
 
-        const dx = Math.abs(selectedPart.position.x - tx);
-        const dy = Math.abs(selectedPart.position.y - ty);
+        const inTarget = Math.abs(p.x - tx) < 100 && Math.abs(p.y - ty) < 100;
 
-        if (dx < 0.6 && dy < 0.4) {
+        if (inTarget) {
             if (holdingPart !== selectedPart) {
                 holdingPart = selectedPart;
                 holdingStartTime = Date.now();
             }
-            if (Date.now() - holdingStartTime >= HOLD_DURATION) {
-                selectedPart.userData.placed = true;
-                selectedPart.position.set(tx, ty, 0);
+
+            const elapsed = Date.now() - holdingStartTime;
+            const progress = Math.min(elapsed / HOLD_DURATION, 1);
+
+            // ارسم شريط التقدم
+            gctx.fillStyle = 'rgba(0, 255, 0, 0.9)';
+            gctx.fillRect(tx, ty - 30, PART_SIZE * progress, 12);
+            gctx.strokeStyle = 'white';
+            gctx.lineWidth = 2;
+            gctx.strokeRect(tx, ty - 30, PART_SIZE, 12);
+
+            // ثبّت
+            if (elapsed >= HOLD_DURATION) {
+                p.placed = true;
+                p.x = tx;
+                p.y = ty;
+                playCorrect();
+                dragging = false;
                 selectedPart = null;
                 holdingPart = null;
                 checkWin();
@@ -216,62 +288,106 @@ function handleDrag() {
     }
 }
 
-function checkWin() {
-    if (parts3D.every(m => m.userData.placed)) {
-        gameState = 'FINISHED';
-        const elapsed = (Date.now() - startTime) / 1000;
-        document.getElementById('endStats').innerHTML = `
-            اللاعب: ${playerName}<br>
-            الوقت: ${elapsed.toFixed(1)}s<br>
-            الأخطاء: ${mistakes}
-        `;
-        document.getElementById('endScreen').classList.remove('hidden');
-    }
-}
+// ===== رسم اللعبة =====
+function drawGame() {
+    if (!gctx) return;
 
-function drawTargets(ctx, canvas) {
+    gctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+    // 1. رسم المربعات المستهدفة (أرقام فقط)
     PART_ORDER.forEach(name => {
-        const config = TARGETS[name];
-        const x = config.x * canvas.width - 60;
-        const y = config.y * canvas.height - 60;
-        const mesh = parts3D.find(m => m.userData.name === name);
-        const placed = mesh ? mesh.userData.placed : false;
+        const target = TARGETS[name];
+        const tx = target.x * window.innerWidth;
+        const ty = target.y * window.innerHeight;
+        const placed = parts[name].placed;
 
-        ctx.strokeStyle = placed ? '#00ff00' : '#ffffff';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(x, y, 120, 120);
+        gctx.strokeStyle = placed ? '#00ff00' : '#ffffff';
+        gctx.lineWidth = 4;
+        gctx.strokeRect(tx, ty, PART_SIZE, PART_SIZE);
 
-        ctx.fillStyle = placed ? '#00ff00' : '#ffffff';
-        ctx.font = 'bold 40px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(config.num, x + 60, y + 75);
+        gctx.fillStyle = placed ? '#00ff00' : '#ffffff';
+        gctx.font = 'bold 30px Arial';
+        gctx.textAlign = 'center';
+        gctx.fillText(target.num, tx + PART_SIZE / 2, ty + PART_SIZE + 35);
     });
+
+    // 2. رسم القطع
+    PART_ORDER.forEach(name => {
+        const p = parts[name];
+        if (p.placed) return; // القطع الموضوعة لا ترسم (تبقى في مكانها)
+
+        const img = images[name];
+        if (img && img.complete && img.naturalWidth > 0) {
+            gctx.drawImage(img, p.x, p.y, PART_SIZE, PART_SIZE);
+        } else {
+            // بديل: مستطيل ملوّن
+            const colors = {
+                'panel': '#1e3a8a',
+                'controller': '#10b981',
+                'battery': '#ef4444',
+                'inverter': '#f59e0b',
+                'load': '#fbbf24'
+            };
+            gctx.fillStyle = colors[name];
+            gctx.fillRect(p.x, p.y, PART_SIZE, PART_SIZE);
+            gctx.fillStyle = 'white';
+            gctx.font = 'bold 12px Arial';
+            gctx.fillText(PART_LABELS[name], p.x + PART_SIZE / 2, p.y + PART_SIZE / 2);
+        }
+    });
+
+    // 3. رسم القطع الموضوعة (على المربعات)
+    PART_ORDER.forEach(name => {
+        const p = parts[name];
+        if (!p.placed) return;
+
+        const img = images[name];
+        if (img && img.complete && img.naturalWidth > 0) {
+            gctx.drawImage(img, p.x, p.y, PART_SIZE, PART_SIZE);
+        }
+    });
+
+    // 4. المؤقت
+    if (gameState === 'PLAYING') {
+        const elapsed = (Date.now() - startTime) / 1000;
+        document.getElementById('hudTimer').textContent = elapsed.toFixed(1) + 's';
+    }
+
+    requestAnimationFrame(drawGame);
 }
 
+// ===== الكاميرا =====
 async function initCamera() {
-    const video = document.getElementById('video');
     try {
         const stream = await navigator.mediaDevices.getUserMedia({
             video: { width: 1280, height: 720, facingMode: 'user' }
         });
         video.srcObject = stream;
-        const cam = new Camera(video, {
-            onFrame: async () => { await handDetector.send({ image: video }); },
+
+        camera = new Camera(video, {
+            onFrame: async () => {
+                await handDetector.send({ image: video });
+            },
             width: 1280,
             height: 720
         });
-        cam.start();
+        camera.start();
+
+        // ابدأ حلقة الرسم
+        drawGame();
     } catch (err) {
         alert('❌ لم أستطع تشغيل الكاميرا');
         console.error(err);
     }
 }
 
+// ===== العد التنازلي =====
 function startCountdown() {
     let counter = 3;
     const el = document.getElementById('hudNext');
     const interval = setInterval(() => {
         el.textContent = counter > 0 ? counter : 'GO!';
+        playBeep(500, 200);
         counter--;
         if (counter < -1) {
             clearInterval(interval);
@@ -282,12 +398,29 @@ function startCountdown() {
     }, 1000);
 }
 
+// ===== الفوز =====
+function checkWin() {
+    if (PART_ORDER.every(name => parts[name].placed)) {
+        gameState = 'FINISHED';
+        const elapsed = (Date.now() - startTime) / 1000;
+        playWin();
+        document.getElementById('endStats').innerHTML = `
+            اللاعب: ${playerName}<br>
+            الوقت: ${elapsed.toFixed(1)}s<br>
+            الأخطاء: ${mistakes}
+        `;
+        document.getElementById('endScreen').classList.remove('hidden');
+    }
+}
+
 function restartGame() { location.reload(); }
 
+// ===== إعادة الحجم =====
 window.addEventListener('resize', () => {
-    if (renderer && camera) {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+    if (gameCanvas) {
+        gameCanvas.width = window.innerWidth;
+        gameCanvas.height = window.innerHeight;
+        handCanvas.width = window.innerWidth;
+        handCanvas.height = window.innerHeight;
     }
 });
