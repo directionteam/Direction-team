@@ -1,4 +1,3 @@
-// ===== المتغيرات =====
 let video, handCanvas, ctx, gameCanvas, gctx;
 let handDetector, camera;
 let fingertip = null;
@@ -6,35 +5,28 @@ let playerName = '';
 let startTime = 0;
 let mistakes = 0;
 let gameState = 'IDLE';
-let images = {};
+let systemImage = null;
 let selectedPart = null;
 let dragging = false;
 let holdingPart = null;
 let holdingStartTime = 0;
 
 const HOLD_DURATION = 500;
-const PART_SIZE = 100;
 
 const PART_ORDER = ['panel', 'controller', 'battery', 'inverter', 'load'];
-const PART_LABELS = {
-    'panel': 'Solar Panel',
-    'controller': 'Controller',
-    'battery': 'Battery',
-    'inverter': 'Inverter',
-    'load': 'Load'
-};
 
-const TARGETS = {
-    'panel':      { x: 0.12, y: 0.72, num: 1 },
-    'controller': { x: 0.32, y: 0.72, num: 2 },
-    'battery':    { x: 0.52, y: 0.72, num: 3 },
-    'inverter':   { x: 0.72, y: 0.72, num: 4 },
-    'load':       { x: 0.90, y: 0.72, num: 5 }
+// المواقع داخل الصورة (نسب من 0 إلى 1)
+const PARTS_POSITIONS = {
+    'panel':      { x: 0.22, y: 0.30, label: 'Solar Panel' },
+    'controller': { x: 0.18, y: 0.55, label: 'Controller' },
+    'battery':    { x: 0.25, y: 0.82, label: 'Battery' },
+    'inverter':   { x: 0.52, y: 0.45, label: 'Inverter' },
+    'load':       { x: 0.80, y: 0.65, label: 'House' }
 };
 
 let parts = {};
 
-// ===== الأصوات =====
+// ===== أصوات =====
 function playBeep(freq, duration) {
     try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -49,7 +41,6 @@ function playBeep(freq, duration) {
         osc.stop(audioCtx.currentTime + duration / 1000);
     } catch (e) {}
 }
-
 function playCorrect() { playBeep(800, 150); }
 function playWrong() { playBeep(300, 300); }
 function playWin() {
@@ -69,30 +60,22 @@ async function startGame() {
     handCanvas = document.getElementById('handCanvas');
     ctx = handCanvas.getContext('2d');
     gctx = gameCanvas.getContext('2d');
-
     video = document.getElementById('video');
 
-    // تحميل الصور — كل صورة تُحفظ مباشرة في images
+    // تحميل الصورة
     await new Promise((resolve) => {
-        const names = ['panel', 'controller', 'battery', 'inverter', 'load'];
-        let loaded = 0;
-        names.forEach(name => {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = () => {
-                images[name] = img;
-                console.log('✅ تم تحميل: ' + name);
-                loaded++;
-                if (loaded === names.length) resolve();
-            };
-            img.onerror = () => {
-                console.error('❌ فشل: ' + name + '.png');
-                loaded++;
-                if (loaded === names.length) resolve();
-            };
-            img.src = name + '.png';
-        });
-        // timeout احتياطي بعد 5 ثواني
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            systemImage = img;
+            console.log('✅ تم تحميل الصورة: ' + img.width + 'x' + img.height);
+            resolve();
+        };
+        img.onerror = () => {
+            console.error('❌ فشل تحميل الصورة');
+            resolve();
+        };
+        img.src = 'https://directionteam.github.io/Direction-team/system.png';
         setTimeout(resolve, 5000);
     });
 
@@ -104,18 +87,16 @@ async function startGame() {
     startCountdown();
 }
 
-// ===== خلط القطع =====
 function randomizePositions() {
-    const positions = [0.08, 0.26, 0.44, 0.62, 0.80];
+    const positions = [0.05, 0.24, 0.43, 0.62, 0.81];
     for (let i = positions.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [positions[i], positions[j]] = [positions[j], positions[i]];
     }
-
     PART_ORDER.forEach((name, i) => {
         parts[name] = {
             x: positions[i] * window.innerWidth,
-            y: 0.15 * window.innerHeight,
+            y: 0.08 * window.innerHeight,
             placed: false
         };
     });
@@ -127,28 +108,20 @@ async function initMediaPipe() {
         locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
     });
     handDetector.setOptions({
-        maxNumHands: 1,
-        modelComplexity: 1,
-        minDetectionConfidence: 0.6,
-        minTrackingConfidence: 0.6
+        maxNumHands: 1, modelComplexity: 1,
+        minDetectionConfidence: 0.6, minTrackingConfidence: 0.6
     });
     handDetector.onResults(onHandResults);
 }
 
 function onHandResults(results) {
-    const W = window.innerWidth;
-    const H = window.innerHeight;
-
-    if (handCanvas.width !== W) handCanvas.width = W;
-    if (handCanvas.height !== H) handCanvas.height = H;
-    if (gameCanvas.width !== W) gameCanvas.width = W;
-    if (gameCanvas.height !== H) gameCanvas.height = H;
-
+    const W = window.innerWidth, H = window.innerHeight;
+    handCanvas.width = W; handCanvas.height = H;
+    gameCanvas.width = W; gameCanvas.height = H;
     ctx.clearRect(0, 0, W, H);
 
     if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-        const lm = results.multiHandLandmarks[0];
-        const tip = lm[8];
+        const tip = results.multiHandLandmarks[0][8];
         const x = (1 - tip.x) * W;
         const y = tip.y * H;
         fingertip = { x, y };
@@ -161,54 +134,29 @@ function onHandResults(results) {
         ctx.lineWidth = 3;
         ctx.stroke();
 
-        if (gameState === 'PLAYING') {
-            handleGameLogic();
-        }
+        if (gameState === 'PLAYING') handleGameLogic();
     } else {
         fingertip = null;
         if (dragging && selectedPart) {
-            const p = parts[selectedPart];
-            const target = TARGETS[selectedPart];
-            const tx = target.x * W;
-            const ty = target.y * H;
-            const inTarget = Math.abs(p.x - tx) < 100 && Math.abs(p.y - ty) < 100;
-
-            if (!inTarget) {
-                const positions = [0.08, 0.26, 0.44, 0.62, 0.80];
-                for (let i = positions.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [positions[i], positions[j]] = [positions[j], positions[i]];
-                }
-                p.x = positions[Math.floor(Math.random() * 5)] * W;
-                p.y = 0.15 * H;
-                mistakes++;
-                document.getElementById('hudMistakes').textContent = mistakes;
-                playWrong();
-            }
             dragging = false;
             selectedPart = null;
             holdingPart = null;
         }
     }
-
     drawGame(W, H);
 }
 
 // ===== المنطق =====
 function handleGameLogic() {
     if (!fingertip) return;
-    const W = window.innerWidth;
-    const H = window.innerHeight;
-    const fx = fingertip.x;
-    const fy = fingertip.y;
+    const W = window.innerWidth, H = window.innerHeight;
+    const fx = fingertip.x, fy = fingertip.y;
 
     if (!dragging) {
         for (const name of PART_ORDER) {
             if (parts[name].placed) continue;
             const p = parts[name];
-            const dx = Math.abs(fx - (p.x + PART_SIZE / 2));
-            const dy = Math.abs(fy - (p.y + PART_SIZE / 2));
-            if (dx < 70 && dy < 70) {
+            if (Math.abs(fx - (p.x + 50)) < 60 && Math.abs(fy - (p.y + 50)) < 60) {
                 selectedPart = name;
                 dragging = true;
                 break;
@@ -217,30 +165,29 @@ function handleGameLogic() {
     }
 
     if (dragging && selectedPart) {
-        parts[selectedPart].x = fx - PART_SIZE / 2;
-        parts[selectedPart].y = fy - PART_SIZE / 2;
+        parts[selectedPart].x = fx - 50;
+        parts[selectedPart].y = fy - 50;
 
         const p = parts[selectedPart];
-        const target = TARGETS[selectedPart];
+        const target = PARTS_POSITIONS[selectedPart];
         const tx = target.x * W;
         const ty = target.y * H;
 
-        const inTarget = Math.abs(p.x - tx) < 100 && Math.abs(p.y - ty) < 100;
+        const inTarget = Math.abs(p.x - tx) < 120 && Math.abs(p.y - ty) < 120;
 
         if (inTarget) {
             if (holdingPart !== selectedPart) {
                 holdingPart = selectedPart;
                 holdingStartTime = Date.now();
             }
-
             const elapsed = Date.now() - holdingStartTime;
             const progress = Math.min(elapsed / HOLD_DURATION, 1);
 
             gctx.fillStyle = 'rgba(0, 255, 0, 0.9)';
-            gctx.fillRect(tx, ty - 30, PART_SIZE * progress, 12);
+            gctx.fillRect(tx, ty - 30, 100 * progress, 12);
             gctx.strokeStyle = 'white';
             gctx.lineWidth = 2;
-            gctx.strokeRect(tx, ty - 30, PART_SIZE, 12);
+            gctx.strokeRect(tx, ty - 30, 100, 12);
 
             if (elapsed >= HOLD_DURATION) {
                 p.placed = true;
@@ -263,75 +210,82 @@ function drawGame(W, H) {
     if (!gctx) return;
     gctx.clearRect(0, 0, W, H);
 
-    // المربعات المستهدفة
+    // المربعات المستهدفة (باهتة)
     PART_ORDER.forEach(name => {
-        const target = TARGETS[name];
+        const target = PARTS_POSITIONS[name];
         const tx = target.x * W;
         const ty = target.y * H;
         const placed = parts[name].placed;
 
-        gctx.strokeStyle = placed ? '#00ff00' : '#ffffff';
-        gctx.lineWidth = 4;
-        gctx.strokeRect(tx, ty, PART_SIZE, PART_SIZE);
+        gctx.strokeStyle = placed ? 'rgba(0, 255, 0, 0.8)' : 'rgba(255, 255, 255, 0.3)';
+        gctx.lineWidth = 3;
+        gctx.setLineDash([10, 10]);
+        gctx.strokeRect(tx, ty, 100, 100);
+        gctx.setLineDash([]);
 
-        gctx.fillStyle = placed ? '#00ff00' : '#ffffff';
-        gctx.font = 'bold 32px Arial';
+        // الاسم
+        gctx.fillStyle = placed ? '#00ff00' : 'rgba(255, 255, 255, 0.7)';
+        gctx.font = 'bold 14px Arial';
         gctx.textAlign = 'center';
-        gctx.fillText(target.num, tx + PART_SIZE / 2, ty + PART_SIZE + 40);
+        gctx.fillText(target.label, tx + 50, ty + 130);
     });
 
-    // القطع — استخدام images مباشرة
+    // القطع - نرسم كل قطعة كمقتطف من الصورة
     PART_ORDER.forEach(name => {
         const p = parts[name];
-        const img = images[name];
+        const img = systemImage;
 
-        if (img) {
-            try {
-                gctx.drawImage(img, p.x, p.y, PART_SIZE, PART_SIZE);
-            } catch(e) {
-                // بديل
-                const colors = {
-                    'panel': '#1e3a8a', 'controller': '#10b981', 'battery': '#ef4444',
-                    'inverter': '#f59e0b', 'load': '#fbbf24'
-                };
-                gctx.fillStyle = colors[name];
-                gctx.fillRect(p.x, p.y, PART_SIZE, PART_SIZE);
+        if (img && img.complete) {
+            // كل قطعة تُرسم من نفس الصورة الكاملة
+            // نرسم المقطع المناسب
+            let sx, sy, sw, sh;
+            const IW = img.width, IH = img.height;
+
+            switch(name) {
+                case 'panel':
+                    sx = 0.05 * IW; sy = 0.05 * IH;
+                    sw = 0.35 * IW; sh = 0.35 * IH;
+                    break;
+                case 'controller':
+                    sx = 0.05 * IW; sy = 0.45 * IH;
+                    sw = 0.30 * IW; sh = 0.30 * IH;
+                    break;
+                case 'battery':
+                    sx = 0.08 * IW; sy = 0.75 * IH;
+                    sw = 0.35 * IW; sh = 0.25 * IH;
+                    break;
+                case 'inverter':
+                    sx = 0.42 * IW; sy = 0.38 * IH;
+                    sw = 0.25 * IW; sh = 0.25 * IH;
+                    break;
+                case 'load':
+                    sx = 0.65 * IW; sy = 0.50 * IH;
+                    sw = 0.35 * IW; sh = 0.45 * IH;
+                    break;
             }
-        } else {
-            // بديل
-            const colors = {
-                'panel': '#1e3a8a', 'controller': '#10b981', 'battery': '#ef4444',
-                'inverter': '#f59e0b', 'load': '#fbbf24'
-            };
-            gctx.fillStyle = colors[name];
-            gctx.fillRect(p.x, p.y, PART_SIZE, PART_SIZE);
-            gctx.fillStyle = 'white';
-            gctx.font = 'bold 12px Arial';
-            gctx.textAlign = 'center';
-            gctx.fillText(PART_LABELS[name].substring(0, 5), p.x + PART_SIZE / 2, p.y + PART_SIZE / 2);
+            try {
+                gctx.drawImage(img, sx, sy, sw, sh, p.x, p.y, 100, 100);
+            } catch(e) {
+                gctx.fillStyle = '#ff0000';
+                gctx.fillRect(p.x, p.y, 100, 100);
+            }
         }
     });
 
     if (gameState === 'PLAYING') {
-        const elapsed = (Date.now() - startTime) / 1000;
-        document.getElementById('hudTimer').textContent = elapsed.toFixed(1) + 's';
+        document.getElementById('hudTimer').textContent = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
     }
 }
 
-// ===== الكاميرا =====
 async function initCamera() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({
             video: { width: 1280, height: 720, facingMode: 'user' }
         });
         video.srcObject = stream;
-
         camera = new Camera(video, {
-            onFrame: async () => {
-                await handDetector.send({ image: video });
-            },
-            width: 1280,
-            height: 720
+            onFrame: async () => { await handDetector.send({ image: video }); },
+            width: 1280, height: 720
         });
         camera.start();
     } catch (err) {
@@ -340,7 +294,6 @@ async function initCamera() {
     }
 }
 
-// ===== العد التنازلي =====
 function startCountdown() {
     let counter = 3;
     const el = document.getElementById('hudNext');
@@ -357,7 +310,6 @@ function startCountdown() {
     }, 1000);
 }
 
-// ===== الفوز =====
 function checkWin() {
     if (PART_ORDER.every(name => parts[name].placed)) {
         gameState = 'FINISHED';
