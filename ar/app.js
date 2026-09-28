@@ -99,7 +99,7 @@ function loadImages() {
                 if (imagesLoaded === names.length) resolve();
             };
             // ✅ المسار الصحيح: نفس المجلد
-            img.src = name + '.png';
+           img.src = '../' + name + '.png';
         });
     });
 }
