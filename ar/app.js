@@ -30,14 +30,6 @@ const PART_LABELS = {
     'load': 'House'
 };
 
-// مواقع الأهداف (نسب من 0 إلى 1)
-const TARGETS = {
-    'panel':      { x: 0.15, y: 0.75, num: 1 },
-    'controller': { x: 0.35, y: 0.75, num: 2 },
-    'battery':    { x: 0.55, y: 0.75, num: 3 },
-    'inverter':   { x: 0.75, y: 0.75, num: 4 },
-    'load':       { x: 0.90, y: 0.75, num: 5 }
-};
 
 let parts = {};
 
