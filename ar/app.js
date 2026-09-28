@@ -12,10 +12,9 @@ let selectedPart = null;
 let dragging = false;
 let holdingPart = null;
 let holdingStartTime = 0;
-let particles = [];
 
-const HOLD_DURATION = 500; // نص ثانية
-const PART_SIZE = 90;
+const HOLD_DURATION = 500;
+const PART_SIZE = 100;
 
 const PART_ORDER = ['panel', 'controller', 'battery', 'inverter', 'load'];
 const PART_LABELS = {
@@ -67,32 +66,18 @@ async function startGame() {
     document.getElementById('gameScreen').classList.remove('hidden');
     document.getElementById('hudPlayer').textContent = playerName;
 
-    // إعداد Canvas
     gameCanvas = document.getElementById('threeCanvas');
-    gameCanvas.width = window.innerWidth;
-    gameCanvas.height = window.innerHeight;
-    gctx = gameCanvas.getContext('2d');
-
     handCanvas = document.getElementById('handCanvas');
-    handCanvas.width = window.innerWidth;
-    handCanvas.height = window.innerHeight;
     ctx = handCanvas.getContext('2d');
+    gctx = gameCanvas.getContext('2d');
 
     video = document.getElementById('video');
 
-    // تحميل الصور
     await loadImages();
-
-    // خلط القطع
     randomizePositions();
-
-    // بدء MediaPipe
     await initMediaPipe();
-
-    // تشغيل الكاميرا
     await initCamera();
 
-    // العد التنازلي
     gameState = 'COUNTDOWN';
     startCountdown();
 }
@@ -100,44 +85,28 @@ async function startGame() {
 // ===== تحميل الصور =====
 function loadImages() {
     return new Promise((resolve) => {
-        const imageNames = ['panel', 'controller', 'battery', 'inverter', 'load'];
+        const names = ['panel', 'controller', 'battery', 'inverter', 'load'];
         
-        if (imageNames.length === 0) {
-            resolve();
-            return;
-        }
-
-        imageNames.forEach(name => {
+        names.forEach(name => {
             const img = new Image();
             img.onload = () => {
                 imagesLoaded++;
-                if (imagesLoaded === imageNames.length) {
-                    resolve();
-                }
+                if (imagesLoaded === names.length) resolve();
             };
             img.onerror = () => {
-                console.warn(`⚠️ لم أجد ${name}.png`);
+                console.warn('فشل تحميل: ' + name);
                 imagesLoaded++;
-                if (imagesLoaded === imageNames.length) {
-                    resolve();
-                }
+                if (imagesLoaded === names.length) resolve();
             };
-           img.src = `${name}.png`;// يقرأ الصور من المجلد الرئيسي
+            // ✅ المسار الصحيح: نفس المجلد
+            img.src = name + '.png';
         });
     });
 }
 
 // ===== خلط القطع =====
 function randomizePositions() {
-    const positions = [];
-    const xStart = 0.08;
-    const spacing = 0.18;
-    const yPos = 0.15;
-
-    for (let i = 0; i < 5; i++) {
-        positions.push(xStart + i * spacing);
-    }
-    // خلط
+    const positions = [0.08, 0.26, 0.44, 0.62, 0.80];
     for (let i = positions.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [positions[i], positions[j]] = [positions[j], positions[i]];
@@ -146,7 +115,7 @@ function randomizePositions() {
     PART_ORDER.forEach((name, i) => {
         parts[name] = {
             x: positions[i] * window.innerWidth,
-            y: yPos * window.innerHeight,
+            y: 0.15 * window.innerHeight,
             placed: false
         };
     });
@@ -167,18 +136,31 @@ async function initMediaPipe() {
 }
 
 function onHandResults(results) {
-    ctx.clearRect(0, 0, handCanvas.width, handCanvas.height);
+    // ✅ استخدم أبعاد النافذة الفعلية
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+
+    if (handCanvas.width !== W || handCanvas.height !== H) {
+        handCanvas.width = W;
+        handCanvas.height = H;
+    }
+    if (gameCanvas.width !== W || gameCanvas.height !== H) {
+        gameCanvas.width = W;
+        gameCanvas.height = H;
+    }
+
+    ctx.clearRect(0, 0, W, H);
 
     if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         const lm = results.multiHandLandmarks[0];
         const tip = lm[8];
-        // انعكاس x لأن الكاميرا معكوسة
-        const x = (1 - tip.x) * handCanvas.width;
-        const y = tip.y * handCanvas.height;
+        // ✅ عكس x لأن الفيديو معكوس
+        const x = (1 - tip.x) * W;
+        const y = tip.y * H;
         fingertip = { x, y };
 
-        // رسم إصبع
-        ctx.fillStyle = 'rgba(0, 255, 255, 0.8)';
+        // رسم نقطة الإصبع
+        ctx.fillStyle = 'rgba(0, 255, 255, 0.9)';
         ctx.beginPath();
         ctx.arc(x, y, 20, 0, Math.PI * 2);
         ctx.fill();
@@ -186,30 +168,26 @@ function onHandResults(results) {
         ctx.lineWidth = 3;
         ctx.stroke();
 
-        // منطق اللعبة
         if (gameState === 'PLAYING') {
             handleGameLogic();
         }
     } else {
         fingertip = null;
-        // إذا اختفت اليد → أسقط القطعة
         if (dragging && selectedPart) {
             const p = parts[selectedPart];
             const target = TARGETS[selectedPart];
-            const tx = target.x * window.innerWidth;
-            const ty = target.y * window.innerHeight;
+            const tx = target.x * W;
+            const ty = target.y * H;
             const inTarget = Math.abs(p.x - tx) < 100 && Math.abs(p.y - ty) < 100;
 
             if (!inTarget) {
-                // أسقط
-                const positions = [];
-                for (let i = 0; i < 5; i++) positions.push(0.08 + i * 0.18);
+                const positions = [0.08, 0.26, 0.44, 0.62, 0.80];
                 for (let i = positions.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [positions[i], positions[j]] = [positions[j], positions[i]];
                 }
-                p.x = positions[Math.floor(Math.random() * 5)] * window.innerWidth;
-                p.y = 0.15 * window.innerHeight;
+                p.x = positions[Math.floor(Math.random() * 5)] * W;
+                p.y = 0.15 * H;
                 mistakes++;
                 document.getElementById('hudMistakes').textContent = mistakes;
                 playWrong();
@@ -219,15 +197,18 @@ function onHandResults(results) {
             holdingPart = null;
         }
     }
+
+    drawGame(W, H);
 }
 
-// ===== منطق السحب والإفلات =====
+// ===== المنطق =====
 function handleGameLogic() {
     if (!fingertip) return;
+    const W = window.innerWidth;
+    const H = window.innerHeight;
     const fx = fingertip.x;
     const fy = fingertip.y;
 
-    // 1. اختيار القطعة
     if (!dragging) {
         for (const name of PART_ORDER) {
             if (parts[name].placed) continue;
@@ -242,16 +223,14 @@ function handleGameLogic() {
         }
     }
 
-    // 2. تحريك القطعة
     if (dragging && selectedPart) {
         parts[selectedPart].x = fx - PART_SIZE / 2;
         parts[selectedPart].y = fy - PART_SIZE / 2;
 
-        // 3. التحقق من الهدف
         const p = parts[selectedPart];
         const target = TARGETS[selectedPart];
-        const tx = target.x * window.innerWidth;
-        const ty = target.y * window.innerHeight;
+        const tx = target.x * W;
+        const ty = target.y * H;
 
         const inTarget = Math.abs(p.x - tx) < 100 && Math.abs(p.y - ty) < 100;
 
@@ -264,14 +243,12 @@ function handleGameLogic() {
             const elapsed = Date.now() - holdingStartTime;
             const progress = Math.min(elapsed / HOLD_DURATION, 1);
 
-            // ارسم شريط التقدم
             gctx.fillStyle = 'rgba(0, 255, 0, 0.9)';
             gctx.fillRect(tx, ty - 30, PART_SIZE * progress, 12);
             gctx.strokeStyle = 'white';
             gctx.lineWidth = 2;
             gctx.strokeRect(tx, ty - 30, PART_SIZE, 12);
 
-            // ثبّت
             if (elapsed >= HOLD_DURATION) {
                 p.placed = true;
                 p.x = tx;
@@ -288,17 +265,17 @@ function handleGameLogic() {
     }
 }
 
-// ===== رسم اللعبة =====
-function drawGame() {
+// ===== رسم =====
+function drawGame(W, H) {
     if (!gctx) return;
 
-    gctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+    gctx.clearRect(0, 0, W, H);
 
-    // 1. رسم المربعات المستهدفة (أرقام فقط)
+    // الأرقام
     PART_ORDER.forEach(name => {
         const target = TARGETS[name];
-        const tx = target.x * window.innerWidth;
-        const ty = target.y * window.innerHeight;
+        const tx = target.x * W;
+        const ty = target.y * H;
         const placed = parts[name].placed;
 
         gctx.strokeStyle = placed ? '#00ff00' : '#ffffff';
@@ -306,21 +283,20 @@ function drawGame() {
         gctx.strokeRect(tx, ty, PART_SIZE, PART_SIZE);
 
         gctx.fillStyle = placed ? '#00ff00' : '#ffffff';
-        gctx.font = 'bold 30px Arial';
+        gctx.font = 'bold 32px Arial';
         gctx.textAlign = 'center';
-        gctx.fillText(target.num, tx + PART_SIZE / 2, ty + PART_SIZE + 35);
+        gctx.fillText(target.num, tx + PART_SIZE / 2, ty + PART_SIZE + 40);
     });
 
-    // 2. رسم القطع
+    // القطع
     PART_ORDER.forEach(name => {
         const p = parts[name];
-        if (p.placed) return; // القطع الموضوعة لا ترسم (تبقى في مكانها)
-
         const img = images[name];
+
         if (img && img.complete && img.naturalWidth > 0) {
             gctx.drawImage(img, p.x, p.y, PART_SIZE, PART_SIZE);
         } else {
-            // بديل: مستطيل ملوّن
+            // بديل
             const colors = {
                 'panel': '#1e3a8a',
                 'controller': '#10b981',
@@ -332,28 +308,15 @@ function drawGame() {
             gctx.fillRect(p.x, p.y, PART_SIZE, PART_SIZE);
             gctx.fillStyle = 'white';
             gctx.font = 'bold 12px Arial';
-            gctx.fillText(PART_LABELS[name], p.x + PART_SIZE / 2, p.y + PART_SIZE / 2);
+            gctx.textAlign = 'center';
+            gctx.fillText(PART_LABELS[name].substring(0, 5), p.x + PART_SIZE / 2, p.y + PART_SIZE / 2);
         }
     });
 
-    // 3. رسم القطع الموضوعة (على المربعات)
-    PART_ORDER.forEach(name => {
-        const p = parts[name];
-        if (!p.placed) return;
-
-        const img = images[name];
-        if (img && img.complete && img.naturalWidth > 0) {
-            gctx.drawImage(img, p.x, p.y, PART_SIZE, PART_SIZE);
-        }
-    });
-
-    // 4. المؤقت
     if (gameState === 'PLAYING') {
         const elapsed = (Date.now() - startTime) / 1000;
         document.getElementById('hudTimer').textContent = elapsed.toFixed(1) + 's';
     }
-
-    requestAnimationFrame(drawGame);
 }
 
 // ===== الكاميرا =====
@@ -372,9 +335,6 @@ async function initCamera() {
             height: 720
         });
         camera.start();
-
-        // ابدأ حلقة الرسم
-        drawGame();
     } catch (err) {
         alert('❌ لم أستطع تشغيل الكاميرا');
         console.error(err);
@@ -414,13 +374,3 @@ function checkWin() {
 }
 
 function restartGame() { location.reload(); }
-
-// ===== إعادة الحجم =====
-window.addEventListener('resize', () => {
-    if (gameCanvas) {
-        gameCanvas.width = window.innerWidth;
-        gameCanvas.height = window.innerHeight;
-        handCanvas.width = window.innerWidth;
-        handCanvas.height = window.innerHeight;
-    }
-});
