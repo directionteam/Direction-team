@@ -155,7 +155,7 @@ function onHandResults(results) {
         const lm = results.multiHandLandmarks[0];
         const tip = lm[8];
         // ✅ عكس x لأن الفيديو معكوس
-        const x = (1 - tip.x) * W;
+       const x = tip.x * W;
         const y = tip.y * H;
         fingertip = { x, y };
 
