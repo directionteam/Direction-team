@@ -93,6 +93,7 @@ function loadImages() {
                 imagesLoaded++;
                 if (imagesLoaded === names.length) resolve();
             };
+            
             img.onerror = () => {
                 console.warn('فشل تحميل: ' + name);
                 imagesLoaded++;
