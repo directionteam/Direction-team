@@ -122,7 +122,7 @@ function loadImages() {
                     resolve();
                 }
             };
-            img.src = `../${name}.png`; // يقرأ الصور من المجلد الرئيسي
+           img.src = `${name}.png`;// يقرأ الصور من المجلد الرئيسي
         });
     });
 }
