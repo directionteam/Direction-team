@@ -7,7 +7,6 @@ let startTime = 0;
 let mistakes = 0;
 let gameState = 'IDLE';
 let images = {};
-let imagesLoaded = 0;
 let selectedPart = null;
 let dragging = false;
 let holdingPart = null;
@@ -73,36 +72,36 @@ async function startGame() {
 
     video = document.getElementById('video');
 
-    await loadImages();
+    // تحميل الصور — كل صورة تُحفظ مباشرة في images
+    await new Promise((resolve) => {
+        const names = ['panel', 'controller', 'battery', 'inverter', 'load'];
+        let loaded = 0;
+        names.forEach(name => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                images[name] = img;
+                console.log('✅ تم تحميل: ' + name);
+                loaded++;
+                if (loaded === names.length) resolve();
+            };
+            img.onerror = () => {
+                console.error('❌ فشل: ' + name + '.png');
+                loaded++;
+                if (loaded === names.length) resolve();
+            };
+            img.src = name + '.png';
+        });
+        // timeout احتياطي بعد 5 ثواني
+        setTimeout(resolve, 5000);
+    });
+
     randomizePositions();
     await initMediaPipe();
     await initCamera();
 
     gameState = 'COUNTDOWN';
     startCountdown();
-}
-
-// ===== تحميل الصور =====
-function loadImages() {
-    return new Promise((resolve) => {
-        const names = ['panel', 'controller', 'battery', 'inverter', 'load'];
-        
-        names.forEach(name => {
-            const img = new Image();
-            img.onload = () => {
-                imagesLoaded++;
-                if (imagesLoaded === names.length) resolve();
-            };
-            
-            img.onerror = () => {
-                console.warn('فشل تحميل: ' + name);
-                imagesLoaded++;
-                if (imagesLoaded === names.length) resolve();
-            };
-            // ✅ المسار الصحيح: نفس المجلد
-          img.src = name + '.png';
-        });
-    });
 }
 
 // ===== خلط القطع =====
@@ -137,30 +136,23 @@ async function initMediaPipe() {
 }
 
 function onHandResults(results) {
-    // ✅ استخدم أبعاد النافذة الفعلية
     const W = window.innerWidth;
     const H = window.innerHeight;
 
-    if (handCanvas.width !== W || handCanvas.height !== H) {
-        handCanvas.width = W;
-        handCanvas.height = H;
-    }
-    if (gameCanvas.width !== W || gameCanvas.height !== H) {
-        gameCanvas.width = W;
-        gameCanvas.height = H;
-    }
+    if (handCanvas.width !== W) handCanvas.width = W;
+    if (handCanvas.height !== H) handCanvas.height = H;
+    if (gameCanvas.width !== W) gameCanvas.width = W;
+    if (gameCanvas.height !== H) gameCanvas.height = H;
 
     ctx.clearRect(0, 0, W, H);
 
     if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         const lm = results.multiHandLandmarks[0];
         const tip = lm[8];
-        // ✅ عكس x لأن الفيديو معكوس
-const x = (1 - tip.x) * W;
+        const x = (1 - tip.x) * W;
         const y = tip.y * H;
         fingertip = { x, y };
 
-        // رسم نقطة الإصبع
         ctx.fillStyle = 'rgba(0, 255, 255, 0.9)';
         ctx.beginPath();
         ctx.arc(x, y, 20, 0, Math.PI * 2);
@@ -269,10 +261,9 @@ function handleGameLogic() {
 // ===== رسم =====
 function drawGame(W, H) {
     if (!gctx) return;
-
     gctx.clearRect(0, 0, W, H);
 
-    // الأرقام
+    // المربعات المستهدفة
     PART_ORDER.forEach(name => {
         const target = TARGETS[name];
         const tx = target.x * W;
@@ -289,21 +280,28 @@ function drawGame(W, H) {
         gctx.fillText(target.num, tx + PART_SIZE / 2, ty + PART_SIZE + 40);
     });
 
-    // القطع
+    // القطع — استخدام images مباشرة
     PART_ORDER.forEach(name => {
         const p = parts[name];
         const img = images[name];
 
-        if (img && img.complete && img.naturalWidth > 0) {
-            gctx.drawImage(img, p.x, p.y, PART_SIZE, PART_SIZE);
+        if (img) {
+            try {
+                gctx.drawImage(img, p.x, p.y, PART_SIZE, PART_SIZE);
+            } catch(e) {
+                // بديل
+                const colors = {
+                    'panel': '#1e3a8a', 'controller': '#10b981', 'battery': '#ef4444',
+                    'inverter': '#f59e0b', 'load': '#fbbf24'
+                };
+                gctx.fillStyle = colors[name];
+                gctx.fillRect(p.x, p.y, PART_SIZE, PART_SIZE);
+            }
         } else {
             // بديل
             const colors = {
-                'panel': '#1e3a8a',
-                'controller': '#10b981',
-                'battery': '#ef4444',
-                'inverter': '#f59e0b',
-                'load': '#fbbf24'
+                'panel': '#1e3a8a', 'controller': '#10b981', 'battery': '#ef4444',
+                'inverter': '#f59e0b', 'load': '#fbbf24'
             };
             gctx.fillStyle = colors[name];
             gctx.fillRect(p.x, p.y, PART_SIZE, PART_SIZE);
