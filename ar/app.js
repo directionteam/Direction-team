@@ -12,16 +12,31 @@ let holdingPart = null;
 let holdingStartTime = 0;
 
 const HOLD_DURATION = 500;
+const PART_SIZE = 120;
 
 const PART_ORDER = ['panel', 'controller', 'battery', 'inverter', 'load'];
+const PART_EMOJI = {
+    'panel': '☀️',
+    'controller': '🎛️',
+    'battery': '🔋',
+    'inverter': '⚡',
+    'load': '🏠'
+};
+const PART_LABELS = {
+    'panel': 'Solar Panel',
+    'controller': 'Controller',
+    'battery': 'Battery',
+    'inverter': 'Inverter',
+    'load': 'House'
+};
 
-// المواقع داخل الصورة (نسب من 0 إلى 1)
-const PARTS_POSITIONS = {
-    'panel':      { x: 0.22, y: 0.30, label: 'Solar Panel' },
-    'controller': { x: 0.18, y: 0.55, label: 'Controller' },
-    'battery':    { x: 0.25, y: 0.82, label: 'Battery' },
-    'inverter':   { x: 0.52, y: 0.45, label: 'Inverter' },
-    'load':       { x: 0.80, y: 0.65, label: 'House' }
+// مواقع الأهداف (نسب من 0 إلى 1)
+const TARGETS = {
+    'panel':      { x: 0.15, y: 0.75, num: 1 },
+    'controller': { x: 0.35, y: 0.75, num: 2 },
+    'battery':    { x: 0.55, y: 0.75, num: 3 },
+    'inverter':   { x: 0.75, y: 0.75, num: 4 },
+    'load':       { x: 0.90, y: 0.75, num: 5 }
 };
 
 let parts = {};
@@ -62,7 +77,7 @@ async function startGame() {
     gctx = gameCanvas.getContext('2d');
     video = document.getElementById('video');
 
-    // تحميل الصورة
+    // تحميل الصورة (من الرابط المباشر)
     await new Promise((resolve) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
@@ -96,7 +111,7 @@ function randomizePositions() {
     PART_ORDER.forEach((name, i) => {
         parts[name] = {
             x: positions[i] * window.innerWidth,
-            y: 0.08 * window.innerHeight,
+            y: 0.10 * window.innerHeight,
             placed: false
         };
     });
@@ -156,7 +171,7 @@ function handleGameLogic() {
         for (const name of PART_ORDER) {
             if (parts[name].placed) continue;
             const p = parts[name];
-            if (Math.abs(fx - (p.x + 50)) < 60 && Math.abs(fy - (p.y + 50)) < 60) {
+            if (Math.abs(fx - (p.x + PART_SIZE/2)) < 70 && Math.abs(fy - (p.y + PART_SIZE/2)) < 70) {
                 selectedPart = name;
                 dragging = true;
                 break;
@@ -165,11 +180,11 @@ function handleGameLogic() {
     }
 
     if (dragging && selectedPart) {
-        parts[selectedPart].x = fx - 50;
-        parts[selectedPart].y = fy - 50;
+        parts[selectedPart].x = fx - PART_SIZE/2;
+        parts[selectedPart].y = fy - PART_SIZE/2;
 
         const p = parts[selectedPart];
-        const target = PARTS_POSITIONS[selectedPart];
+        const target = TARGETS[selectedPart];
         const tx = target.x * W;
         const ty = target.y * H;
 
@@ -184,10 +199,10 @@ function handleGameLogic() {
             const progress = Math.min(elapsed / HOLD_DURATION, 1);
 
             gctx.fillStyle = 'rgba(0, 255, 0, 0.9)';
-            gctx.fillRect(tx, ty - 30, 100 * progress, 12);
+            gctx.fillRect(tx, ty - 30, PART_SIZE * progress, 12);
             gctx.strokeStyle = 'white';
             gctx.lineWidth = 2;
-            gctx.strokeRect(tx, ty - 30, 100, 12);
+            gctx.strokeRect(tx, ty - 30, PART_SIZE, 12);
 
             if (elapsed >= HOLD_DURATION) {
                 p.placed = true;
@@ -210,65 +225,72 @@ function drawGame(W, H) {
     if (!gctx) return;
     gctx.clearRect(0, 0, W, H);
 
-    // المربعات المستهدفة (باهتة)
+    // خلفية شفافة
+    gctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    gctx.fillRect(0, 0, W, H);
+
+    // المربعات المستهدفة
     PART_ORDER.forEach(name => {
-        const target = PARTS_POSITIONS[name];
+        const target = TARGETS[name];
         const tx = target.x * W;
         const ty = target.y * H;
         const placed = parts[name].placed;
 
-        gctx.strokeStyle = placed ? 'rgba(0, 255, 0, 0.8)' : 'rgba(255, 255, 255, 0.3)';
-        gctx.lineWidth = 3;
-        gctx.setLineDash([10, 10]);
-        gctx.strokeRect(tx, ty, 100, 100);
-        gctx.setLineDash([]);
+        gctx.strokeStyle = placed ? '#00ff00' : 'rgba(255, 255, 255, 0.7)';
+        gctx.lineWidth = 4;
+        gctx.strokeRect(tx, ty, PART_SIZE, PART_SIZE);
 
-        // الاسم
-        gctx.fillStyle = placed ? '#00ff00' : 'rgba(255, 255, 255, 0.7)';
-        gctx.font = 'bold 14px Arial';
+        gctx.fillStyle = placed ? '#00ff00' : '#ffffff';
+        gctx.font = 'bold 36px Arial';
         gctx.textAlign = 'center';
-        gctx.fillText(target.label, tx + 50, ty + 130);
+        gctx.textBaseline = 'alphabetic';
+        gctx.fillText(target.num, tx + PART_SIZE/2, ty + PART_SIZE + 45);
     });
 
-    // القطع - نرسم كل قطعة كمقتطف من الصورة
+    // القطع - رسم الصورة الكاملة ثم الاقتصاص
     PART_ORDER.forEach(name => {
         const p = parts[name];
-        const img = systemImage;
 
-        if (img && img.complete) {
-            // كل قطعة تُرسم من نفس الصورة الكاملة
-            // نرسم المقطع المناسب
-            let sx, sy, sw, sh;
-            const IW = img.width, IH = img.height;
+        if (systemImage && systemImage.complete) {
+            // اقتصاص الجزء المناسب من الصورة
+            let sx = 0, sy = 0, sw = systemImage.width, sh = systemImage.height;
 
-            switch(name) {
-                case 'panel':
-                    sx = 0.05 * IW; sy = 0.05 * IH;
-                    sw = 0.35 * IW; sh = 0.35 * IH;
-                    break;
-                case 'controller':
-                    sx = 0.05 * IW; sy = 0.45 * IH;
-                    sw = 0.30 * IW; sh = 0.30 * IH;
-                    break;
-                case 'battery':
-                    sx = 0.08 * IW; sy = 0.75 * IH;
-                    sw = 0.35 * IW; sh = 0.25 * IH;
-                    break;
-                case 'inverter':
-                    sx = 0.42 * IW; sy = 0.38 * IH;
-                    sw = 0.25 * IW; sh = 0.25 * IH;
-                    break;
-                case 'load':
-                    sx = 0.65 * IW; sy = 0.50 * IH;
-                    sw = 0.35 * IW; sh = 0.45 * IH;
-                    break;
+            if (name === 'panel') {
+                sx = systemImage.width * 0.02;
+                sy = systemImage.height * 0.02;
+                sw = systemImage.width * 0.38;
+                sh = systemImage.height * 0.38;
+            } else if (name === 'controller') {
+                sx = systemImage.width * 0.05;
+                sy = systemImage.height * 0.42;
+                sw = systemImage.width * 0.30;
+                sh = systemImage.height * 0.30;
+            } else if (name === 'battery') {
+                sx = systemImage.width * 0.08;
+                sy = systemImage.height * 0.75;
+                sw = systemImage.width * 0.35;
+                sh = systemImage.height * 0.25;
+            } else if (name === 'inverter') {
+                sx = systemImage.width * 0.42;
+                sy = systemImage.height * 0.38;
+                sw = systemImage.width * 0.25;
+                sh = systemImage.height * 0.25;
+            } else if (name === 'load') {
+                sx = systemImage.width * 0.65;
+                sy = systemImage.height * 0.50;
+                sw = systemImage.width * 0.35;
+                sh = systemImage.height * 0.45;
             }
+
             try {
-                gctx.drawImage(img, sx, sy, sw, sh, p.x, p.y, 100, 100);
+                gctx.drawImage(systemImage, sx, sy, sw, sh, p.x, p.y, PART_SIZE, PART_SIZE);
             } catch(e) {
-                gctx.fillStyle = '#ff0000';
-                gctx.fillRect(p.x, p.y, 100, 100);
+                gctx.fillStyle = '#00ff00';
+                gctx.fillRect(p.x, p.y, PART_SIZE, PART_SIZE);
             }
+        } else {
+            gctx.fillStyle = '#ff0000';
+            gctx.fillRect(p.x, p.y, PART_SIZE, PART_SIZE);
         }
     });
 
