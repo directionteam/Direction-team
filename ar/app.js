@@ -8,7 +8,6 @@ let gameState = 'IDLE';
 let partImages = {};
 let selectedPart = null;
 let dragging = false;
-let mistakeCounted = false;
 let lastTickSecond = -1;
 
 let simulationStart = 0;
@@ -231,14 +230,12 @@ function onHandResults(results) {
         fingertip = null;
         if (dragging && selectedPart) {
             const p = parts[selectedPart];
-            if (!p.placed && !p.placement) {
-                // القطعة سقطت → بدون خطأ
+            if (!p.placed) {
                 p.x = Math.random() * (W - PART_SIZE - 100) + 50;
                 p.y = 0.08 * H;
             }
             dragging = false;
             selectedPart = null;
-            mistakeCounted = false;
         }
     }
     drawGame(W, H);
@@ -254,20 +251,15 @@ function handleGameLogic() {
     if (!dragging) {
         for (const name of PART_ORDER) {
             const p = parts[name];
+            
+            // تجاهل القطع الصحيحة (ما تنشال)
             if (p.placed && p.placement === 'correct') continue;
 
             if (Math.abs(fx - (p.x + PART_SIZE/2)) < TOUCH_RADIUS && 
                 Math.abs(fy - (p.y + PART_SIZE/2)) < TOUCH_RADIUS) {
                 
-                // ✅ إذا كانت في المكان الغلط → اسحبها + خطأ واحد فقط
-                if (p.placed && p.placement === 'wrong' && !mistakeCounted) {
-                    mistakes++;
-                    mistakeCounted = true;
-                    playWrong();
-                    p.placed = false;
-                    p.placement = null;
-                } else if (p.placed && p.placement === 'wrong' && mistakeCounted) {
-                    // اسحبها بدون خطأ إضافي
+                // اسحب القطعة (بدون خطأ هنا)
+                if (p.placed) {
                     p.placed = false;
                     p.placement = null;
                 }
@@ -309,19 +301,20 @@ function handleGameLogic() {
             p.placed = true;
 
             if (bestTarget.name === selectedPart) {
+                // ✅ صح
                 p.placement = 'correct';
                 playCorrect();
             } else {
+                // ❌ غلط — خطأ +1 فقط عند الإفلات
                 p.placement = 'wrong';
+                mistakes++;
+                playWrong();
             }
 
             dragging = false;
             selectedPart = null;
             checkWin();
         }
-    } else {
-        // ✅ إعادة تعيين العلم فقط لما ما يكون في سحب
-        mistakeCounted = false;
     }
 }
 
@@ -345,7 +338,7 @@ function drawTutorial(W, H) {
         '2️⃣ اسحبها نحو المربع المناسب',
         '3️⃣ ثبّت يدك — القطعة تنفصل',
         '4️⃣ رتّب كل القطع قبل انتهاء الوقت',
-        '5️⃣ الأخطاء تُحسب عند الشيل أو السقوط'
+        '5️⃣ الخطأ يُحسب عند الإفلات في المكان الغلط'
     ];
 
     steps.forEach((s, i) => {
