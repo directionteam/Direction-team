@@ -251,7 +251,7 @@ function handleGameLogic() {
             if (p.placed) {
                 // فقط القطع في المكان الغلط يمكن إزالتها
                 if (p.placement === 'wrong') {
-                    if (Math.abs(fx - (p.x + PART_SIZE/2)) < 70 && Math.abs(fy - (p.y + PART_SIZE/2)) < 70) {
+                    if (Math.abs(fx - (p.x + PART_SIZE/2)) < 90 && Math.abs(fy - (p.y + PART_SIZE/2)) < 70) {
                         selectedPart = name;
                         dragging = true;
                         p.placed = false;
