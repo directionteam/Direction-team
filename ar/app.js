@@ -8,16 +8,11 @@ let gameState = 'IDLE';
 let partImages = {};
 let selectedPart = null;
 let dragging = false;
-let holdingPart = null;
-let holdingStartTime = 0;
 
-// المحاكاة
-let simulationStart = 0;
-let batteryCharge = 0;
-let lightBrightness = 0;
-let simDone = false;
+// إزالة آلية التثبيت الطويل
+// القطعة تثبت مباشرة عند الإفلات
 
-const HOLD_DURATION = 500;
+const GAME_DURATION = 60; // 60 ثانية
 const PART_SIZE = 100;
 
 const PART_ORDER = ['panel', 'controller', 'battery', 'inverter', 'load'];
@@ -30,7 +25,6 @@ const PARTS_POSITIONS = {
     'load':       { x: 0.90, y: 0.70, num: 5 }
 };
 
-// مواقع القطع في المحاكاة (أماكن ثابتة)
 const SIM_POSITIONS = {
     'panel':      { x: 0.15, y: 0.30 },
     'controller': { x: 0.35, y: 0.55 },
@@ -41,7 +35,7 @@ const SIM_POSITIONS = {
 
 let parts = {};
 
-// ===== أصوات =====
+// ===== أصوات (فقط صح + فوز) =====
 function playBeep(freq, duration) {
     try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -57,7 +51,6 @@ function playBeep(freq, duration) {
     } catch (e) {}
 }
 function playCorrect() { playBeep(800, 150); }
-function playWrong() { playBeep(300, 300); }
 function playWin() {
     playBeep(600, 100);
     setTimeout(() => playBeep(800, 100), 150);
@@ -68,6 +61,56 @@ function playComplete() {
     setTimeout(() => playBeep(700, 100), 100);
     setTimeout(() => playBeep(900, 100), 200);
     setTimeout(() => playBeep(1100, 300), 300);
+}
+// لا يوجد playWrong — بدون صوت خطأ
+
+// ===== Leaderboard =====
+function getLeaderboard() {
+    try { return JSON.parse(localStorage.getItem('dt_leaderboard') || '[]'); }
+    catch(e) { return []; }
+}
+function saveScore(name, time, mistakesCount, completed) {
+    const lb = getLeaderboard();
+    lb.push({
+        name: name,
+        time: parseFloat(time.toFixed(1)),
+        mistakes: mistakesCount,
+        completed: completed,
+        date: new Date().toLocaleDateString('ar-EG')
+    });
+    // ترتيب: أكملوا أولاً، ثم أخطاء أقل، ثم وقت أقل
+    lb.sort((a, b) => {
+        if (a.completed !== b.completed) return b.completed - a.completed;
+        if (a.mistakes !== b.mistakes) return a.mistakes - b.mistakes;
+        return a.time - b.time;
+    });
+    localStorage.setItem('dt_leaderboard', JSON.stringify(lb.slice(0, 5)));
+}
+function drawLeaderboard(W) {
+    const lb = getLeaderboard();
+    if (lb.length === 0) return;
+    gctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+    gctx.fillRect(W - 280, 100, 260, 50 + lb.length * 40);
+    gctx.strokeStyle = '#00d4ff';
+    gctx.lineWidth = 2;
+    gctx.strokeRect(W - 280, 100, 260, 50 + lb.length * 40);
+    gctx.fillStyle = '#00d4ff';
+    gctx.font = 'bold 20px Arial';
+    gctx.textAlign = 'center';
+    gctx.fillText('🏆 أفضل 5', W - 150, 130);
+    lb.forEach((entry, i) => {
+        const y = 165 + i * 40;
+        const medal = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : `${i+1}.`));
+        gctx.fillStyle = i === 0 ? '#ffd700' : (i === 1 ? '#c0c0c0' : (i === 2 ? '#cd7f32' : '#fff'));
+        gctx.font = 'bold 15px Arial';
+        gctx.textAlign = 'right';
+        gctx.fillText(`${medal} ${entry.name}`, W - 30, y);
+        gctx.fillStyle = entry.completed ? '#0f0' : '#ff8888';
+        gctx.font = '12px Arial';
+        gctx.fillText(entry.completed ? '✅' : '⏰', W - 30, y + 16);
+        gctx.fillStyle = '#aaa';
+        gctx.fillText(`${entry.time}s | ❌${entry.mistakes}`, W - 60, y + 16);
+    });
 }
 
 // ===== بدء اللعبة =====
@@ -83,21 +126,13 @@ async function startGame() {
     gctx = gameCanvas.getContext('2d');
     video = document.getElementById('video');
 
-    // تحميل الصور الخمس
     await new Promise((resolve) => {
         let loaded = 0;
         PART_ORDER.forEach(name => {
             const img = new Image();
             img.crossOrigin = 'anonymous';
-            img.onload = () => {
-                partImages[name] = img;
-                loaded++;
-                if (loaded === PART_ORDER.length) resolve();
-            };
-            img.onerror = () => {
-                loaded++;
-                if (loaded === PART_ORDER.length) resolve();
-            };
+            img.onload = () => { partImages[name] = img; loaded++; if (loaded === PART_ORDER.length) resolve(); };
+            img.onerror = () => { loaded++; if (loaded === PART_ORDER.length) resolve(); };
             img.src = 'https://directionteam.github.io/Direction-team/ar/' + name + '.png';
         });
         setTimeout(resolve, 8000);
@@ -121,7 +156,8 @@ function randomizePositions() {
         parts[name] = {
             x: positions[i] * window.innerWidth,
             y: 0.08 * window.innerHeight,
-            placed: false
+            placed: false,
+            placement: null // null = مو موضوع، 'correct' أو 'wrong'
         };
     });
 }
@@ -160,10 +196,49 @@ function onHandResults(results) {
         if (gameState === 'PLAYING') handleGameLogic();
     } else {
         fingertip = null;
+        // عند الإفلات: احسب الحالة
         if (dragging && selectedPart) {
+            const p = parts[selectedPart];
+            const W = window.innerWidth, H = window.innerHeight;
+            
+            // ابحث عن أقرب مربع
+            let closestTarget = null;
+            let closestDist = 9999;
+            for (const name of PART_ORDER) {
+                const target = PARTS_POSITIONS[name];
+                const tx = target.x * W;
+                const ty = target.y * H;
+                const dist = Math.sqrt((p.x - tx)**2 + (p.y - ty)**2);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closestTarget = { name, tx, ty };
+                }
+            }
+
+            if (closestTarget && closestDist < 150) {
+                // ضع القطعة في المربع
+                p.x = closestTarget.tx;
+                p.y = closestTarget.ty;
+                p.placed = true;
+                
+                if (closestTarget.name === selectedPart) {
+                    // ✅ صح — بدون صوت (كتم)
+                    p.placement = 'correct';
+                } else {
+                    // ❌ غلط — بدون صوت
+                    p.placement = 'wrong';
+                    // وقت يستمر — لا شي
+                }
+            } else {
+                // سقطت خارج أي مربع → ترجع للأعلى
+                p.x = Math.random() * (W - PART_SIZE - 100) + 50;
+                p.y = 0.08 * H;
+                mistakes++; // خطأ لأن القطعة سقطت
+            }
+
             dragging = false;
             selectedPart = null;
-            holdingPart = null;
+            checkWin();
         }
     }
     drawGame(W, H);
@@ -175,13 +250,28 @@ function handleGameLogic() {
     const fx = fingertip.x, fy = fingertip.y;
 
     if (!dragging) {
+        // ابحث عن قطعة قريبة
         for (const name of PART_ORDER) {
-            if (parts[name].placed) continue;
             const p = parts[name];
-            if (Math.abs(fx - (p.x + PART_SIZE/2)) < 70 && Math.abs(fy - (p.y + PART_SIZE/2)) < 70) {
-                selectedPart = name;
-                dragging = true;
-                break;
+            // ✅ السماح بلمس القطع الموضوعة (لإزالتها)
+            if (p.placed) {
+                // فقط إذا كانت في المكان الغلط → يمكن إزالتها
+                if (p.placement === 'wrong') {
+                    if (Math.abs(fx - (p.x + PART_SIZE/2)) < 70 && Math.abs(fy - (p.y + PART_SIZE/2)) < 70) {
+                        selectedPart = name;
+                        dragging = true;
+                        p.placed = false;
+                        p.placement = null;
+                        mistakes++; // خطأ: يشيل قطعة
+                        break;
+                    }
+                }
+            } else {
+                if (Math.abs(fx - (p.x + PART_SIZE/2)) < 70 && Math.abs(fy - (p.y + PART_SIZE/2)) < 70) {
+                    selectedPart = name;
+                    dragging = true;
+                    break;
+                }
             }
         }
     }
@@ -189,45 +279,9 @@ function handleGameLogic() {
     if (dragging && selectedPart) {
         parts[selectedPart].x = fx - PART_SIZE/2;
         parts[selectedPart].y = fy - PART_SIZE/2;
-
-        const p = parts[selectedPart];
-        const target = PARTS_POSITIONS[selectedPart];
-        const tx = target.x * W;
-        const ty = target.y * H;
-
-        const inTarget = Math.abs(p.x - tx) < 120 && Math.abs(p.y - ty) < 120;
-
-        if (inTarget) {
-            if (holdingPart !== selectedPart) {
-                holdingPart = selectedPart;
-                holdingStartTime = Date.now();
-            }
-            const elapsed = Date.now() - holdingStartTime;
-            const progress = Math.min(elapsed / HOLD_DURATION, 1);
-
-            gctx.fillStyle = 'rgba(0, 255, 0, 0.9)';
-            gctx.fillRect(tx, ty - 30, PART_SIZE * progress, 12);
-            gctx.strokeStyle = 'white';
-            gctx.lineWidth = 2;
-            gctx.strokeRect(tx, ty - 30, PART_SIZE, 12);
-
-            if (elapsed >= HOLD_DURATION) {
-                p.placed = true;
-                p.x = tx;
-                p.y = ty;
-                playCorrect();
-                dragging = false;
-                selectedPart = null;
-                holdingPart = null;
-                checkWin();
-            }
-        } else {
-            holdingPart = null;
-        }
     }
 }
 
-// ===== رسم الشمس =====
 function drawSun(cx, cy, t) {
     for (let i = 0; i < 3; i++) {
         const r = 40 + i * 15 + Math.sin(t * 3 + i) * 5;
@@ -243,7 +297,6 @@ function drawSun(cx, cy, t) {
     gctx.strokeStyle = '#FFA500';
     gctx.lineWidth = 3;
     gctx.stroke();
-
     for (let i = 0; i < 12; i++) {
         const a = i * Math.PI / 6 + t * 1.5;
         gctx.beginPath();
@@ -255,7 +308,6 @@ function drawSun(cx, cy, t) {
     }
 }
 
-// ===== خط كهرباء متحرك =====
 function drawPowerLine(x1, y1, x2, y2, t) {
     gctx.beginPath();
     gctx.moveTo(x1, y1);
@@ -263,7 +315,6 @@ function drawPowerLine(x1, y1, x2, y2, t) {
     gctx.strokeStyle = 'rgba(255, 100, 0, 0.7)';
     gctx.lineWidth = 5;
     gctx.stroke();
-
     for (let i = 0; i < 3; i++) {
         const p = ((t * 0.8) + i * 0.33) % 1;
         const px = x1 + (x2 - x1) * p;
@@ -286,14 +337,11 @@ function drawBatteryBar(x, y, charge) {
     gctx.strokeRect(x, y, 150, 35);
     gctx.fillStyle = '#666';
     gctx.fillRect(x + 150, y + 10, 10, 15);
-
     let color = '#ef4444';
     if (charge > 70) color = '#10b981';
     else if (charge > 30) color = '#f59e0b';
-
     gctx.fillStyle = color;
     gctx.fillRect(x + 4, y + 4, (142 * charge / 100), 27);
-
     gctx.fillStyle = '#fff';
     gctx.font = 'bold 16px Arial';
     gctx.textAlign = 'center';
@@ -311,60 +359,44 @@ function drawHouseGlow(cx, cy, brightness) {
     }
 }
 
-// ===== رسم اللعبة =====
 function drawGame(W, H) {
     if (!gctx) return;
     gctx.clearRect(0, 0, W, H);
-
-    // خلفية
     gctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     gctx.fillRect(0, 0, W, H);
 
-    // ===== حالة المحاكاة =====
+    // ===== المحاكاة =====
     if (gameState === 'SIMULATION') {
         const t = (Date.now() - simulationStart) / 1000;
-
         const grad = gctx.createLinearGradient(0, 0, 0, H);
         grad.addColorStop(0, '#1a1a2e');
         grad.addColorStop(1, '#0f0f1e');
         gctx.fillStyle = grad;
         gctx.fillRect(0, 0, W, H);
 
-        // الشمس
         drawSun(W / 2, 100, t);
 
-        // القطع في أماكنها (في المحاكاة)
         PART_ORDER.forEach(name => {
             const sp = SIM_POSITIONS[name];
-            const sx = sp.x * W;
-            const sy = sp.y * H;
             const img = partImages[name];
             if (img && img.complete) {
-                try {
-                    gctx.drawImage(img, sx, sy, PART_SIZE, PART_SIZE);
-                } catch(e) {}
+                try { gctx.drawImage(img, sp.x*W, sp.y*H, PART_SIZE, PART_SIZE); } catch(e) {}
             }
         });
 
-        // خطوط الكهرباء
         const p1 = SIM_POSITIONS.panel, p2 = SIM_POSITIONS.controller;
         const p3 = SIM_POSITIONS.battery, p4 = SIM_POSITIONS.inverter;
         const p5 = SIM_POSITIONS.load;
+        drawPowerLine(p1.x*W+50, p1.y*H+50, p2.x*W+50, p2.y*H+50, t);
+        drawPowerLine(p2.x*W+50, p2.y*H+50, p3.x*W+50, p3.y*H+50, t);
+        drawPowerLine(p3.x*W+50, p3.y*H+50, p4.x*W+50, p4.y*H+50, t);
+        drawPowerLine(p4.x*W+50, p4.y*H+50, p5.x*W+50, p5.y*H+50, t);
 
-        drawPowerLine(p1.x*W + 50, p1.y*H + 50, p2.x*W + 50, p2.y*H + 50, t);
-        drawPowerLine(p2.x*W + 50, p2.y*H + 50, p3.x*W + 50, p3.y*H + 50, t);
-        drawPowerLine(p3.x*W + 50, p3.y*H + 50, p4.x*W + 50, p4.y*H + 50, t);
-        drawPowerLine(p4.x*W + 50, p4.y*H + 50, p5.x*W + 50, p5.y*H + 50, t);
-
-        // شحن البطارية
         batteryCharge = Math.min((t / 5) * 100, 100);
         lightBrightness = batteryCharge > 50 ? Math.min((batteryCharge - 50) / 50, 1) : 0;
-        drawHouseGlow(p5.x*W + 50, p5.y*H + 50, lightBrightness);
-
-        // البطارية
+        drawHouseGlow(p5.x*W+50, p5.y*H+50, lightBrightness);
         drawBatteryBar(30, H - 60, batteryCharge);
 
-        // النصوص
         gctx.fillStyle = '#00d4ff';
         gctx.font = 'bold 32px Arial';
         gctx.textAlign = 'center';
@@ -379,12 +411,13 @@ function drawGame(W, H) {
         if (batteryCharge >= 100 && !simDone) {
             simDone = true;
             playComplete();
+            const totalTime = (Date.now() - startTime) / 1000;
+            saveScore(playerName, totalTime, mistakes, true);
             setTimeout(() => {
                 gameState = 'FINISHED';
-                const elapsed = (Date.now() - startTime) / 1000;
                 document.getElementById('endStats').innerHTML = `
                     🎉 ${playerName}!<br>
-                    ⏱️ الوقت: ${elapsed.toFixed(1)}s<br>
+                    ⏱️ الوقت: ${totalTime.toFixed(1)}s<br>
                     ❌ الأخطاء: ${mistakes}<br>
                     <br>✅ النظام يعمل بنجاح!
                 `;
@@ -394,62 +427,67 @@ function drawGame(W, H) {
         return;
     }
 
-    // ===== حالة اللعب =====
+    // ===== اللعب =====
+    // المربعات (بدون إطارات)
     PART_ORDER.forEach(name => {
         const target = PARTS_POSITIONS[name];
         const tx = target.x * W;
         const ty = target.y * H;
-        const placed = parts[name].placed;
 
-        if (placed) {
-            // القطعة مثبتة → ترسم في المربع
-            const img = partImages[name];
-            if (img && img.complete) {
-                try {
-                    gctx.drawImage(img, tx, ty, PART_SIZE, PART_SIZE);
-                } catch(e) {}
-            }
-            // إطار أخضر
-            gctx.strokeStyle = '#00ff00';
-            gctx.lineWidth = 5;
-            gctx.strokeRect(tx, ty, PART_SIZE, PART_SIZE);
-            // علامة صح
-            gctx.fillStyle = '#00ff00';
-            gctx.font = 'bold 28px Arial';
-            gctx.textAlign = 'center';
-            gctx.fillText('✓', tx + PART_SIZE - 15, ty + 25);
-        } else {
-            // إطار متقطع
-            gctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
-            gctx.lineWidth = 4;
-            gctx.setLineDash([10, 10]);
-            gctx.strokeRect(tx, ty, PART_SIZE, PART_SIZE);
-            gctx.setLineDash([]);
-
-            // الرقم
-            gctx.fillStyle = '#ffffff';
-            gctx.font = 'bold 36px Arial';
-            gctx.textAlign = 'center';
-            gctx.textBaseline = 'alphabetic';
-            gctx.fillText(target.num, tx + PART_SIZE/2, ty + PART_SIZE + 40);
-        }
+        // الرقم فقط (بدون إطار)
+        gctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        gctx.font = 'bold 36px Arial';
+        gctx.textAlign = 'center';
+        gctx.textBaseline = 'alphabetic';
+        gctx.fillText(target.num, tx + PART_SIZE/2, ty + PART_SIZE + 40);
     });
 
-    // القطع العائمة
+    // القطع
     PART_ORDER.forEach(name => {
         const p = parts[name];
-        if (p.placed) return;
-
         const img = partImages[name];
         if (img && img.complete) {
-            try {
-                gctx.drawImage(img, p.x, p.y, PART_SIZE, PART_SIZE);
-            } catch(e) {}
+            try { gctx.drawImage(img, p.x, p.y, PART_SIZE, PART_SIZE); } catch(e) {}
         }
     });
 
-    if (gameState === 'PLAYING') {
-        document.getElementById('hudTimer').textContent = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+    // HUD
+    const elapsed = (Date.now() - startTime) / 1000;
+    const remaining = Math.max(0, GAME_DURATION - elapsed);
+    document.getElementById('hudTimer').textContent = remaining.toFixed(1) + 's';
+    document.getElementById('hudMistakes').textContent = mistakes;
+
+    // شريط الوقت
+    gctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    gctx.fillRect(W/2 - 150, 20, 300, 30);
+    const timeColor = remaining > 20 ? '#0f0' : (remaining > 10 ? '#ff0' : '#f00');
+    gctx.fillStyle = timeColor;
+    gctx.fillRect(W/2 - 148, 22, (296 * remaining / GAME_DURATION), 26);
+
+    // Leaderboard
+    drawLeaderboard(W);
+
+    // انتهى الوقت
+    if (remaining <= 0 && gameState === 'PLAYING') {
+        gameState = 'FINISHED';
+        const totalTime = GAME_DURATION;
+        const completed = PART_ORDER.every(n => parts[n].placed && parts[n].placement === 'correct');
+        saveScore(playerName, totalTime, mistakes, completed);
+        
+        let correct = 0, wrong = 0;
+        PART_ORDER.forEach(n => {
+            if (parts[n].placement === 'correct') correct++;
+            else if (parts[n].placement === 'wrong') wrong++;
+        });
+
+        document.getElementById('endStats').innerHTML = `
+            ⏰ انتهى الوقت!<br>
+            👤 ${playerName}<br>
+            ✅ صح: ${correct}/5<br>
+            ❌ غلط: ${wrong}<br>
+            🔴 الأخطاء: ${mistakes}
+        `;
+        document.getElementById('endScreen').classList.remove('hidden');
     }
 }
 
@@ -487,7 +525,8 @@ function startCountdown() {
 }
 
 function checkWin() {
-    if (PART_ORDER.every(name => parts[name].placed)) {
+    // ✅ الفوز فقط إذا كل القطع في المكان الصح
+    if (PART_ORDER.every(n => parts[n].placed && parts[n].placement === 'correct')) {
         playWin();
         setTimeout(() => {
             gameState = 'SIMULATION';
