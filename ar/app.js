@@ -9,10 +9,12 @@ let partImages = {};
 let selectedPart = null;
 let dragging = false;
 
-// إزالة آلية التثبيت الطويل
-// القطعة تثبت مباشرة عند الإفلات
+let simulationStart = 0;
+let batteryCharge = 0;
+let lightBrightness = 0;
+let simDone = false;
 
-const GAME_DURATION = 60; // 60 ثانية
+const GAME_DURATION = 60;
 const PART_SIZE = 100;
 
 const PART_ORDER = ['panel', 'controller', 'battery', 'inverter', 'load'];
@@ -35,7 +37,7 @@ const SIM_POSITIONS = {
 
 let parts = {};
 
-// ===== أصوات (فقط صح + فوز) =====
+// ===== أصوات =====
 function playBeep(freq, duration) {
     try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -62,7 +64,6 @@ function playComplete() {
     setTimeout(() => playBeep(900, 100), 200);
     setTimeout(() => playBeep(1100, 300), 300);
 }
-// لا يوجد playWrong — بدون صوت خطأ
 
 // ===== Leaderboard =====
 function getLeaderboard() {
@@ -78,7 +79,6 @@ function saveScore(name, time, mistakesCount, completed) {
         completed: completed,
         date: new Date().toLocaleDateString('ar-EG')
     });
-    // ترتيب: أكملوا أولاً، ثم أخطاء أقل، ثم وقت أقل
     lb.sort((a, b) => {
         if (a.completed !== b.completed) return b.completed - a.completed;
         if (a.mistakes !== b.mistakes) return a.mistakes - b.mistakes;
@@ -157,7 +157,7 @@ function randomizePositions() {
             x: positions[i] * window.innerWidth,
             y: 0.08 * window.innerHeight,
             placed: false,
-            placement: null // null = مو موضوع، 'correct' أو 'wrong'
+            placement: null
         };
     });
 }
@@ -196,12 +196,10 @@ function onHandResults(results) {
         if (gameState === 'PLAYING') handleGameLogic();
     } else {
         fingertip = null;
-        // عند الإفلات: احسب الحالة
         if (dragging && selectedPart) {
             const p = parts[selectedPart];
             const W = window.innerWidth, H = window.innerHeight;
             
-            // ابحث عن أقرب مربع
             let closestTarget = null;
             let closestDist = 9999;
             for (const name of PART_ORDER) {
@@ -216,24 +214,22 @@ function onHandResults(results) {
             }
 
             if (closestTarget && closestDist < 150) {
-                // ضع القطعة في المربع
                 p.x = closestTarget.tx;
                 p.y = closestTarget.ty;
                 p.placed = true;
                 
                 if (closestTarget.name === selectedPart) {
-                    // ✅ صح — بدون صوت (كتم)
                     p.placement = 'correct';
+                    // صوت صح فقط
+                    playCorrect();
                 } else {
-                    // ❌ غلط — بدون صوت
                     p.placement = 'wrong';
-                    // وقت يستمر — لا شي
+                    // ❌ لا صوت
                 }
             } else {
-                // سقطت خارج أي مربع → ترجع للأعلى
                 p.x = Math.random() * (W - PART_SIZE - 100) + 50;
                 p.y = 0.08 * H;
-                mistakes++; // خطأ لأن القطعة سقطت
+                mistakes++;
             }
 
             dragging = false;
@@ -250,19 +246,17 @@ function handleGameLogic() {
     const fx = fingertip.x, fy = fingertip.y;
 
     if (!dragging) {
-        // ابحث عن قطعة قريبة
         for (const name of PART_ORDER) {
             const p = parts[name];
-            // ✅ السماح بلمس القطع الموضوعة (لإزالتها)
             if (p.placed) {
-                // فقط إذا كانت في المكان الغلط → يمكن إزالتها
+                // فقط القطع في المكان الغلط يمكن إزالتها
                 if (p.placement === 'wrong') {
                     if (Math.abs(fx - (p.x + PART_SIZE/2)) < 70 && Math.abs(fy - (p.y + PART_SIZE/2)) < 70) {
                         selectedPart = name;
                         dragging = true;
                         p.placed = false;
                         p.placement = null;
-                        mistakes++; // خطأ: يشيل قطعة
+                        mistakes++;
                         break;
                     }
                 }
@@ -365,7 +359,6 @@ function drawGame(W, H) {
     gctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     gctx.fillRect(0, 0, W, H);
 
-    // ===== المحاكاة =====
     if (gameState === 'SIMULATION') {
         const t = (Date.now() - simulationStart) / 1000;
         const grad = gctx.createLinearGradient(0, 0, 0, H);
@@ -373,9 +366,7 @@ function drawGame(W, H) {
         grad.addColorStop(1, '#0f0f1e');
         gctx.fillStyle = grad;
         gctx.fillRect(0, 0, W, H);
-
         drawSun(W / 2, 100, t);
-
         PART_ORDER.forEach(name => {
             const sp = SIM_POSITIONS[name];
             const img = partImages[name];
@@ -383,7 +374,6 @@ function drawGame(W, H) {
                 try { gctx.drawImage(img, sp.x*W, sp.y*H, PART_SIZE, PART_SIZE); } catch(e) {}
             }
         });
-
         const p1 = SIM_POSITIONS.panel, p2 = SIM_POSITIONS.controller;
         const p3 = SIM_POSITIONS.battery, p4 = SIM_POSITIONS.inverter;
         const p5 = SIM_POSITIONS.load;
@@ -391,23 +381,19 @@ function drawGame(W, H) {
         drawPowerLine(p2.x*W+50, p2.y*H+50, p3.x*W+50, p3.y*H+50, t);
         drawPowerLine(p3.x*W+50, p3.y*H+50, p4.x*W+50, p4.y*H+50, t);
         drawPowerLine(p4.x*W+50, p4.y*H+50, p5.x*W+50, p5.y*H+50, t);
-
         batteryCharge = Math.min((t / 5) * 100, 100);
         lightBrightness = batteryCharge > 50 ? Math.min((batteryCharge - 50) / 50, 1) : 0;
         drawHouseGlow(p5.x*W+50, p5.y*H+50, lightBrightness);
         drawBatteryBar(30, H - 60, batteryCharge);
-
         gctx.fillStyle = '#00d4ff';
         gctx.font = 'bold 32px Arial';
         gctx.textAlign = 'center';
         gctx.fillText('🌞 SYSTEM ONLINE', W/2, 50);
-
         gctx.font = 'bold 18px Arial';
         gctx.fillStyle = '#fff';
         gctx.fillText(`⚡ Power: ${Math.round(batteryCharge * 10)} W`, W/2, H - 100);
         gctx.fillText(`🔋 Battery: ${Math.round(batteryCharge)}%`, W/2, H - 75);
         gctx.fillText(`💡 Light: ${Math.round(lightBrightness * 100)}%`, W/2, H - 50);
-
         if (batteryCharge >= 100 && !simDone) {
             simDone = true;
             playComplete();
@@ -428,14 +414,22 @@ function drawGame(W, H) {
     }
 
     // ===== اللعب =====
-    // المربعات (بدون إطارات)
+    // ✅ الإطارات المتقطعة + الأرقام (باهتة)
     PART_ORDER.forEach(name => {
         const target = PARTS_POSITIONS[name];
         const tx = target.x * W;
         const ty = target.y * H;
+        const placed = parts[name].placed;
 
-        // الرقم فقط (بدون إطار)
-        gctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        // إطار متقطع باهت (دائماً)
+        gctx.strokeStyle = placed ? 'rgba(100, 100, 100, 0.3)' : 'rgba(255, 255, 255, 0.4)';
+        gctx.lineWidth = 3;
+        gctx.setLineDash([8, 8]);
+        gctx.strokeRect(tx, ty, PART_SIZE, PART_SIZE);
+        gctx.setLineDash([]);
+
+        // الرقم (باهت إذا القطعة مثبتة)
+        gctx.fillStyle = placed ? 'rgba(100, 100, 100, 0.5)' : 'rgba(255, 255, 255, 0.8)';
         gctx.font = 'bold 36px Arial';
         gctx.textAlign = 'center';
         gctx.textBaseline = 'alphabetic';
@@ -464,22 +458,17 @@ function drawGame(W, H) {
     gctx.fillStyle = timeColor;
     gctx.fillRect(W/2 - 148, 22, (296 * remaining / GAME_DURATION), 26);
 
-    // Leaderboard
     drawLeaderboard(W);
 
-    // انتهى الوقت
     if (remaining <= 0 && gameState === 'PLAYING') {
         gameState = 'FINISHED';
-        const totalTime = GAME_DURATION;
         const completed = PART_ORDER.every(n => parts[n].placed && parts[n].placement === 'correct');
-        saveScore(playerName, totalTime, mistakes, completed);
-        
+        saveScore(playerName, GAME_DURATION, mistakes, completed);
         let correct = 0, wrong = 0;
         PART_ORDER.forEach(n => {
             if (parts[n].placement === 'correct') correct++;
             else if (parts[n].placement === 'wrong') wrong++;
         });
-
         document.getElementById('endStats').innerHTML = `
             ⏰ انتهى الوقت!<br>
             👤 ${playerName}<br>
@@ -525,7 +514,6 @@ function startCountdown() {
 }
 
 function checkWin() {
-    // ✅ الفوز فقط إذا كل القطع في المكان الصح
     if (PART_ORDER.every(n => parts[n].placed && parts[n].placement === 'correct')) {
         playWin();
         setTimeout(() => {
