@@ -213,7 +213,7 @@ function onHandResults(results) {
                 }
             }
 
-            if (closestTarget && closestDist < 150) {
+            if (closestTarget && closestDist < 250) {
                 p.x = closestTarget.tx;
                 p.y = closestTarget.ty;
                 p.placed = true;
