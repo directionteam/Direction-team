@@ -8,6 +8,7 @@ let gameState = 'IDLE';
 let partImages = {};
 let selectedPart = null;
 let dragging = false;
+let mistakeCounted = false; // ← يمنع تكرار الخطأ
 
 let simulationStart = 0;
 let batteryCharge = 0;
@@ -39,6 +40,7 @@ const SIM_POSITIONS = {
 
 let parts = {};
 
+// ===== أصوات =====
 function playBeep(freq, duration) {
     try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -66,6 +68,7 @@ function playComplete() {
     setTimeout(() => playBeep(1100, 300), 300);
 }
 
+// ===== Leaderboard =====
 function getLeaderboard() {
     try { return JSON.parse(localStorage.getItem('dt_leaderboard') || '[]'); }
     catch(e) { return []; }
@@ -111,6 +114,7 @@ function drawLeaderboard(W) {
     });
 }
 
+// ===== بدء اللعبة =====
 async function startGame() {
     playerName = document.getElementById('playerName').value.trim() || 'Player';
     document.getElementById('startScreen').classList.add('hidden');
@@ -202,12 +206,13 @@ function onHandResults(results) {
             }
             dragging = false;
             selectedPart = null;
+            mistakeCounted = false;
         }
     }
     drawGame(W, H);
 }
 
-// ✅ الإفلات على أي مربع (صح أو غلط)
+// ===== منطق اللعبة =====
 function handleGameLogic() {
     if (!fingertip) return;
     const W = window.innerWidth, H = window.innerHeight;
@@ -222,11 +227,14 @@ function handleGameLogic() {
             if (Math.abs(fx - (p.x + PART_SIZE/2)) < TOUCH_RADIUS && 
                 Math.abs(fy - (p.y + PART_SIZE/2)) < TOUCH_RADIUS) {
                 
-                // إذا كانت في المكان الغلط → اسحبها
+                // ✅ إذا كانت في المكان الغلط → اسحبها + خطأ واحد فقط
                 if (p.placed && p.placement === 'wrong') {
+                    if (!mistakeCounted) {
+                        mistakes++;
+                        mistakeCounted = true;
+                    }
                     p.placed = false;
                     p.placement = null;
-                    mistakes++;
                 }
 
                 selectedPart = name;
@@ -236,59 +244,51 @@ function handleGameLogic() {
         }
     }
 
-    // ===== 2. حرّك القطعة مع الإصبع =====
+    // ===== 2. حرّك القطعة =====
     if (dragging && selectedPart) {
         const p = parts[selectedPart];
         p.x = fx - PART_SIZE/2;
         p.y = fy - PART_SIZE/2;
 
         // ===== 3. الإفلات على أي مربع (صح أو غلط) =====
-        let snapped = false;
         let bestTarget = null;
         let bestDist = 9999;
 
-        // ابحث عن **أقرب** مربع للإصبع
         for (const name of PART_ORDER) {
             const target = PARTS_POSITIONS[name];
             const tx = target.x * W;
             const ty = target.y * H;
-            
-            // مركز المربع
             const targetCenterX = tx + PART_SIZE/2;
             const targetCenterY = ty + PART_SIZE/2;
-
-            // المسافة من الإصبع إلى مركز المربع
             const dist = Math.sqrt((fx - targetCenterX)**2 + (fy - targetCenterY)**2);
 
-            // إذا الإصبع قريب من المربع
             if (dist < SNAP_DISTANCE && dist < bestDist) {
                 bestDist = dist;
                 bestTarget = { name, tx, ty };
             }
         }
 
-        // ✅ إذا لقينا مربع قريب → افلت القطعة فيه
         if (bestTarget) {
             p.x = bestTarget.tx;
             p.y = bestTarget.ty;
             p.placed = true;
 
             if (bestTarget.name === selectedPart) {
-                // ✅ صح
                 p.placement = 'correct';
                 playCorrect();
             } else {
-                // ❌ غلط
                 p.placement = 'wrong';
             }
 
             dragging = false;
             selectedPart = null;
+            mistakeCounted = false; // ← إعادة تعيين
             checkWin();
         }
     }
 }
 
+// ===== رسم =====
 function drawSun(cx, cy, t) {
     for (let i = 0; i < 3; i++) {
         const r = 40 + i * 15 + Math.sin(t * 3 + i) * 5;
@@ -372,6 +372,7 @@ function drawGame(W, H) {
     gctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     gctx.fillRect(0, 0, W, H);
 
+    // ===== المحاكاة =====
     if (gameState === 'SIMULATION') {
         const t = (Date.now() - simulationStart) / 1000;
         const grad = gctx.createLinearGradient(0, 0, 0, H);
@@ -426,6 +427,7 @@ function drawGame(W, H) {
         return;
     }
 
+    // ===== اللعب =====
     PART_ORDER.forEach(name => {
         const target = PARTS_POSITIONS[name];
         const tx = target.x * W;
