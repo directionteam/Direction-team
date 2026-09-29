@@ -87,16 +87,16 @@ function drawLeaderboard(W) {
     const lb = getLeaderboard();
     if (lb.length === 0) return;
     gctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-    gctx.fillRect(W - 280, 100, 260, 50 + lb.length * 40);
+    gctx.fillRect(W - 280, 200, 260, 50 + lb.length * 40);
     gctx.strokeStyle = '#00d4ff';
     gctx.lineWidth = 2;
-    gctx.strokeRect(W - 280, 100, 260, 50 + lb.length * 40);
+    gctx.strokeRect(W - 280, 200, 260, 50 + lb.length * 40);
     gctx.fillStyle = '#00d4ff';
     gctx.font = 'bold 20px Arial';
     gctx.textAlign = 'center';
-    gctx.fillText('🏆 أفضل 5', W - 150, 130);
+    gctx.fillText('🏆 أفضل 5', W - 150, 230);
     lb.forEach((entry, i) => {
-        const y = 165 + i * 40;
+        const y = 265 + i * 40;
         const medal = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : `${i+1}.`));
         gctx.fillStyle = i === 0 ? '#ffd700' : (i === 1 ? '#c0c0c0' : (i === 2 ? '#cd7f32' : '#fff'));
         gctx.font = 'bold 15px Arial';
@@ -192,13 +192,13 @@ function onHandResults(results) {
         if (gameState === 'PLAYING') handleGameLogic();
     } else {
         fingertip = null;
-        // إذا اختفت اليد → القطعة ترجع للأعلى
+        // إذا اختفت اليد → القطعة ترجع للأعلى (خطأ +1 فقط)
         if (dragging && selectedPart) {
             const p = parts[selectedPart];
             if (!p.placed) {
                 p.x = Math.random() * (W - PART_SIZE - 100) + 50;
                 p.y = 0.08 * H;
-                mistakes++;
+                mistakes++; // خطأ واحد فقط
             }
             dragging = false;
             selectedPart = null;
@@ -223,7 +223,7 @@ function handleGameLogic() {
                         dragging = true;
                         p.placed = false;
                         p.placement = null;
-                        mistakes++;
+                        mistakes++; // خطأ عند الشيل
                         break;
                     }
                 }
@@ -237,20 +237,25 @@ function handleGameLogic() {
         }
     }
 
-    // ✅ حرك القطعة مع الإصبع
+    // حرك القطعة
     if (dragging && selectedPart) {
         parts[selectedPart].x = fx - PART_SIZE/2;
         parts[selectedPart].y = fy - PART_SIZE/2;
 
-        // ✅ الإفلات التلقائي: لما الإصبع يدخل أي مربع
+        // ✅ الإفلات التلقائي: نفحص موقع **القطعة** (مو الإصبع)
+        const p = parts[selectedPart];
+        const pieceCenterX = p.x + PART_SIZE/2;
+        const pieceCenterY = p.y + PART_SIZE/2;
+
         for (const name of PART_ORDER) {
             const target = PARTS_POSITIONS[name];
             const tx = target.x * W;
             const ty = target.y * H;
             
-            // الإصبع داخل المربع؟
-            if (fx > tx && fx < tx + PART_SIZE && fy > ty && fy < ty + PART_SIZE) {
-                const p = parts[selectedPart];
+            // هل مركز القطعة داخل المربع؟
+            if (pieceCenterX > tx && pieceCenterX < tx + PART_SIZE &&
+                pieceCenterY > ty && pieceCenterY < ty + PART_SIZE) {
+                
                 p.x = tx;
                 p.y = ty;
                 p.placed = true;
@@ -260,6 +265,7 @@ function handleGameLogic() {
                     playCorrect();
                 } else {
                     p.placement = 'wrong';
+                    // ✅ لا نزيد الخطأ هنا — الخطأ يُحسب عند الشيل أو السقوط
                 }
 
                 dragging = false;
