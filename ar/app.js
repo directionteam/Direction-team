@@ -8,7 +8,8 @@ let gameState = 'IDLE';
 let partImages = {};
 let selectedPart = null;
 let dragging = false;
-let mistakeCounted = false; // ← يمنع تكرار الخطأ
+let mistakeCounted = false;
+let lastTickSecond = -1;
 
 let simulationStart = 0;
 let batteryCharge = 0;
@@ -38,34 +39,61 @@ const SIM_POSITIONS = {
     'load':       { x: 0.80, y: 0.55 }
 };
 
+const EXPLANATIONS = {
+    'panel':      'اللوح الشمسي: يحوّل ضوء الشمس إلى كهرباء!',
+    'controller': 'المنظم: ينظّم الجهد ويحمي البطارية من الشحن الزائد!',
+    'battery':    'البطارية: تخزّن الطاقة للاستخدام في الليل!',
+    'inverter':   'العاكس: يحوّل التيار المستمر إلى متردد!',
+    'load':       'الحمل: يستخدم الكهرباء (بيت، لمبة، إلخ)!'
+};
+
 let parts = {};
+let showTutorial = true;
+let tutorialStart = 0;
 
 // ===== أصوات =====
-function playBeep(freq, duration) {
+let audioCtx = null;
+function getAudioCtx() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+}
+
+function playBeep(freq, duration, type = 'sine', volume = 0.3) {
     try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
+        const ac = getAudioCtx();
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = type;
         osc.frequency.value = freq;
         osc.connect(gain);
-        gain.connect(audioCtx.destination);
+        gain.connect(ac.destination);
         osc.start();
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration / 1000);
-        osc.stop(audioCtx.currentTime + duration / 1000);
+        gain.gain.setValueAtTime(volume, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ac.currentTime + duration / 1000);
+        osc.stop(ac.currentTime + duration / 1000);
     } catch (e) {}
 }
-function playCorrect() { playBeep(800, 150); }
+function playCorrect() {
+    playBeep(700, 100);
+    setTimeout(() => playBeep(900, 150), 100);
+}
+function playWrong() {
+    playBeep(200, 300, 'sawtooth', 0.2);
+}
+function playTick() {
+    playBeep(1200, 50, 'square', 0.15);
+}
 function playWin() {
-    playBeep(600, 100);
-    setTimeout(() => playBeep(800, 100), 150);
-    setTimeout(() => playBeep(1000, 200), 300);
+    [600, 800, 1000, 1200].forEach((f, i) => {
+        setTimeout(() => playBeep(f, 150), i * 120);
+    });
 }
 function playComplete() {
-    playBeep(500, 100);
-    setTimeout(() => playBeep(700, 100), 100);
-    setTimeout(() => playBeep(900, 100), 200);
-    setTimeout(() => playBeep(1100, 300), 300);
+    [500, 700, 900, 1100, 1300].forEach((f, i) => {
+        setTimeout(() => playBeep(f, 200), i * 100);
+    });
 }
 
 // ===== Leaderboard =====
@@ -127,6 +155,9 @@ async function startGame() {
     gctx = gameCanvas.getContext('2d');
     video = document.getElementById('video');
 
+    // محاولة تشغيل audio (يحتاج تفاعل)
+    try { getAudioCtx(); } catch(e) {}
+
     await new Promise((resolve) => {
         let loaded = 0;
         PART_ORDER.forEach(name => {
@@ -143,8 +174,13 @@ async function startGame() {
     await initMediaPipe();
     await initCamera();
 
-    gameState = 'COUNTDOWN';
-    startCountdown();
+    // ✅ شاشة تعليمات أولاً
+    gameState = 'TUTORIAL';
+    tutorialStart = Date.now();
+    setTimeout(() => {
+        gameState = 'COUNTDOWN';
+        startCountdown();
+    }, 6000);
 }
 
 function randomizePositions() {
@@ -232,6 +268,7 @@ function handleGameLogic() {
                     if (!mistakeCounted) {
                         mistakes++;
                         mistakeCounted = true;
+                        playWrong();
                     }
                     p.placed = false;
                     p.placement = null;
@@ -250,7 +287,7 @@ function handleGameLogic() {
         p.x = fx - PART_SIZE/2;
         p.y = fy - PART_SIZE/2;
 
-        // ===== 3. الإفلات على أي مربع (صح أو غلط) =====
+        // ===== 3. الإفلات على أي مربع =====
         let bestTarget = null;
         let bestDist = 9999;
 
@@ -282,13 +319,56 @@ function handleGameLogic() {
 
             dragging = false;
             selectedPart = null;
-            mistakeCounted = false; // ← إعادة تعيين
+            mistakeCounted = false;
             checkWin();
         }
     }
 }
 
 // ===== رسم =====
+function drawTutorial(W, H) {
+    // خلفية معتمة
+    gctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+    gctx.fillRect(0, 0, W, H);
+
+    gctx.textAlign = 'center';
+
+    // العنوان
+    gctx.fillStyle = '#00d4ff';
+    gctx.font = 'bold 50px Arial';
+    gctx.fillText('🎓 كيف تلعب', W/2, 120);
+
+    // الخطوات
+    gctx.fillStyle = '#ffffff';
+    gctx.font = 'bold 28px Arial';
+    gctx.textAlign = 'right';
+
+    const steps = [
+        '1️⃣ المس القطعة بإصبع السبابة',
+        '2️⃣ اسحبها نحو المربع المناسب',
+        '3️⃣ ثبّت يدك — القطعة تنفصل',
+        '4️⃣ رتّب كل القطع قبل انتهاء الوقت',
+        '5️⃣ الأخطاء تُحسب عند الشيل أو السقوط'
+    ];
+
+    steps.forEach((s, i) => {
+        gctx.fillText(s, W - 100, 230 + i * 60);
+    });
+
+    // ملاحظة
+    gctx.fillStyle = '#ffd700';
+    gctx.font = 'bold 22px Arial';
+    gctx.textAlign = 'center';
+    gctx.fillText('⏱️ الوقت: 60 ثانية | 🎯 الترتيب مهم!', W/2, H - 100);
+
+    // عد تنازلي
+    const elapsed = (Date.now() - tutorialStart) / 1000;
+    const remaining = Math.max(1, Math.ceil(6 - elapsed));
+    gctx.fillStyle = '#00d4ff';
+    gctx.font = 'bold 80px Arial';
+    gctx.fillText(remaining, W/2, H - 180);
+}
+
 function drawSun(cx, cy, t) {
     for (let i = 0; i < 3; i++) {
         const r = 40 + i * 15 + Math.sin(t * 3 + i) * 5;
@@ -369,6 +449,13 @@ function drawHouseGlow(cx, cy, brightness) {
 function drawGame(W, H) {
     if (!gctx) return;
     gctx.clearRect(0, 0, W, H);
+
+    // ✅ شاشة التعليمات
+    if (gameState === 'TUTORIAL') {
+        drawTutorial(W, H);
+        return;
+    }
+
     gctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     gctx.fillRect(0, 0, W, H);
 
@@ -460,6 +547,15 @@ function drawGame(W, H) {
     document.getElementById('hudTimer').textContent = remaining.toFixed(1) + 's';
     document.getElementById('hudMistakes').textContent = mistakes;
 
+    // ✅ صوت تيك توك في آخر 10 ثواني
+    if (remaining <= 10 && remaining > 0) {
+        const currentSec = Math.ceil(remaining);
+        if (currentSec !== lastTickSecond) {
+            lastTickSecond = currentSec;
+            playTick();
+        }
+    }
+
     gctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
     gctx.fillRect(W/2 - 150, 20, 300, 30);
     const timeColor = remaining > 20 ? '#0f0' : (remaining > 10 ? '#ff0' : '#f00');
@@ -468,21 +564,42 @@ function drawGame(W, H) {
 
     drawLeaderboard(W);
 
+    // ===== انتهى الوقت =====
     if (remaining <= 0 && gameState === 'PLAYING') {
         gameState = 'FINISHED';
         const completed = PART_ORDER.every(n => parts[n].placed && parts[n].placement === 'correct');
         saveScore(playerName, GAME_DURATION, mistakes, completed);
+
         let correct = 0, wrong = 0;
+        let wrongParts = [];
+        let correctParts = [];
+
         PART_ORDER.forEach(n => {
-            if (parts[n].placement === 'correct') correct++;
-            else if (parts[n].placement === 'wrong') wrong++;
+            if (parts[n].placement === 'correct') {
+                correct++;
+                correctParts.push(n);
+            } else if (parts[n].placement === 'wrong') {
+                wrong++;
+                wrongParts.push(n);
+            }
         });
+
+        // ✅ شرح بعد الفشل
+        let explanationHTML = '';
+        if (wrongParts.length > 0) {
+            explanationHTML = '<br><br>📚 <b>شرح القطع التي أخطأت فيها:</b><br>';
+            wrongParts.forEach(n => {
+                explanationHTML += `<br>❌ <b>${n === 'panel' ? 'اللوح' : n === 'controller' ? 'المنظم' : n === 'battery' ? 'البطارية' : n === 'inverter' ? 'العاكس' : 'الحمل'}</b>: ${EXPLANATIONS[n]}`;
+            });
+        }
+
         document.getElementById('endStats').innerHTML = `
             ⏰ انتهى الوقت!<br>
             👤 ${playerName}<br>
             ✅ صح: ${correct}/5<br>
             ❌ غلط: ${wrong}<br>
             🔴 الأخطاء: ${mistakes}
+            ${explanationHTML}
         `;
         document.getElementById('endScreen').classList.remove('hidden');
     }
@@ -516,6 +633,7 @@ function startCountdown() {
             clearInterval(interval);
             gameState = 'PLAYING';
             startTime = Date.now();
+            lastTickSecond = -1;
             el.textContent = 'ابدأ!';
         }
     }, 1000);
