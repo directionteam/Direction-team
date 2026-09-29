@@ -16,7 +16,8 @@ let simDone = false;
 
 const GAME_DURATION = 60;
 const PART_SIZE = 110;
-const TOUCH_RADIUS = 90;
+const TOUCH_RADIUS = 150;
+const SNAP_DISTANCE = 200;
 
 const PART_ORDER = ['panel', 'controller', 'battery', 'inverter', 'load'];
 
@@ -192,13 +193,12 @@ function onHandResults(results) {
         if (gameState === 'PLAYING') handleGameLogic();
     } else {
         fingertip = null;
-        // إذا اختفت اليد → القطعة ترجع للأعلى (خطأ +1 فقط)
         if (dragging && selectedPart) {
             const p = parts[selectedPart];
             if (!p.placed) {
                 p.x = Math.random() * (W - PART_SIZE - 100) + 50;
                 p.y = 0.08 * H;
-                mistakes++; // خطأ واحد فقط
+                mistakes++;
             }
             dragging = false;
             selectedPart = null;
@@ -207,72 +207,84 @@ function onHandResults(results) {
     drawGame(W, H);
 }
 
+// ✅ الإفلات على أي مربع (صح أو غلط)
 function handleGameLogic() {
     if (!fingertip) return;
     const W = window.innerWidth, H = window.innerHeight;
     const fx = fingertip.x, fy = fingertip.y;
 
+    // ===== 1. اختيار قطعة =====
     if (!dragging) {
-        // اختر قطعة
         for (const name of PART_ORDER) {
             const p = parts[name];
-            if (p.placed) {
-                if (p.placement === 'wrong') {
-                    if (Math.abs(fx - (p.x + PART_SIZE/2)) < TOUCH_RADIUS && Math.abs(fy - (p.y + PART_SIZE/2)) < TOUCH_RADIUS) {
-                        selectedPart = name;
-                        dragging = true;
-                        p.placed = false;
-                        p.placement = null;
-                        mistakes++; // خطأ عند الشيل
-                        break;
-                    }
+            if (p.placed && p.placement === 'correct') continue;
+
+            if (Math.abs(fx - (p.x + PART_SIZE/2)) < TOUCH_RADIUS && 
+                Math.abs(fy - (p.y + PART_SIZE/2)) < TOUCH_RADIUS) {
+                
+                // إذا كانت في المكان الغلط → اسحبها
+                if (p.placed && p.placement === 'wrong') {
+                    p.placed = false;
+                    p.placement = null;
+                    mistakes++;
                 }
-            } else {
-                if (Math.abs(fx - (p.x + PART_SIZE/2)) < TOUCH_RADIUS && Math.abs(fy - (p.y + PART_SIZE/2)) < TOUCH_RADIUS) {
-                    selectedPart = name;
-                    dragging = true;
-                    break;
-                }
+
+                selectedPart = name;
+                dragging = true;
+                break;
             }
         }
     }
 
-    // حرك القطعة
+    // ===== 2. حرّك القطعة مع الإصبع =====
     if (dragging && selectedPart) {
-        parts[selectedPart].x = fx - PART_SIZE/2;
-        parts[selectedPart].y = fy - PART_SIZE/2;
-
-        // ✅ الإفلات التلقائي: نفحص موقع **القطعة** (مو الإصبع)
         const p = parts[selectedPart];
-        const pieceCenterX = p.x + PART_SIZE/2;
-        const pieceCenterY = p.y + PART_SIZE/2;
+        p.x = fx - PART_SIZE/2;
+        p.y = fy - PART_SIZE/2;
 
+        // ===== 3. الإفلات على أي مربع (صح أو غلط) =====
+        let snapped = false;
+        let bestTarget = null;
+        let bestDist = 9999;
+
+        // ابحث عن **أقرب** مربع للإصبع
         for (const name of PART_ORDER) {
             const target = PARTS_POSITIONS[name];
             const tx = target.x * W;
             const ty = target.y * H;
             
-            // هل مركز القطعة داخل المربع؟
-            if (pieceCenterX > tx && pieceCenterX < tx + PART_SIZE &&
-                pieceCenterY > ty && pieceCenterY < ty + PART_SIZE) {
-                
-                p.x = tx;
-                p.y = ty;
-                p.placed = true;
+            // مركز المربع
+            const targetCenterX = tx + PART_SIZE/2;
+            const targetCenterY = ty + PART_SIZE/2;
 
-                if (name === selectedPart) {
-                    p.placement = 'correct';
-                    playCorrect();
-                } else {
-                    p.placement = 'wrong';
-                    // ✅ لا نزيد الخطأ هنا — الخطأ يُحسب عند الشيل أو السقوط
-                }
+            // المسافة من الإصبع إلى مركز المربع
+            const dist = Math.sqrt((fx - targetCenterX)**2 + (fy - targetCenterY)**2);
 
-                dragging = false;
-                selectedPart = null;
-                checkWin();
-                break;
+            // إذا الإصبع قريب من المربع
+            if (dist < SNAP_DISTANCE && dist < bestDist) {
+                bestDist = dist;
+                bestTarget = { name, tx, ty };
             }
+        }
+
+        // ✅ إذا لقينا مربع قريب → افلت القطعة فيه
+        if (bestTarget) {
+            p.x = bestTarget.tx;
+            p.y = bestTarget.ty;
+            p.placed = true;
+
+            if (bestTarget.name === selectedPart) {
+                // ✅ صح
+                p.placement = 'correct';
+                playCorrect();
+            } else {
+                // ❌ غلط
+                p.placement = 'wrong';
+            }
+
+            dragging = false;
+            selectedPart = null;
+            checkWin();
         }
     }
 }
