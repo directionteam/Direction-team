@@ -48,7 +48,6 @@ const EXPLANATIONS = {
 };
 
 let parts = {};
-let showTutorial = true;
 let tutorialStart = 0;
 
 // ===== أصوات =====
@@ -59,7 +58,6 @@ function getAudioCtx() {
     }
     return audioCtx;
 }
-
 function playBeep(freq, duration, type = 'sine', volume = 0.3) {
     try {
         const ac = getAudioCtx();
@@ -155,7 +153,6 @@ async function startGame() {
     gctx = gameCanvas.getContext('2d');
     video = document.getElementById('video');
 
-    // محاولة تشغيل audio (يحتاج تفاعل)
     try { getAudioCtx(); } catch(e) {}
 
     await new Promise((resolve) => {
@@ -174,7 +171,6 @@ async function startGame() {
     await initMediaPipe();
     await initCamera();
 
-    // ✅ شاشة تعليمات أولاً
     gameState = 'TUTORIAL';
     tutorialStart = Date.now();
     setTimeout(() => {
@@ -235,10 +231,10 @@ function onHandResults(results) {
         fingertip = null;
         if (dragging && selectedPart) {
             const p = parts[selectedPart];
-            if (!p.placed) {
+            if (!p.placed && !p.placement) {
+                // القطعة سقطت → بدون خطأ
                 p.x = Math.random() * (W - PART_SIZE - 100) + 50;
                 p.y = 0.08 * H;
-                mistakes++;
             }
             dragging = false;
             selectedPart = null;
@@ -264,12 +260,14 @@ function handleGameLogic() {
                 Math.abs(fy - (p.y + PART_SIZE/2)) < TOUCH_RADIUS) {
                 
                 // ✅ إذا كانت في المكان الغلط → اسحبها + خطأ واحد فقط
-                if (p.placed && p.placement === 'wrong') {
-                    if (!mistakeCounted) {
-                        mistakes++;
-                        mistakeCounted = true;
-                        playWrong();
-                    }
+                if (p.placed && p.placement === 'wrong' && !mistakeCounted) {
+                    mistakes++;
+                    mistakeCounted = true;
+                    playWrong();
+                    p.placed = false;
+                    p.placement = null;
+                } else if (p.placed && p.placement === 'wrong' && mistakeCounted) {
+                    // اسحبها بدون خطأ إضافي
                     p.placed = false;
                     p.placement = null;
                 }
@@ -287,7 +285,7 @@ function handleGameLogic() {
         p.x = fx - PART_SIZE/2;
         p.y = fy - PART_SIZE/2;
 
-        // ===== 3. الإفلات على أي مربع =====
+        // ===== 3. الإفلات =====
         let bestTarget = null;
         let bestDist = 9999;
 
@@ -319,26 +317,25 @@ function handleGameLogic() {
 
             dragging = false;
             selectedPart = null;
-            mistakeCounted = false;
             checkWin();
         }
+    } else {
+        // ✅ إعادة تعيين العلم فقط لما ما يكون في سحب
+        mistakeCounted = false;
     }
 }
 
 // ===== رسم =====
 function drawTutorial(W, H) {
-    // خلفية معتمة
     gctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
     gctx.fillRect(0, 0, W, H);
 
     gctx.textAlign = 'center';
 
-    // العنوان
     gctx.fillStyle = '#00d4ff';
     gctx.font = 'bold 50px Arial';
     gctx.fillText('🎓 كيف تلعب', W/2, 120);
 
-    // الخطوات
     gctx.fillStyle = '#ffffff';
     gctx.font = 'bold 28px Arial';
     gctx.textAlign = 'right';
@@ -355,13 +352,11 @@ function drawTutorial(W, H) {
         gctx.fillText(s, W - 100, 230 + i * 60);
     });
 
-    // ملاحظة
     gctx.fillStyle = '#ffd700';
     gctx.font = 'bold 22px Arial';
     gctx.textAlign = 'center';
     gctx.fillText('⏱️ الوقت: 60 ثانية | 🎯 الترتيب مهم!', W/2, H - 100);
 
-    // عد تنازلي
     const elapsed = (Date.now() - tutorialStart) / 1000;
     const remaining = Math.max(1, Math.ceil(6 - elapsed));
     gctx.fillStyle = '#00d4ff';
@@ -450,7 +445,6 @@ function drawGame(W, H) {
     if (!gctx) return;
     gctx.clearRect(0, 0, W, H);
 
-    // ✅ شاشة التعليمات
     if (gameState === 'TUTORIAL') {
         drawTutorial(W, H);
         return;
@@ -547,7 +541,6 @@ function drawGame(W, H) {
     document.getElementById('hudTimer').textContent = remaining.toFixed(1) + 's';
     document.getElementById('hudMistakes').textContent = mistakes;
 
-    // ✅ صوت تيك توك في آخر 10 ثواني
     if (remaining <= 10 && remaining > 0) {
         const currentSec = Math.ceil(remaining);
         if (currentSec !== lastTickSecond) {
@@ -564,7 +557,6 @@ function drawGame(W, H) {
 
     drawLeaderboard(W);
 
-    // ===== انتهى الوقت =====
     if (remaining <= 0 && gameState === 'PLAYING') {
         gameState = 'FINISHED';
         const completed = PART_ORDER.every(n => parts[n].placed && parts[n].placement === 'correct');
@@ -572,24 +564,21 @@ function drawGame(W, H) {
 
         let correct = 0, wrong = 0;
         let wrongParts = [];
-        let correctParts = [];
 
         PART_ORDER.forEach(n => {
-            if (parts[n].placement === 'correct') {
-                correct++;
-                correctParts.push(n);
-            } else if (parts[n].placement === 'wrong') {
+            if (parts[n].placement === 'correct') correct++;
+            else if (parts[n].placement === 'wrong') {
                 wrong++;
                 wrongParts.push(n);
             }
         });
 
-        // ✅ شرح بعد الفشل
         let explanationHTML = '';
         if (wrongParts.length > 0) {
             explanationHTML = '<br><br>📚 <b>شرح القطع التي أخطأت فيها:</b><br>';
             wrongParts.forEach(n => {
-                explanationHTML += `<br>❌ <b>${n === 'panel' ? 'اللوح' : n === 'controller' ? 'المنظم' : n === 'battery' ? 'البطارية' : n === 'inverter' ? 'العاكس' : 'الحمل'}</b>: ${EXPLANATIONS[n]}`;
+                const arabicName = n === 'panel' ? 'اللوح' : n === 'controller' ? 'المنظم' : n === 'battery' ? 'البطارية' : n === 'inverter' ? 'العاكس' : 'الحمل';
+                explanationHTML += `<br>❌ <b>${arabicName}</b>: ${EXPLANATIONS[n]}`;
             });
         }
 
