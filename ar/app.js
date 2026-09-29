@@ -5,13 +5,13 @@ let playerName = '';
 let startTime = 0;
 let mistakes = 0;
 let gameState = 'IDLE';
-let systemImage = null;
+let partImages = {};
 let selectedPart = null;
 let dragging = false;
 let holdingPart = null;
 let holdingStartTime = 0;
 
-// ===== المحاكاة =====
+// المحاكاة
 let simulationStart = 0;
 let batteryCharge = 0;
 let lightBrightness = 0;
@@ -23,11 +23,20 @@ const PART_SIZE = 100;
 const PART_ORDER = ['panel', 'controller', 'battery', 'inverter', 'load'];
 
 const PARTS_POSITIONS = {
-    'panel':      { x: 0.20, y: 0.30, num: 1 },
-    'controller': { x: 0.18, y: 0.55, num: 2 },
-    'battery':    { x: 0.25, y: 0.78, num: 3 },
-    'inverter':   { x: 0.52, y: 0.48, num: 4 },
-    'load':       { x: 0.80, y: 0.62, num: 5 }
+    'panel':      { x: 0.15, y: 0.70, num: 1 },
+    'controller': { x: 0.35, y: 0.70, num: 2 },
+    'battery':    { x: 0.55, y: 0.70, num: 3 },
+    'inverter':   { x: 0.75, y: 0.70, num: 4 },
+    'load':       { x: 0.90, y: 0.70, num: 5 }
+};
+
+// مواقع القطع في المحاكاة (أماكن ثابتة)
+const SIM_POSITIONS = {
+    'panel':      { x: 0.15, y: 0.30 },
+    'controller': { x: 0.35, y: 0.55 },
+    'battery':    { x: 0.35, y: 0.80 },
+    'inverter':   { x: 0.60, y: 0.55 },
+    'load':       { x: 0.80, y: 0.55 }
 };
 
 let parts = {};
@@ -74,13 +83,24 @@ async function startGame() {
     gctx = gameCanvas.getContext('2d');
     video = document.getElementById('video');
 
+    // تحميل الصور الخمس
     await new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => { systemImage = img; resolve(); };
-        img.onerror = () => { resolve(); };
-        img.src = 'https://directionteam.github.io/Direction-team/system.png';
-        setTimeout(resolve, 5000);
+        let loaded = 0;
+        PART_ORDER.forEach(name => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                partImages[name] = img;
+                loaded++;
+                if (loaded === PART_ORDER.length) resolve();
+            };
+            img.onerror = () => {
+                loaded++;
+                if (loaded === PART_ORDER.length) resolve();
+            };
+            img.src = 'https://directionteam.github.io/Direction-team/ar/' + name + '.png';
+        });
+        setTimeout(resolve, 8000);
     });
 
     randomizePositions();
@@ -207,16 +227,6 @@ function handleGameLogic() {
     }
 }
 
-// اقتصاص كل قطعة من الصورة
-function getPartSource(name, IW, IH) {
-    if (name === 'panel')      return { sx: 0.02*IW, sy: 0.02*IH, sw: 0.38*IW, sh: 0.38*IH };
-    if (name === 'controller') return { sx: 0.05*IW, sy: 0.42*IH, sw: 0.30*IW, sh: 0.30*IH };
-    if (name === 'battery')    return { sx: 0.08*IW, sy: 0.75*IH, sw: 0.35*IW, sh: 0.25*IH };
-    if (name === 'inverter')   return { sx: 0.42*IW, sy: 0.38*IH, sw: 0.25*IW, sh: 0.25*IH };
-    if (name === 'load')       return { sx: 0.65*IW, sy: 0.50*IH, sw: 0.35*IW, sh: 0.45*IH };
-    return { sx: 0, sy: 0, sw: IW, sh: IH };
-}
-
 // ===== رسم الشمس =====
 function drawSun(cx, cy, t) {
     for (let i = 0; i < 3; i++) {
@@ -250,7 +260,7 @@ function drawPowerLine(x1, y1, x2, y2, t) {
     gctx.beginPath();
     gctx.moveTo(x1, y1);
     gctx.lineTo(x2, y2);
-    gctx.strokeStyle = 'rgba(255, 100, 0, 0.6)';
+    gctx.strokeStyle = 'rgba(255, 100, 0, 0.7)';
     gctx.lineWidth = 5;
     gctx.stroke();
 
@@ -268,7 +278,6 @@ function drawPowerLine(x1, y1, x2, y2, t) {
     }
 }
 
-// ===== بطارية تشحن =====
 function drawBatteryBar(x, y, charge) {
     gctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
     gctx.fillRect(x, y, 150, 35);
@@ -291,11 +300,10 @@ function drawBatteryBar(x, y, charge) {
     gctx.fillText(`${Math.round(charge)}%`, x + 75, y + 24);
 }
 
-// ===== اللمبة/البيت يضيء =====
 function drawHouseGlow(cx, cy, brightness) {
     if (brightness <= 0) return;
     for (let i = 0; i < 4; i++) {
-        const r = 100 + i * 50 + Math.sin(Date.now() / 300 + i) * 10;
+        const r = 80 + i * 50 + Math.sin(Date.now() / 300 + i) * 10;
         gctx.fillStyle = `rgba(255, 215, 0, ${brightness * 0.15 * (1 - i/4)})`;
         gctx.beginPath();
         gctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -303,6 +311,7 @@ function drawHouseGlow(cx, cy, brightness) {
     }
 }
 
+// ===== رسم اللعبة =====
 function drawGame(W, H) {
     if (!gctx) return;
     gctx.clearRect(0, 0, W, H);
@@ -315,7 +324,6 @@ function drawGame(W, H) {
     if (gameState === 'SIMULATION') {
         const t = (Date.now() - simulationStart) / 1000;
 
-        // خلفية متدرجة
         const grad = gctx.createLinearGradient(0, 0, 0, H);
         grad.addColorStop(0, '#1a1a2e');
         grad.addColorStop(1, '#0f0f1e');
@@ -325,41 +333,38 @@ function drawGame(W, H) {
         // الشمس
         drawSun(W / 2, 100, t);
 
-        // القطع في أماكنها
-        if (systemImage && systemImage.complete) {
-            const IW = systemImage.width, IH = systemImage.height;
-            PART_ORDER.forEach(name => {
-                const target = PARTS_POSITIONS[name];
-                const tx = target.x * W;
-                const ty = target.y * H;
-                const src = getPartSource(name, IW, IH);
+        // القطع في أماكنها (في المحاكاة)
+        PART_ORDER.forEach(name => {
+            const sp = SIM_POSITIONS[name];
+            const sx = sp.x * W;
+            const sy = sp.y * H;
+            const img = partImages[name];
+            if (img && img.complete) {
                 try {
-                    gctx.drawImage(systemImage, src.sx, src.sy, src.sw, src.sh, tx, ty, PART_SIZE, PART_SIZE);
+                    gctx.drawImage(img, sx, sy, PART_SIZE, PART_SIZE);
                 } catch(e) {}
-            });
-        }
+            }
+        });
 
         // خطوط الكهرباء
-        drawPowerLine(PARTS_POSITIONS.panel.x*W + 50, PARTS_POSITIONS.panel.y*H + 50,
-                     PARTS_POSITIONS.controller.x*W + 50, PARTS_POSITIONS.controller.y*H + 50, t);
-        drawPowerLine(PARTS_POSITIONS.controller.x*W + 50, PARTS_POSITIONS.controller.y*H + 50,
-                     PARTS_POSITIONS.battery.x*W + 50, PARTS_POSITIONS.battery.y*H + 50, t);
-        drawPowerLine(PARTS_POSITIONS.battery.x*W + 50, PARTS_POSITIONS.battery.y*H + 50,
-                     PARTS_POSITIONS.inverter.x*W + 50, PARTS_POSITIONS.inverter.y*H + 50, t);
-        drawPowerLine(PARTS_POSITIONS.inverter.x*W + 50, PARTS_POSITIONS.inverter.y*H + 50,
-                     PARTS_POSITIONS.load.x*W + 50, PARTS_POSITIONS.load.y*H + 50, t);
+        const p1 = SIM_POSITIONS.panel, p2 = SIM_POSITIONS.controller;
+        const p3 = SIM_POSITIONS.battery, p4 = SIM_POSITIONS.inverter;
+        const p5 = SIM_POSITIONS.load;
 
-        // شحن البطارية (5 ثواني)
+        drawPowerLine(p1.x*W + 50, p1.y*H + 50, p2.x*W + 50, p2.y*H + 50, t);
+        drawPowerLine(p2.x*W + 50, p2.y*H + 50, p3.x*W + 50, p3.y*H + 50, t);
+        drawPowerLine(p3.x*W + 50, p3.y*H + 50, p4.x*W + 50, p4.y*H + 50, t);
+        drawPowerLine(p4.x*W + 50, p4.y*H + 50, p5.x*W + 50, p5.y*H + 50, t);
+
+        // شحن البطارية
         batteryCharge = Math.min((t / 5) * 100, 100);
-
-        // توهج البيت
         lightBrightness = batteryCharge > 50 ? Math.min((batteryCharge - 50) / 50, 1) : 0;
-        drawHouseGlow(PARTS_POSITIONS.load.x*W + 50, PARTS_POSITIONS.load.y*H + 50, lightBrightness);
+        drawHouseGlow(p5.x*W + 50, p5.y*H + 50, lightBrightness);
 
-        // شريط البطارية
+        // البطارية
         drawBatteryBar(30, H - 60, batteryCharge);
 
-        // نصوص
+        // النصوص
         gctx.fillStyle = '#00d4ff';
         gctx.font = 'bold 32px Arial';
         gctx.textAlign = 'center';
@@ -371,7 +376,6 @@ function drawGame(W, H) {
         gctx.fillText(`🔋 Battery: ${Math.round(batteryCharge)}%`, W/2, H - 75);
         gctx.fillText(`💡 Light: ${Math.round(lightBrightness * 100)}%`, W/2, H - 50);
 
-        // انتهاء المحاكاة
         if (batteryCharge >= 100 && !simDone) {
             simDone = true;
             playComplete();
@@ -385,7 +389,7 @@ function drawGame(W, H) {
                     <br>✅ النظام يعمل بنجاح!
                 `;
                 document.getElementById('endScreen').classList.remove('hidden');
-            }, 2000);
+            }, 2500);
         }
         return;
     }
@@ -398,21 +402,20 @@ function drawGame(W, H) {
         const placed = parts[name].placed;
 
         if (placed) {
-            // ✅ القطعة مثبتة — ترسم داخل المربع
-            if (systemImage && systemImage.complete) {
-                const IW = systemImage.width, IH = systemImage.height;
-                const src = getPartSource(name, IW, IH);
+            // القطعة مثبتة → ترسم في المربع
+            const img = partImages[name];
+            if (img && img.complete) {
                 try {
-                    gctx.drawImage(systemImage, src.sx, src.sy, src.sw, src.sh, tx, ty, PART_SIZE, PART_SIZE);
+                    gctx.drawImage(img, tx, ty, PART_SIZE, PART_SIZE);
                 } catch(e) {}
             }
             // إطار أخضر
             gctx.strokeStyle = '#00ff00';
             gctx.lineWidth = 5;
             gctx.strokeRect(tx, ty, PART_SIZE, PART_SIZE);
-            // ✅ علامة صح
+            // علامة صح
             gctx.fillStyle = '#00ff00';
-            gctx.font = 'bold 30px Arial';
+            gctx.font = 'bold 28px Arial';
             gctx.textAlign = 'center';
             gctx.fillText('✓', tx + PART_SIZE - 15, ty + 25);
         } else {
@@ -437,11 +440,10 @@ function drawGame(W, H) {
         const p = parts[name];
         if (p.placed) return;
 
-        if (systemImage && systemImage.complete) {
-            const IW = systemImage.width, IH = systemImage.height;
-            const src = getPartSource(name, IW, IH);
+        const img = partImages[name];
+        if (img && img.complete) {
             try {
-                gctx.drawImage(systemImage, src.sx, src.sy, src.sw, src.sh, p.x, p.y, PART_SIZE, PART_SIZE);
+                gctx.drawImage(img, p.x, p.y, PART_SIZE, PART_SIZE);
             } catch(e) {}
         }
     });
