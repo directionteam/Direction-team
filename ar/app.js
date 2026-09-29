@@ -15,7 +15,8 @@ let lightBrightness = 0;
 let simDone = false;
 
 const GAME_DURATION = 60;
-const PART_SIZE = 100;
+const PART_SIZE = 110;
+const TOUCH_RADIUS = 90;
 
 const PART_ORDER = ['panel', 'controller', 'battery', 'inverter', 'load'];
 
@@ -37,7 +38,6 @@ const SIM_POSITIONS = {
 
 let parts = {};
 
-// ===== أصوات =====
 function playBeep(freq, duration) {
     try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -65,7 +65,6 @@ function playComplete() {
     setTimeout(() => playBeep(1100, 300), 300);
 }
 
-// ===== Leaderboard =====
 function getLeaderboard() {
     try { return JSON.parse(localStorage.getItem('dt_leaderboard') || '[]'); }
     catch(e) { return []; }
@@ -73,10 +72,8 @@ function getLeaderboard() {
 function saveScore(name, time, mistakesCount, completed) {
     const lb = getLeaderboard();
     lb.push({
-        name: name,
-        time: parseFloat(time.toFixed(1)),
-        mistakes: mistakesCount,
-        completed: completed,
+        name: name, time: parseFloat(time.toFixed(1)),
+        mistakes: mistakesCount, completed: completed,
         date: new Date().toLocaleDateString('ar-EG')
     });
     lb.sort((a, b) => {
@@ -113,7 +110,6 @@ function drawLeaderboard(W) {
     });
 }
 
-// ===== بدء اللعبة =====
 async function startGame() {
     playerName = document.getElementById('playerName').value.trim() || 'Player';
     document.getElementById('startScreen').classList.add('hidden');
@@ -196,45 +192,16 @@ function onHandResults(results) {
         if (gameState === 'PLAYING') handleGameLogic();
     } else {
         fingertip = null;
+        // إذا اختفت اليد → القطعة ترجع للأعلى
         if (dragging && selectedPart) {
             const p = parts[selectedPart];
-            const W = window.innerWidth, H = window.innerHeight;
-            
-            let closestTarget = null;
-            let closestDist = 9999;
-            for (const name of PART_ORDER) {
-                const target = PARTS_POSITIONS[name];
-                const tx = target.x * W;
-                const ty = target.y * H;
-                const dist = Math.sqrt((p.x - tx)**2 + (p.y - ty)**2);
-                if (dist < closestDist) {
-                    closestDist = dist;
-                    closestTarget = { name, tx, ty };
-                }
-            }
-
-            if (closestTarget && closestDist < 250) {
-                p.x = closestTarget.tx;
-                p.y = closestTarget.ty;
-                p.placed = true;
-                
-                if (closestTarget.name === selectedPart) {
-                    p.placement = 'correct';
-                    // صوت صح فقط
-                    playCorrect();
-                } else {
-                    p.placement = 'wrong';
-                    // ❌ لا صوت
-                }
-            } else {
+            if (!p.placed) {
                 p.x = Math.random() * (W - PART_SIZE - 100) + 50;
                 p.y = 0.08 * H;
                 mistakes++;
             }
-
             dragging = false;
             selectedPart = null;
-            checkWin();
         }
     }
     drawGame(W, H);
@@ -246,12 +213,12 @@ function handleGameLogic() {
     const fx = fingertip.x, fy = fingertip.y;
 
     if (!dragging) {
+        // اختر قطعة
         for (const name of PART_ORDER) {
             const p = parts[name];
             if (p.placed) {
-                // فقط القطع في المكان الغلط يمكن إزالتها
                 if (p.placement === 'wrong') {
-                    if (Math.abs(fx - (p.x + PART_SIZE/2)) < 90 && Math.abs(fy - (p.y + PART_SIZE/2)) < 70) {
+                    if (Math.abs(fx - (p.x + PART_SIZE/2)) < TOUCH_RADIUS && Math.abs(fy - (p.y + PART_SIZE/2)) < TOUCH_RADIUS) {
                         selectedPart = name;
                         dragging = true;
                         p.placed = false;
@@ -261,7 +228,7 @@ function handleGameLogic() {
                     }
                 }
             } else {
-                if (Math.abs(fx - (p.x + PART_SIZE/2)) < 70 && Math.abs(fy - (p.y + PART_SIZE/2)) < 70) {
+                if (Math.abs(fx - (p.x + PART_SIZE/2)) < TOUCH_RADIUS && Math.abs(fy - (p.y + PART_SIZE/2)) < TOUCH_RADIUS) {
                     selectedPart = name;
                     dragging = true;
                     break;
@@ -270,9 +237,37 @@ function handleGameLogic() {
         }
     }
 
+    // ✅ حرك القطعة مع الإصبع
     if (dragging && selectedPart) {
         parts[selectedPart].x = fx - PART_SIZE/2;
         parts[selectedPart].y = fy - PART_SIZE/2;
+
+        // ✅ الإفلات التلقائي: لما الإصبع يدخل أي مربع
+        for (const name of PART_ORDER) {
+            const target = PARTS_POSITIONS[name];
+            const tx = target.x * W;
+            const ty = target.y * H;
+            
+            // الإصبع داخل المربع؟
+            if (fx > tx && fx < tx + PART_SIZE && fy > ty && fy < ty + PART_SIZE) {
+                const p = parts[selectedPart];
+                p.x = tx;
+                p.y = ty;
+                p.placed = true;
+
+                if (name === selectedPart) {
+                    p.placement = 'correct';
+                    playCorrect();
+                } else {
+                    p.placement = 'wrong';
+                }
+
+                dragging = false;
+                selectedPart = null;
+                checkWin();
+                break;
+            }
+        }
     }
 }
 
@@ -413,22 +408,18 @@ function drawGame(W, H) {
         return;
     }
 
-    // ===== اللعب =====
-    // ✅ الإطارات المتقطعة + الأرقام (باهتة)
     PART_ORDER.forEach(name => {
         const target = PARTS_POSITIONS[name];
         const tx = target.x * W;
         const ty = target.y * H;
         const placed = parts[name].placed;
 
-        // إطار متقطع باهت (دائماً)
         gctx.strokeStyle = placed ? 'rgba(100, 100, 100, 0.3)' : 'rgba(255, 255, 255, 0.4)';
         gctx.lineWidth = 3;
         gctx.setLineDash([8, 8]);
         gctx.strokeRect(tx, ty, PART_SIZE, PART_SIZE);
         gctx.setLineDash([]);
 
-        // الرقم (باهت إذا القطعة مثبتة)
         gctx.fillStyle = placed ? 'rgba(100, 100, 100, 0.5)' : 'rgba(255, 255, 255, 0.8)';
         gctx.font = 'bold 36px Arial';
         gctx.textAlign = 'center';
@@ -436,7 +427,6 @@ function drawGame(W, H) {
         gctx.fillText(target.num, tx + PART_SIZE/2, ty + PART_SIZE + 40);
     });
 
-    // القطع
     PART_ORDER.forEach(name => {
         const p = parts[name];
         const img = partImages[name];
@@ -445,13 +435,11 @@ function drawGame(W, H) {
         }
     });
 
-    // HUD
     const elapsed = (Date.now() - startTime) / 1000;
     const remaining = Math.max(0, GAME_DURATION - elapsed);
     document.getElementById('hudTimer').textContent = remaining.toFixed(1) + 's';
     document.getElementById('hudMistakes').textContent = mistakes;
 
-    // شريط الوقت
     gctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
     gctx.fillRect(W/2 - 150, 20, 300, 30);
     const timeColor = remaining > 20 ? '#0f0' : (remaining > 10 ? '#ff0' : '#f00');
