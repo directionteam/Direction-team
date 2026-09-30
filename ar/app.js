@@ -543,8 +543,7 @@ function drawGame(W, H) {
     const elapsed = (Date.now() - startTime) / 1000;
     const remaining = Math.max(0, GAME_DURATION - elapsed);
     document.getElementById('hudTimer').textContent = remaining.toFixed(1) + 's';
-    document.getElementById('hudMistakes').textContent = mistakes;
-
+document.getElementById('hudMistakes').textContent = mistakes;
     if (remaining <= 10 && remaining > 0) {
         const currentSec = Math.ceil(remaining);
         if (currentSec !== lastTickSecond) {
