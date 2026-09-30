@@ -8,6 +8,8 @@ let gameState = 'IDLE';
 let partImages = {};
 let selectedPart = null;
 let dragging = false;
+let pickingUp = false;
+let pickUpTime = 0;
 let lastTickSecond = -1;
 
 let simulationStart = 0;
@@ -236,6 +238,7 @@ function onHandResults(results) {
             }
             dragging = false;
             selectedPart = null;
+            pickingUp = false;
         }
     }
     drawGame(W, H);
@@ -258,10 +261,12 @@ function handleGameLogic() {
             if (Math.abs(fx - (p.x + PART_SIZE/2)) < TOUCH_RADIUS && 
                 Math.abs(fy - (p.y + PART_SIZE/2)) < TOUCH_RADIUS) {
                 
-                // اسحب القطعة (بدون خطأ هنا)
+                // إذا كانت مثبتة (في المكان الغلط) → اسحبها
                 if (p.placed) {
                     p.placed = false;
                     p.placement = null;
+                    pickingUp = true;
+                    pickUpTime = Date.now();
                 }
 
                 selectedPart = name;
@@ -276,6 +281,11 @@ function handleGameLogic() {
         const p = parts[selectedPart];
         p.x = fx - PART_SIZE/2;
         p.y = fy - PART_SIZE/2;
+
+        // ✅ ما نفحص الإفلات إلا بعد 500ms من الرفع
+        if (pickingUp && Date.now() - pickUpTime < 500) {
+            return;
+        }
 
         // ===== 3. الإفلات =====
         let bestTarget = null;
@@ -313,6 +323,7 @@ function handleGameLogic() {
 
             dragging = false;
             selectedPart = null;
+            pickingUp = false;
             checkWin();
         }
     }
@@ -336,7 +347,7 @@ function drawTutorial(W, H) {
     const steps = [
         '1️⃣ المس القطعة بإصبع السبابة',
         '2️⃣ اسحبها نحو المربع المناسب',
-        '3️⃣ ثبّت يدك — القطعة تنفصل',
+        '3️⃣ إفلات تلقائي عند الاقتراب',
         '4️⃣ رتّب كل القطع قبل انتهاء الوقت',
         '5️⃣ الخطأ يُحسب عند الإفلات في المكان الغلط'
     ];
