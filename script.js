@@ -1892,40 +1892,49 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ===== عداد الزوار (حقيقي - مرة واحدة لكل زائر) =====
+// ===== عداد الزوار - Firebase =====
 async function loadVisitorCount() {
     const counterEl = document.getElementById('visitorCounter');
     if (!counterEl) return;
 
     const isAr = currentLang === 'ar';
-    const counted = localStorage.getItem('directionteam_visited');
+    const visited = localStorage.getItem('directionteam_visited');
+
+    const projectId = 'direction-team-7c298';
+    const apiKey = 'AIzaSyB2NatZvCd9fGZfGV0MxA2A7bgEmS-rrDQ';
+    const baseUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/stats/visits?key=${apiKey}`;
 
     try {
-        let url = 'https://tallywire.cronpulse.workers.dev/';
-        if (counted) {
-            // زائر قديم → نعرض الرقم فقط (بدون زيادة)
-            url += 'get/directionteam.github.io/visits';
-        } else {
-            // زائر جديد → نزيد الرقم
-            url += 'hit/directionteam.github.io/visits';
-        }
+        // 1) نقرأ الرقم الحالي
+        const getRes = await fetch(baseUrl);
+        const getData = await getRes.json();
+        const currentCount = parseInt(getData.fields?.count?.integerValue || '0');
 
-        const response = await fetch(url);
-        const data = await response.json();
-        const count = data.value || 0;
-        
-        // نحفظ إن الزائر شاف الموقع
-        if (!counted) {
+        let newCount = currentCount;
+
+        if (!visited) {
+            // 2) زائر جديد → نزيد الرقم
+            newCount = currentCount + 1;
+            const patchUrl = baseUrl + '&updateMask.fieldPaths=count';
+            await fetch(patchUrl, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fields: { count: { integerValue: String(newCount) } }
+                })
+            });
             localStorage.setItem('directionteam_visited', 'true');
         }
 
-        const formatted = count.toLocaleString(isAr ? 'ar-EG' : 'en-US');
+        const formatted = newCount.toLocaleString(isAr ? 'ar-EG' : 'en-US');
         counterEl.textContent = '👥 ' + formatted + (isAr ? ' زيارة' : ' visits');
     } catch (error) {
         console.error('Counter error:', error);
-        counterEl.style.display = 'none';
+        counterEl.textContent = '👥 —';
     }
 }
 
+// تشغيل العداد
 document.addEventListener('DOMContentLoaded', loadVisitorCount);
 
 // ===== تمرير سلس =====
