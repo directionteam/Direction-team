@@ -1912,7 +1912,7 @@ async function loadVisitorCount() {
         const response = await fetch(url);
         const data = await response.json();
         const count = data.value || 0;
-
+        
         // نحفظ إن الزائر شاف الموقع
         if (!counted) {
             localStorage.setItem('directionteam_visited', 'true');
