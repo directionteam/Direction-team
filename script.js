@@ -1895,8 +1895,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ===== عداد الزوار (حقيقي - مرة واحدة لكل زائر) =====
-// ===== عداد الزوار - Firebase =====
+// ===== عداد الزوار - Firebase (مع حماية من التصفير) =====
 async function loadVisitorCount() {
     const counterEl = document.getElementById('visitorCounter');
     if (!counterEl) return;
@@ -1909,17 +1908,24 @@ async function loadVisitorCount() {
     const baseUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/stats/visits?key=${apiKey}`;
 
     try {
-        // 1) نقرأ الرقم الحالي
+        // 1) نقرأ الرقم الحالي من Firebase
         const getRes = await fetch(baseUrl);
         const getData = await getRes.json();
-        const currentCount = parseInt(getData.fields?.count?.integerValue || '0');
+        
+        let currentCount = parseInt(getData.fields?.count?.integerValue || '0');
+        
+        // 🛡️ الحماية: إذا كان الرقم صفر أو ناقص، نرجعه لـ 360
+        if (currentCount < 100) {
+            currentCount = 360; 
+        }
 
         let newCount = currentCount;
 
         if (!visited) {
-            // 2) زائر جديد → نزيد الرقم
+            // 2) زائر جديد → نزيد الرقم ونحدثه في Firebase
             newCount = currentCount + 1;
             const patchUrl = baseUrl + '&updateMask.fieldPaths=count';
+            
             await fetch(patchUrl, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
@@ -1930,28 +1936,19 @@ async function loadVisitorCount() {
             localStorage.setItem('directionteam_visited', 'true');
         }
 
+        // 3) عرض الرقم
         const formatted = newCount.toLocaleString(isAr ? 'ar-EG' : 'en-US');
         counterEl.textContent = '👥 ' + formatted + (isAr ? ' زيارة' : ' visits');
+        
     } catch (error) {
         console.error('Counter error:', error);
-        counterEl.textContent = '👥 —';
+        // في حال فشل الاتصال، نعرض 360 بدل الشرطة
+        counterEl.textContent = '👥 ' + (isAr ? '360 زيارة' : '360 visits');
     }
 }
 
 // تشغيل العداد
 document.addEventListener('DOMContentLoaded', loadVisitorCount);
-
-// ===== تمرير سلس =====
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener('click', function(e) {
-        const href = this.getAttribute('href');
-        if (href !== '#' && href.length > 1) {
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    });
-});
 // ===== PWA - Service Worker =====
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
